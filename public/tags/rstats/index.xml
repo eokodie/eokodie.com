@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Rstats on Ernest Omane-Kodie</title>
+    <link>/tags/rstats/</link>
+    <description>Recent content in Rstats on Ernest Omane-Kodie</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 13 Apr 2018 21:13:14 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/rstats/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Installing Missing Packages from Bioconductor, CRAN and Github</title>
+      <link>/blog/installing-missing-packages-from-bioconductor-cran-and-github/</link>
+      <pubDate>Fri, 13 Apr 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/installing-missing-packages-from-bioconductor-cran-and-github/</guid>
+      <description>via GIPHYOver the past few days I have had to use computers that are different from my trusty old laptop. One thing I noticed while working with R on the new machines is that the excitement in checking for, and installing, missing packages wears off pretty quickly. This blog post is a walk-through of a function I wrote to make the process less painful.
+A bit more backgroundWhen R developers create open source packages, they typically distribute them through The Comprehensive R Archive Network (CRAN), Github or, if the package concerns computational biology and/or bioinformatics, Bioconductor.</description>
+    </item>
+    
+  </channel>
+</rss>
