@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "http://www.eokodie.com/"
 theme = "cocoa-eh-hugo-theme"
 builddrafts = true
 canonifyurls = true
@@ -30,14 +30,8 @@ share = true
 latestpostcount = 5
 github = "eokodie"
 email = "omanekodie@gmail.com"
-# linkedin = "john-example-aa80ue8C("
-# twitter = "example"
-# facebook = "facebook_id"
-# social_banner = "img/banner.png"
 usesmallsummarycard = true
 posts_navigation = true
-# issoHost = "comments.domain.tld:1234"
-# githubRepo = "githubUsername/repositoryName/tree/master"
 small_banner_logo = false
 
 [params.colors]
