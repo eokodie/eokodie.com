@@ -1,3 +1,4 @@
 User-agent: *
 Disallow:
+Crawl-delay: 5
 Sitemap: https://www.eokodie.com/sitemap.xml 
