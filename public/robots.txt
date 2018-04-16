@@ -1,1 +1,3 @@
-Sitemap: http://www.eokodie.com/sitemap.xml 
+User-agent: *
+Disallow:
+Sitemap: https://www.eokodie.com/sitemap.xml 
