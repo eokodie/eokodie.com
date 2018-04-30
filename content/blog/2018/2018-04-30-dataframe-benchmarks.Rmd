@@ -135,7 +135,7 @@ microbenchmark(
   create_boxplot(title = "Stacking")
 ```
 
-As expected, `dplyr::bind_rows` and `data.table::rbindlist` are several orders of magnitude faster than the implementation in `base`. 
+As expected, `dplyr::bind_rows` and `data.table::rbindlist` are faster than the implementation in `base`. 
 
 Also note that `dplyr::bind_rows` outperforms `data.table::rbindlist`.
 
@@ -243,7 +243,7 @@ In this example, `base::cbind` with `do.call` is the most efficient.
 
 
 ## Aggregation
-I will test this using the `mtcars` dataset to compute the average weight (in 1000 Ibs) of cars grouped by number of cylinders. As usual, I will compare functions in `dplyr`, `base` and `data.table`.
+I will test this using the `mtcars` dataset to compute the average weight (in 1000 lbs) of cars grouped by number of cylinders. As usual, I will compare functions in `dplyr`, `base` and `data.table`.
 ```{r}
 base_agg <- aggregate(mtcars$wt, by = list(mtcars$cyl), mean, na.rm = TRUE) %>% 
   as_tibble()
