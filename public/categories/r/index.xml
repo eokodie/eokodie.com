@@ -6,10 +6,20 @@
     <description>Recent content in R on Ernest Omane-Kodie</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Fri, 13 Apr 2018 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Mon, 30 Apr 2018 21:13:14 -0500</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Need for Speed: Benchmarks on Dataframes</title>
+      <link>/blog/need-for-speed-benchmarks-on-dataframes/</link>
+      <pubDate>Mon, 30 Apr 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/need-for-speed-benchmarks-on-dataframes/</guid>
+      <description>via GIPHYIn this post, I will explore the execution speed of various implementations of dataframe aggregation and combining operations in R.
+I will record timings using microbenchmark, a package for measuring the performance of very small pieces of R code.</description>
+    </item>
     
     <item>
       <title>Installing Missing Packages from Bioconductor, CRAN and Github</title>
@@ -17,7 +27,7 @@
       <pubDate>Fri, 13 Apr 2018 21:13:14 -0500</pubDate>
       
       <guid>/blog/installing-missing-packages-from-bioconductor-cran-and-github/</guid>
-      <description>via GIPHYOver the past few days I have had to use computers that are different from my trusty old laptop. One thing I noticed while working with R on the new machines is that the excitement in checking for, and installing, missing packages wears off pretty quickly. This blog post is a walk-through of a function I wrote to make the process less painful.
+      <description>via GIPHYOver the past few days I have had to use computers that are different from my trusty old laptop. One thing I noticed while working with R on the new machines is that the excitement in checking for, and installing, missing packages wears off pretty quickly. This blog post is a walk-through of a function I wrote to make the process less painful.
 A bit more backgroundWhen R developers create open source packages, they typically distribute them through The Comprehensive R Archive Network (CRAN), Github or, if the package concerns computational biology and/or bioinformatics, Bioconductor.</description>
     </item>
     

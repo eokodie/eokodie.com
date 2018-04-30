@@ -6,10 +6,30 @@
     <description>Recent content on Ernest Omane-Kodie</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Fri, 13 Apr 2018 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Mon, 30 Apr 2018 21:13:14 -0500</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Need for Speed: Benchmarks on Dataframes</title>
+      <link>/blog/need-for-speed-benchmarks-on-dataframes/</link>
+      <pubDate>Mon, 30 Apr 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/need-for-speed-benchmarks-on-dataframes/</guid>
+      <description>via GIPHYIn this post, I will explore the execution speed of various implementations of dataframe aggregation and combining operations in R.
+I will record timings using microbenchmark, a package for measuring the performance of very small pieces of R code.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>My name is Ernest Omane-Kodie. I work at AXA where I use open-source technology, data science techniques and pricing principles to come up with answers to interesting questions concerning data of all kinds.
+ &amp;ldquo;The impulse to keep to yourself what you have learned is not only shameful, it is destructive. Anything you do not give freely and abundantly becomes lost to you. You open your safe and find ashes&amp;rdquo; - Annie Dillard</description>
+    </item>
     
     <item>
       <title>Installing Missing Packages from Bioconductor, CRAN and Github</title>
@@ -17,19 +37,8 @@
       <pubDate>Fri, 13 Apr 2018 21:13:14 -0500</pubDate>
       
       <guid>/blog/installing-missing-packages-from-bioconductor-cran-and-github/</guid>
-      <description>via GIPHYOver the past few days I have had to use computers that are different from my trusty old laptop. One thing I noticed while working with R on the new machines is that the excitement in checking for, and installing, missing packages wears off pretty quickly. This blog post is a walk-through of a function I wrote to make the process less painful.
+      <description>via GIPHYOver the past few days I have had to use computers that are different from my trusty old laptop. One thing I noticed while working with R on the new machines is that the excitement in checking for, and installing, missing packages wears off pretty quickly. This blog post is a walk-through of a function I wrote to make the process less painful.
 A bit more backgroundWhen R developers create open source packages, they typically distribute them through The Comprehensive R Archive Network (CRAN), Github or, if the package concerns computational biology and/or bioinformatics, Bioconductor.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>/about/</link>
-      <pubDate>Fri, 13 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/about/</guid>
-      <description>My name is Ernest Omane-Kodie. I am at AXA where I use open-source technology, pricing and data science techniques to come up with answers to interesting questions around data.
-I have learned a lot from the amazing rstats community over the years. I started this blog as a way of giving back through musings on the R programming language, data and visualisation.
-This blog is built entirely in R using blogdown, and deployed with Netlify.</description>
     </item>
     
     <item>
