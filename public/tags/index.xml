@@ -6,15 +6,33 @@
     <description>Recent content in Tags on Ernest Omane-Kodie</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Fri, 13 Apr 2018 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Mon, 30 Apr 2018 21:13:14 -0500</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Highcharts</title>
+      <link>/tags/highcharts/</link>
+      <pubDate>Mon, 30 Apr 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/tags/highcharts/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Microbenchmark</title>
+      <link>/tags/microbenchmark/</link>
+      <pubDate>Mon, 30 Apr 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/tags/microbenchmark/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Rstats</title>
       <link>/tags/rstats/</link>
-      <pubDate>Fri, 13 Apr 2018 21:13:14 -0500</pubDate>
+      <pubDate>Mon, 30 Apr 2018 21:13:14 -0500</pubDate>
       
       <guid>/tags/rstats/</guid>
       <description></description>
