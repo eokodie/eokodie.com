@@ -1,0 +1,282 @@
+---
+title: "Need for Speed: Benchmarks on Dataframes" 
+author: "Ernest Omane-Kodie"
+date: 2018-04-30T21:13:14-05:00 
+categories: ["R"]
+tags: ["rstats", "microbenchmark", "highcharts"]
+---
+
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<script src="/rmarkdown-libs/proj4js/proj4.js"></script>
+<link href="/rmarkdown-libs/highcharts/css/motion.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/highcharts/highstock.js"></script>
+<script src="/rmarkdown-libs/highcharts/highcharts-3d.js"></script>
+<script src="/rmarkdown-libs/highcharts/highcharts-more.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/annotations.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/broken-axis.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/data.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/drilldown.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/exporting.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/funnel.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/heatmap.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/map.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/no-data-to-display.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/offline-exporting.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/solid-gauge.js"></script>
+<script src="/rmarkdown-libs/highcharts/modules/treemap.js"></script>
+<script src="/rmarkdown-libs/highcharts/plugins/annotations.js"></script>
+<script src="/rmarkdown-libs/highcharts/plugins/draggable-legend.js"></script>
+<script src="/rmarkdown-libs/highcharts/plugins/draggable-points.js"></script>
+<script src="/rmarkdown-libs/highcharts/plugins/export-csv.js"></script>
+<script src="/rmarkdown-libs/highcharts/plugins/grouped-categories.js"></script>
+<script src="/rmarkdown-libs/highcharts/plugins/motion.js"></script>
+<script src="/rmarkdown-libs/highcharts/plugins/pattern-fill-v2.js"></script>
+<script src="/rmarkdown-libs/highcharts/plugins/tooltip-delay.js"></script>
+<script src="/rmarkdown-libs/highcharts/custom/reset.js"></script>
+<script src="/rmarkdown-libs/highcharts/custom/symbols-extra.js"></script>
+<script src="/rmarkdown-libs/highcharts/custom/text-symbols.js"></script>
+<link href="/rmarkdown-libs/fontawesome/font-awesome.min.css" rel="stylesheet" />
+<link href="/rmarkdown-libs/htmlwdgtgrid/htmlwdgtgrid.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/highchart-binding/highchart.js"></script>
+
+
+<iframe src="https://giphy.com/embed/MZkHHFNtF9B8k" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen>
+</iframe>
+<p>
+<a href="https://giphy.com/gifs/MZkHHFNtF9B8k">via GIPHY</a>
+</p>
+<p>In this post, I will explore the execution speed of various implementations of dataframe aggregation and combining operations in R.</p>
+<p>I will record timings using <a href="https://cran.r-project.org/web/packages/microbenchmark/">microbenchmark</a>, a package for measuring the performance of very small pieces of R code.</p>
+<blockquote>
+<p>“The most productive way to make code fast is… to make it work correctly, determine whether it’s actually worth speeding it up, and–in those cases where it is–to use a profiler to identify bottlenecks” – <a href="https://arxiv.org/abs/1210.0530">Best Practices for Scientific Computing</a></p>
+</blockquote>
+<p>For larger, fully-functioning chunks of R code, where a clear need for optimisation has been established, you might want to consider rewriting bottlenecks using lower level languages like C and Fortran, but bear in mind that any speed gains will come at the expense of readability and development time.</p>
+<p>As a general rule of thumb, whenever possible, first tune the performance of R code using R solutions and resort to lower level languages only when you are certain that the performance gain will outstrip development time.</p>
+<blockquote>
+<p>“The conventional wisdom shared by many of today’s software engineers calls for ignoring efficiency in the small; but I believe this is simply an overreaction… In established engineering disciplines a 12% improvement, easily obtained, is never considered marginal.” – Donald Knuth</p>
+</blockquote>
+<div id="disclaimer" class="section level2">
+<h2>Disclaimer</h2>
+<p>The benchmarks are based on simple dataframes and do not take into account the impact of datasets of varying complexity on performance. The results may not be representative of your use case, since any difference in your system hardware and the structure of your datasets may affect actual test results. Always benchmark against your specific data and use case.</p>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>The tests are performed on a single Windows 10 laptop (i7 6820HK <span class="citation">@2.7</span> GHz) with 64GB RAM and a decent SSD (M.2 Samsung SM951).</p>
+<p>For each test, there are 10 warm-up iterations followed by the actual benchmark. Execution times are based on running each expression 1,000 times and randomly shuffling the order of expressions evaluated.</p>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>First up, we need example datasets to run the tests on. Let’s create a few dataframes and store them in a list for convenience.</p>
+<pre class="r"><code>library(tidyverse)
+library(microbenchmark)
+library(data.table)
+library(highcharter)
+library(magrittr) 
+library(glue)
+num_of_iterations = 1000 </code></pre>
+<pre class="r"><code>create_data &lt;- function(i){
+  df = data.frame(key = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;), value = i*(1:3))
+  return(df)
+} 
+data_list &lt;- 1:4 %&gt;% map(create_data) </code></pre>
+</div>
+<div id="helpers" class="section level2">
+<h2>Helpers</h2>
+<p>Next, we will simplify our workflow with a few helper functions, each serving a specific purpose.</p>
+<pre class="r"><code>compare_dfs &lt;- function(df_name){
+  df1 &lt;- get(ls(pattern = pattern, envir = .GlobalEnv)[1])
+  setequal(df1, get(df_name))
+}</code></pre>
+<pre class="r"><code>create_boxplot &lt;- function(data, title){
+  p &lt;- hcboxplot(x = data$time, var = data$expr, 
+                 outliers = FALSE, color = &#39;tomato&#39;, 
+                 fillColor = &#39;white&#39;, lineWidth = 1.5) %&gt;%
+    hc_chart(type = &quot;column&quot;)  %&gt;% 
+    hc_title(text = glue(&quot;&lt;b&gt;{title}&lt;b&gt;&quot;))  %&gt;%
+    hc_yAxis(title = list(text = &quot;&lt;b&gt; Time (ns)&lt;b&gt;&quot;)) %&gt;% 
+    hc_add_theme(hc_theme_ffx())
+  return(p)
+}</code></pre>
+<pre class="r"><code>give_names &lt;- function(name){
+  df &lt;- get(name)
+  df %&lt;&gt;% setnames(c(&quot;key&quot;, paste0(&quot;value_&quot;, 1:(ncol(df)-1))))
+}</code></pre>
+<ul>
+<li><code>compare_dfs</code>: a function which takes a list of dataframes and checks that all dataframes in the list are identical</li>
+<li><code>create_boxplot</code>: a function which creates a boxplot of microbenchmark timings by passing a <code>microbenchmark</code> object to <code>highcharter</code>; an R wrapper for the <a href="https://www.highcharts.com">Highcharts javascript library</a></li>
+<li><code>give_names</code>: a function to rename the columns of a dataframe</li>
+</ul>
+</div>
+<div id="stacking-dataframes" class="section level2">
+<h2>Stacking dataframes</h2>
+<p>R provides several ways of combining dataframes by rows to create a larger dataframe. Note that this type of operation only works if the dataframes have the same variable names.</p>
+<p>I will compare four approaches:</p>
+<ul>
+<li>multiple calls to <code>base::rbind</code> using a for-loop</li>
+<li>a call to <code>base::rbind</code> using <code>do.call</code></li>
+<li>a call to <code>data.table::rbindlist</code></li>
+<li>a call to <code>dplyr::bind_rows</code></li>
+</ul>
+<p>Let’s start by stacking up the dataframes using these approaches:</p>
+<pre class="r"><code>for_loop_rbind &lt;- function(data_list){
+  df = data_list[[1]]
+  for (i in 2:length(data_list)){
+    df = rbind(df, data_list[[i]])
+  }
+  return(df)
+}
+
+rbind_for_loop_stk = for_loop_rbind(data_list)
+rbind_do_call_stk = do.call(rbind, data_list)
+data_table_rbindlist_stk = rbindlist(data_list)
+dplyr_bind_rows_stk = bind_rows(data_list)</code></pre>
+<p>Do the different methods produce the same dataframe?</p>
+<pre class="r"><code>pattern = &#39;_stk&#39;
+ls(pattern = pattern) %&gt;%
+  map_lgl(compare_dfs)</code></pre>
+<pre><code>## [1] TRUE TRUE TRUE TRUE</code></pre>
+<p>As expected, the results are identical. We can now test the execution speed of each method but before we proceed, let’s do a quick sense check of what to expect. <code>dplyr::bind_rows</code> and <code>data.table::rbindlist</code> both accept a list of dataframes and are optimized for iterating over many dataframes. So you would expect these to be faster than any other implementation which combine two dataframes at a time (i.e. the base R versions).</p>
+<pre class="r"><code>microbenchmark(
+  dplyr_bind_rows = bind_rows(data_list),
+  data_table_rbindlist = rbindlist(data_list),
+  do_call_rbind = do.call(rbind, data_list),  
+  for_loop_rbind = for_loop_rbind(data_list),
+  times = num_of_iterations,
+  unit = &#39;ns&#39;,
+  control = list(warmup = 10)
+  ) %&gt;% 
+  create_boxplot(title = &quot;Stacking&quot;)</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:500px;" class="highchart html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"hc_opts":{"title":{"text":"<b>Stacking<b>"},"yAxis":{"title":{"text":"<b> Time (ns)<b>"}},"credits":{"enabled":false},"exporting":{"enabled":false},"plotOptions":{"series":{"turboThreshold":0,"marker":{"symbol":"circle"},"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"bubble":{"minSize":5,"maxSize":25}},"annotationsOptions":{"enabledButtons":false},"tooltip":{"delayForDisplay":10},"chart":{"type":"column"},"xAxis":{"type":"category","categories":""},"series":[{"name":null,"data":[{"name":"dplyr_bind_rows","low":14347,"q1":23410,"median":26430,"q3":30206,"high":40023},{"name":"data_table_rbindlist","low":71740,"q1":93640,"median":102702,"q3":123846,"high":166891},{"name":"do_call_rbind","low":251847,"q1":271858,"median":290737,"q3":348507,"high":461782},{"name":"for_loop_rbind","low":431575,"q1":478017,"median":513321.5,"q3":587894,"high":746856}],"type":"boxplot","id":null,"color":"tomato","fillColor":"white","lineWidth":1.5}]},"theme":{"colors":["#00AACC","#FF4E00","#B90000","#5F9B0A","#CD6723"],"chart":{"backgroundColor":{"linearGradient":[0,0,0,150],"stops":[[0,"#CAE1F4"],[1,"#EEEEEE"]]},"style":{"fontFamily":"Open Sans"}},"title":{"align":"left"},"subtitle":{"align":"left"},"legend":{"align":"right","verticalAlign":"bottom"},"xAxis":{"gridLineWidth":1,"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1},"yAxis":{"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":"Open+Sans","debug":false},"evals":[],"jsHooks":[]}</script>
+<p>As expected, <code>dplyr::bind_rows</code> and <code>data.table::rbindlist</code> are several orders of magnitude faster than the implementation in <code>base</code>.</p>
+<p>Also note that <code>dplyr::bind_rows</code> outperforms <code>data.table::rbindlist</code>.</p>
+</div>
+<div id="multiple-joins" class="section level2">
+<h2>Multiple joins</h2>
+<p>I will use the same workflow as before to compare the following approaches:</p>
+<ul>
+<li>single call to <code>base::merge</code></li>
+<li>single call to <code>data.table:::merge.data.table</code></li>
+<li>use <code>purrr::reduce</code> to iteratively perform repeated <code>dplyr::left_join</code></li>
+</ul>
+<pre class="r"><code>for_loop_leftjoin_func &lt;- function(data_list){
+  df = data_list[[1]]
+  for (i in 2:length(data_list)){
+    df = left_join(df, data_list[[i]], by = &quot;key&quot;)
+  }
+  return(df)
+}
+
+base_merge_jn &lt;- reduce(data_list, base::merge, by = c(&quot;key&quot;))
+dplyr_left_join_jn &lt;- reduce(data_list, left_join, by = &quot;key&quot;) 
+datatable_merge_jn &lt;- reduce(data_list, data.table:::merge.data.table, by = c(&quot;key&quot;))</code></pre>
+<pre class="r"><code>#Are the dataframes identical?
+# rename df columns
+pattern = &#39;_jn&#39;
+rename_dfs &lt;- ls(pattern = pattern) %&gt;%
+  map(give_names)
+
+# compare dataframes
+ls(pattern = pattern) %&gt;%
+  map_lgl(compare_dfs) </code></pre>
+<pre><code>## [1] TRUE TRUE TRUE</code></pre>
+<pre class="r"><code># run and plot benchmarks
+microbenchmark(
+  base_merge = reduce(data_list, base::merge, by = c(&quot;key&quot;)),  
+  dplyr_left_join = reduce(data_list, left_join, by = &quot;key&quot;), 
+  datatable_merge = reduce(data_list, data.table:::merge.data.table, 
+                           by = c(&quot;key&quot;)),
+  times = num_of_iterations,
+  unit = &quot;ns&quot;,
+  control = list(warmup = 10)
+  ) %&gt;% 
+  create_boxplot(title = &quot;Joins&quot;) </code></pre>
+<div id="htmlwidget-2" style="width:100%;height:500px;" class="highchart html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"hc_opts":{"title":{"text":"<b>Joins<b>"},"yAxis":{"title":{"text":"<b> Time (ns)<b>"}},"credits":{"enabled":false},"exporting":{"enabled":false},"plotOptions":{"series":{"turboThreshold":0,"marker":{"symbol":"circle"},"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"bubble":{"minSize":5,"maxSize":25}},"annotationsOptions":{"enabledButtons":false},"tooltip":{"delayForDisplay":10},"chart":{"type":"column"},"xAxis":{"type":"category","categories":""},"series":[{"name":null,"data":[{"name":"base_merge","low":1317005,"q1":1462185,"median":1547707.5,"q3":1755565.5,"high":2190351},{"name":"dplyr_left_join","low":1779165,"q1":2004014.5,"median":2167129,"q3":2477312,"high":3181879},{"name":"datatable_merge","low":2859047,"q1":3201513.5,"median":3479980.5,"q3":3856051,"high":4835309}],"type":"boxplot","id":null,"color":"tomato","fillColor":"white","lineWidth":1.5}]},"theme":{"colors":["#00AACC","#FF4E00","#B90000","#5F9B0A","#CD6723"],"chart":{"backgroundColor":{"linearGradient":[0,0,0,150],"stops":[[0,"#CAE1F4"],[1,"#EEEEEE"]]},"style":{"fontFamily":"Open Sans"}},"title":{"align":"left"},"subtitle":{"align":"left"},"legend":{"align":"right","verticalAlign":"bottom"},"xAxis":{"gridLineWidth":1,"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1},"yAxis":{"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":"Open+Sans","debug":false},"evals":[],"jsHooks":[]}</script>
+<p>In this example, <code>base::merge</code> is twice as fast as <code>dplyr::left_join</code>, and significantly outperforms <code>data.table:::merge.data.table</code>.</p>
+</div>
+<div id="combining-by-columns" class="section level2">
+<h2>Combining by columns</h2>
+<p>I will compare the following approaches:</p>
+<ul>
+<li>multiple calls to <code>base::cbind</code> using a for-loop</li>
+<li>single call to <code>base::cbind</code> using <code>do.call</code></li>
+<li>single call to <code>dplyr::bind_cols</code></li>
+</ul>
+<p>Note that this type of operation only works if the data frames have the same variable names.</p>
+<pre class="r"><code>for_loop_cbind &lt;- function(data_list){
+  df = data_list[[1]]
+  for (i in 2:length(data_list)){
+    df = cbind(df, data_list[[i]])
+  }
+  return(df)
+}
+
+base_cbind_for_loop_cols = for_loop_cbind(data_list)
+base_cbind_do_call_cols = do.call(cbind, data_list)
+dplyr_bind_cols = bind_cols(data_list)</code></pre>
+<pre class="r"><code>#Are the dataframes identical?
+# rename df columns
+pattern = &#39;_cols&#39;
+rename_dfs &lt;- ls(pattern = pattern) %&gt;%
+  map(give_names)
+
+# compare dataframes
+ls(pattern = pattern) %&gt;%
+  map_lgl(compare_dfs) </code></pre>
+<pre><code>## [1] TRUE TRUE TRUE</code></pre>
+<p>Run benchmark</p>
+<pre class="r"><code>microbenchmark(
+  base_cbind_do_call = do.call(cbind, data_list),
+  dplyr_bind_cols = bind_cols(data_list),
+  base_cbind_for_loop = for_loop_cbind(data_list),  
+  times = num_of_iterations,
+  unit = &#39;ns&#39;,
+  control = list(warmup = 10)
+  ) %&gt;% 
+  create_boxplot(title = &quot;Combine by columns&quot;)   </code></pre>
+<div id="htmlwidget-3" style="width:100%;height:500px;" class="highchart html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"hc_opts":{"title":{"text":"<b>Combine by columns<b>"},"yAxis":{"title":{"text":"<b> Time (ns)<b>"}},"credits":{"enabled":false},"exporting":{"enabled":false},"plotOptions":{"series":{"turboThreshold":0,"marker":{"symbol":"circle"},"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"bubble":{"minSize":5,"maxSize":25}},"annotationsOptions":{"enabledButtons":false},"tooltip":{"delayForDisplay":10},"chart":{"type":"column"},"xAxis":{"type":"category","categories":""},"series":[{"name":null,"data":[{"name":"base_cbind_do_call","low":51729,"q1":56638,"median":64944,"q3":84012.5,"high":124980},{"name":"dplyr_bind_cols","low":98172,"q1":111387,"median":118184,"q3":154431,"high":217487},{"name":"base_cbind_for_loop","low":107989,"q1":117051,"median":131399,"q3":171988.5,"high":254112}],"type":"boxplot","id":null,"color":"tomato","fillColor":"white","lineWidth":1.5}]},"theme":{"colors":["#00AACC","#FF4E00","#B90000","#5F9B0A","#CD6723"],"chart":{"backgroundColor":{"linearGradient":[0,0,0,150],"stops":[[0,"#CAE1F4"],[1,"#EEEEEE"]]},"style":{"fontFamily":"Open Sans"}},"title":{"align":"left"},"subtitle":{"align":"left"},"legend":{"align":"right","verticalAlign":"bottom"},"xAxis":{"gridLineWidth":1,"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1},"yAxis":{"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":"Open+Sans","debug":false},"evals":[],"jsHooks":[]}</script>
+<p>In this example, <code>base::cbind</code> with <code>do.call</code> is the most efficient.</p>
+</div>
+<div id="aggregation" class="section level2">
+<h2>Aggregation</h2>
+<p>I will test this using the <code>mtcars</code> dataset to compute the average weight (in 1000 Ibs) of cars grouped by number of cylinders. As usual, I will compare functions in <code>dplyr</code>, <code>base</code> and <code>data.table</code>.</p>
+<pre class="r"><code>base_agg &lt;- aggregate(mtcars$wt, by = list(mtcars$cyl), mean, na.rm = TRUE) %&gt;% 
+  as_tibble()
+mtcars_dt = data.table(mtcars)
+data_table_agg &lt;- mtcars_dt[ , mean(wt, na.rm = TRUE), cyl] %&gt;% 
+  as_tibble()
+dplyr_agg &lt;- mtcars %&gt;% 
+  group_by(cyl) %&gt;% 
+  summarize(mean(wt, na.rm = TRUE))</code></pre>
+<pre class="r"><code># rename df columns
+pattern = &#39;_agg&#39;
+rename_dfs &lt;- ls(pattern = pattern) %&gt;%
+  map(give_names)
+# compare dataframes
+ls(pattern = pattern) %&gt;%
+  map_lgl(compare_dfs) </code></pre>
+<pre><code>## [1] TRUE TRUE TRUE</code></pre>
+<pre class="r"><code>microbenchmark(
+  datatable = mtcars_dt[ , mean(wt, na.rm = TRUE), cyl],  
+  base = aggregate(mtcars$wt, by = list(mtcars$cyl), mean, na.rm = TRUE),
+  dplyr = mtcars %&gt;% group_by(cyl) %&gt;% summarize(mean(wt, na.rm = TRUE)),
+  times = 1000,
+  unit = &quot;ns&quot;,
+  control = list(warmup = 10)
+) %&gt;% 
+  create_boxplot(title = &quot;Aggregation&quot;)</code></pre>
+<p><div id="htmlwidget-4" style="width:100%;height:500px;" class="highchart html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4">{"x":{"hc_opts":{"title":{"text":"<b>Aggregation<b>"},"yAxis":{"title":{"text":"<b> Time (ns)<b>"}},"credits":{"enabled":false},"exporting":{"enabled":false},"plotOptions":{"series":{"turboThreshold":0,"marker":{"symbol":"circle"},"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"bubble":{"minSize":5,"maxSize":25}},"annotationsOptions":{"enabledButtons":false},"tooltip":{"delayForDisplay":10},"chart":{"type":"column"},"xAxis":{"type":"category","categories":""},"series":[{"name":null,"data":[{"name":"datatable","low":371541,"q1":409676.5,"median":443281,"q3":506714.5,"high":652084},{"name":"base","low":619612,"q1":673983.5,"median":719293,"q3":791411.5,"high":967364},{"name":"dplyr","low":921677,"q1":1003989.5,"median":1059305.5,"q3":1168237.5,"high":1414044}],"type":"boxplot","id":null,"color":"tomato","fillColor":"white","lineWidth":1.5}]},"theme":{"colors":["#00AACC","#FF4E00","#B90000","#5F9B0A","#CD6723"],"chart":{"backgroundColor":{"linearGradient":[0,0,0,150],"stops":[[0,"#CAE1F4"],[1,"#EEEEEE"]]},"style":{"fontFamily":"Open Sans"}},"title":{"align":"left"},"subtitle":{"align":"left"},"legend":{"align":"right","verticalAlign":"bottom"},"xAxis":{"gridLineWidth":1,"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1},"yAxis":{"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":"Open+Sans","debug":false},"evals":[],"jsHooks":[]}</script> In this example, <code>data.table</code> is the most efficient.</p>
+</div>
+<div id="wrapping-up" class="section level2">
+<h2>Wrapping up</h2>
+<p>This study is far from a comprehensive benchmark. It is my attempt at quickly exploring the order of magnitude of execution times for common operations on dataframes; and more importantly, setting up a workflow which can be extended to cover other scenarios.</p>
+<p>Feel free to use the methods identified in these benchmarks to speed up your code but remember that <strong>writing good code trumps writing fast code</strong>.</p>
+<blockquote>
+<p>“We follow two rules in the matters of optimization: Rule 1: Don’t do it. Rule 2 (for experts only): Don’t do it yet - that is, not until you have a perfectly clear and unoptimized solution” – M. A. Jackson</p>
+</blockquote>
+<p>For more information about code optimisation, read <a href="http://adv-r.had.co.nz/Profiling.html">Hadley Wickham’s take on the topic</a>, item 67 from <a href="https://books.google.co.uk/books?id=BIpDDwAAQBAJ&amp;printsec=frontcover&amp;source=gbs_ge_summary_r&amp;cad=0#v=onepage&amp;q&amp;f=false">Joshua Bloch’s Effective Java</a> and the <a href="https://arxiv.org/abs/1210.0530">Best Practices for Scientific Computing</a>.</p>
+</div>
