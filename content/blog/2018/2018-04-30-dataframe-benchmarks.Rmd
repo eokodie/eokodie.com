@@ -120,7 +120,7 @@ ls(pattern = pattern) %>%
   map_lgl(compare_dfs)
 ```
 
-As expected, the results are identical. We can now test the execution speed of each method but before we proceed, let's do a quick sense check of what to expect. `dplyr::bind_rows` and `data.table::rbindlist` both accept a list of dataframes and are optimized for iterating over many dataframes. So you would expect these to be faster than any other implementation which combine two dataframes at a time (i.e. the base R versions). 
+As expected, the results are identical. We can now test the execution speed of each method but before we proceed, let's do a quick sense check of what to expect. `dplyr::bind_rows` and `data.table::rbindlist` both accept a list of dataframes and are optimized for iterating over many dataframes. So you would expect these to be faster than any other implementation which combines two dataframes at a time (i.e. the base R versions). 
 
 ```{r}
 microbenchmark(
@@ -199,9 +199,7 @@ I will compare the following approaches:
   * multiple calls to `base::cbind` using a for-loop
   * single call to `base::cbind` using `do.call`
   * single call to `dplyr::bind_cols`
-  
-Note that this type of operation only works if the data frames have the same variable names.
-  
+
 ```{r}
 for_loop_cbind <- function(data_list){
   df = data_list[[1]]
