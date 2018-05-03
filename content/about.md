@@ -10,3 +10,5 @@ My name is Ernest Omane-Kodie. I work at [AXA](https://www.axa.com/en/about-us/e
 I have learned a lot from the amazing rstats community over the years. I started this blog as a way of giving back, through musings on the R programming language, data and visualisation.
 
 This blog is built entirely in R using [blogdown](https://github.com/rstudio/blogdown), and deployed with [Netlify](https://www.netlify.com/). All articles posted on this blog are released under a [Creative Commons Attribution-ShareAlike 4.0 International License]( https://creativecommons.org/licenses/by-sa/4.0/).
+
+My posts are published on [R Weekly](https://rweekly.org/) and [R-Bloggers](https://www.r-bloggers.com/) along with lots of amazing R related content.
