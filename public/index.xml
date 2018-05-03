@@ -8,7 +8,7 @@
     <language>en-US</language>
     <lastBuildDate>Mon, 30 Apr 2018 21:13:14 -0500</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -17,18 +17,280 @@
       <pubDate>Mon, 30 Apr 2018 21:13:14 -0500</pubDate>
       
       <guid>/blog/need-for-speed-benchmarks-on-dataframes/</guid>
-      <description>via GIPHYIn this post, I will explore the execution speed of various implementations of dataframe aggregation and combining operations in R.
-I will record timings using microbenchmark, a package for measuring the performance of very small pieces of R code.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>/about/</link>
-      <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/about/</guid>
-      <description>My name is Ernest Omane-Kodie. I work at AXA where I use open-source technology, data science techniques and pricing principles to come up with answers to interesting questions concerning data of all kinds.
- &amp;ldquo;The impulse to keep to yourself what you have learned is not only shameful, it is destructive. Anything you do not give freely and abundantly becomes lost to you. You open your safe and find ashes&amp;rdquo; - Annie Dillard</description>
+      <description>&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/proj4js/proj4.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/rmarkdown-libs/highcharts/css/motion.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/highstock.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/highcharts-3d.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/highcharts-more.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/annotations.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/broken-axis.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/data.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/drilldown.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/exporting.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/funnel.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/heatmap.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/map.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/no-data-to-display.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/offline-exporting.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/solid-gauge.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/modules/treemap.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/plugins/annotations.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/plugins/draggable-legend.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/plugins/draggable-points.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/plugins/export-csv.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/plugins/grouped-categories.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/plugins/motion.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/plugins/pattern-fill-v2.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/plugins/tooltip-delay.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/custom/reset.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/custom/symbols-extra.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/highcharts/custom/text-symbols.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/rmarkdown-libs/fontawesome/font-awesome.min.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;link href=&#34;/rmarkdown-libs/htmlwdgtgrid/htmlwdgtgrid.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/rmarkdown-libs/highchart-binding/highchart.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;iframe src=&#34;https://giphy.com/embed/MZkHHFNtF9B8k&#34; width=&#34;480&#34; height=&#34;270&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://giphy.com/gifs/MZkHHFNtF9B8k&#34;&gt;via GIPHY&lt;/a&gt;
+&lt;/p&gt;
+&lt;p&gt;In this post, I will explore the execution speed of various implementations of dataframe aggregation and combining operations in R.&lt;/p&gt;
+&lt;p&gt;I will record timings using &lt;a href=&#34;https://cran.r-project.org/web/packages/microbenchmark/&#34;&gt;microbenchmark&lt;/a&gt;, a package for measuring the performance of very small pieces of R code.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“The most productive way to make code fast is… to make it work correctly, determine whether it’s actually worth speeding it up, and–in those cases where it is–to use a profiler to identify bottlenecks” – &lt;a href=&#34;https://arxiv.org/abs/1210.0530&#34;&gt;Best Practices for Scientific Computing&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;For larger, fully-functioning chunks of R code, where a clear need for optimisation has been established, you might want to consider rewriting bottlenecks using lower level languages like C and Fortran, but bear in mind that any speed gains will come at the expense of readability and development time.&lt;/p&gt;
+&lt;p&gt;As a general rule of thumb, whenever possible, first tune the performance of R code using R solutions and resort to lower level languages only when you are certain that the performance gain will outstrip development time.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“The conventional wisdom shared by many of today’s software engineers calls for ignoring efficiency in the small; but I believe this is simply an overreaction… In established engineering disciplines a 12% improvement, easily obtained, is never considered marginal.” – Donald Knuth&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div id=&#34;disclaimer&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Disclaimer&lt;/h2&gt;
+&lt;p&gt;The benchmarks are based on simple dataframes and do not take into account the impact of datasets of varying complexity on performance. The results may not be representative of your use case, since any difference in your system hardware and the structure of your datasets may affect actual test results. Always benchmark against your specific data and use case.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;setup&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Setup&lt;/h2&gt;
+&lt;p&gt;The tests are performed on a single Windows 10 laptop (i7 6820HK &lt;span class=&#34;citation&#34;&gt;@2.7&lt;/span&gt; GHz) with 64GB RAM and a decent SSD (M.2 Samsung SM951).&lt;/p&gt;
+&lt;p&gt;For each test, there are 10 warm-up iterations followed by the actual benchmark. Execution times are based on running each expression 1,000 times and randomly shuffling the order of expressions evaluated.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data&lt;/h2&gt;
+&lt;p&gt;First up, we need example datasets to run the tests on. Let’s create a few dataframes and store them in a list for convenience.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(microbenchmark)
+library(data.table)
+library(highcharter)
+library(magrittr) 
+library(glue)
+num_of_iterations = 1000 &lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;create_data &amp;lt;- function(i){
+  df = data.frame(key = c(&amp;quot;a&amp;quot;, &amp;quot;b&amp;quot;, &amp;quot;c&amp;quot;), value = i*(1:3))
+  return(df)
+} 
+data_list &amp;lt;- 1:4 %&amp;gt;% map(create_data) &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;helpers&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Helpers&lt;/h2&gt;
+&lt;p&gt;Next, we will simplify our workflow with a few helper functions, each serving a specific purpose.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;compare_dfs &amp;lt;- function(df_name){
+  df1 &amp;lt;- get(ls(pattern = pattern, envir = .GlobalEnv)[1])
+  setequal(df1, get(df_name))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;create_boxplot &amp;lt;- function(data, title){
+  p &amp;lt;- hcboxplot(x = data$time, var = data$expr, 
+                 outliers = FALSE, color = &amp;#39;tomato&amp;#39;, 
+                 fillColor = &amp;#39;white&amp;#39;, lineWidth = 1.5) %&amp;gt;%
+    hc_chart(type = &amp;quot;column&amp;quot;)  %&amp;gt;% 
+    hc_title(text = glue(&amp;quot;&amp;lt;b&amp;gt;{title}&amp;lt;b&amp;gt;&amp;quot;))  %&amp;gt;%
+    hc_yAxis(title = list(text = &amp;quot;&amp;lt;b&amp;gt; Time (ns)&amp;lt;b&amp;gt;&amp;quot;)) %&amp;gt;% 
+    hc_add_theme(hc_theme_ffx())
+  return(p)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;give_names &amp;lt;- function(name){
+  df &amp;lt;- get(name)
+  df %&amp;lt;&amp;gt;% setnames(c(&amp;quot;key&amp;quot;, paste0(&amp;quot;value_&amp;quot;, 1:(ncol(df)-1))))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;compare_dfs&lt;/code&gt;: a function which takes a list of dataframes and checks that all dataframes in the list are identical&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;create_boxplot&lt;/code&gt;: a function which creates a boxplot of microbenchmark timings by passing a &lt;code&gt;microbenchmark&lt;/code&gt; object to &lt;code&gt;highcharter&lt;/code&gt;; an R wrapper for the &lt;a href=&#34;https://www.highcharts.com&#34;&gt;Highcharts javascript library&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;give_names&lt;/code&gt;: a function to rename the columns of a dataframe&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;stacking-dataframes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Stacking dataframes&lt;/h2&gt;
+&lt;p&gt;R provides several ways of combining dataframes by rows to create a larger dataframe. Note that this type of operation only works if the dataframes have the same variable names.&lt;/p&gt;
+&lt;p&gt;I will compare four approaches:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;multiple calls to &lt;code&gt;base::rbind&lt;/code&gt; using a for-loop&lt;/li&gt;
+&lt;li&gt;a call to &lt;code&gt;base::rbind&lt;/code&gt; using &lt;code&gt;do.call&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;a call to &lt;code&gt;data.table::rbindlist&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;a call to &lt;code&gt;dplyr::bind_rows&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let’s start by stacking up the dataframes using these approaches:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;for_loop_rbind &amp;lt;- function(data_list){
+  df = data_list[[1]]
+  for (i in 2:length(data_list)){
+    df = rbind(df, data_list[[i]])
+  }
+  return(df)
+}
+
+rbind_for_loop_stk = for_loop_rbind(data_list)
+rbind_do_call_stk = do.call(rbind, data_list)
+data_table_rbindlist_stk = rbindlist(data_list)
+dplyr_bind_rows_stk = bind_rows(data_list)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Do the different methods produce the same dataframe?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pattern = &amp;#39;_stk&amp;#39;
+ls(pattern = pattern) %&amp;gt;%
+  map_lgl(compare_dfs)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE TRUE TRUE TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As expected, the results are identical. We can now test the execution speed of each method but before we proceed, let’s do a quick sense check of what to expect. &lt;code&gt;dplyr::bind_rows&lt;/code&gt; and &lt;code&gt;data.table::rbindlist&lt;/code&gt; both accept a list of dataframes and are optimized for iterating over many dataframes. So you would expect these to be faster than any other implementation which combines two dataframes at a time (i.e. the base R versions).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;microbenchmark(
+  dplyr_bind_rows = bind_rows(data_list),
+  data_table_rbindlist = rbindlist(data_list),
+  do_call_rbind = do.call(rbind, data_list),  
+  for_loop_rbind = for_loop_rbind(data_list),
+  times = num_of_iterations,
+  unit = &amp;#39;ns&amp;#39;,
+  control = list(warmup = 10)
+  ) %&amp;gt;% 
+  create_boxplot(title = &amp;quot;Stacking&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:500px;&#34; class=&#34;highchart html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;hc_opts&#34;:{&#34;title&#34;:{&#34;text&#34;:&#34;&lt;b&gt;Stacking&lt;b&gt;&#34;},&#34;yAxis&#34;:{&#34;title&#34;:{&#34;text&#34;:&#34;&lt;b&gt; Time (ns)&lt;b&gt;&#34;}},&#34;credits&#34;:{&#34;enabled&#34;:false},&#34;exporting&#34;:{&#34;enabled&#34;:false},&#34;plotOptions&#34;:{&#34;series&#34;:{&#34;turboThreshold&#34;:0,&#34;marker&#34;:{&#34;symbol&#34;:&#34;circle&#34;},&#34;showInLegend&#34;:false},&#34;treemap&#34;:{&#34;layoutAlgorithm&#34;:&#34;squarified&#34;},&#34;bubble&#34;:{&#34;minSize&#34;:5,&#34;maxSize&#34;:25}},&#34;annotationsOptions&#34;:{&#34;enabledButtons&#34;:false},&#34;tooltip&#34;:{&#34;delayForDisplay&#34;:10},&#34;chart&#34;:{&#34;type&#34;:&#34;column&#34;},&#34;xAxis&#34;:{&#34;type&#34;:&#34;category&#34;,&#34;categories&#34;:&#34;&#34;},&#34;series&#34;:[{&#34;name&#34;:null,&#34;data&#34;:[{&#34;name&#34;:&#34;dplyr_bind_rows&#34;,&#34;low&#34;:14726,&#34;q1&#34;:24166,&#34;median&#34;:27942,&#34;q3&#34;:34360.5,&#34;high&#34;:49464},{&#34;name&#34;:&#34;data_table_rbindlist&#34;,&#34;low&#34;:74384,&#34;q1&#34;:98171.5,&#34;median&#34;:108367,&#34;q3&#34;:134608.5,&#34;high&#34;:189169},{&#34;name&#34;:&#34;do_call_rbind&#34;,&#34;low&#34;:248071,&#34;q1&#34;:275258,&#34;median&#34;:294703,&#34;q3&#34;:337936,&#34;high&#34;:428933},{&#34;name&#34;:&#34;for_loop_rbind&#34;,&#34;low&#34;:436862,&#34;q1&#34;:488402.5,&#34;median&#34;:522573,&#34;q3&#34;:585440.5,&#34;high&#34;:727223}],&#34;type&#34;:&#34;boxplot&#34;,&#34;id&#34;:null,&#34;color&#34;:&#34;tomato&#34;,&#34;fillColor&#34;:&#34;white&#34;,&#34;lineWidth&#34;:1.5}]},&#34;theme&#34;:{&#34;colors&#34;:[&#34;#00AACC&#34;,&#34;#FF4E00&#34;,&#34;#B90000&#34;,&#34;#5F9B0A&#34;,&#34;#CD6723&#34;],&#34;chart&#34;:{&#34;backgroundColor&#34;:{&#34;linearGradient&#34;:[0,0,0,150],&#34;stops&#34;:[[0,&#34;#CAE1F4&#34;],[1,&#34;#EEEEEE&#34;]]},&#34;style&#34;:{&#34;fontFamily&#34;:&#34;Open Sans&#34;}},&#34;title&#34;:{&#34;align&#34;:&#34;left&#34;},&#34;subtitle&#34;:{&#34;align&#34;:&#34;left&#34;},&#34;legend&#34;:{&#34;align&#34;:&#34;right&#34;,&#34;verticalAlign&#34;:&#34;bottom&#34;},&#34;xAxis&#34;:{&#34;gridLineWidth&#34;:1,&#34;gridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;lineColor&#34;:&#34;#F3F3F3&#34;,&#34;minorGridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;tickColor&#34;:&#34;#F3F3F3&#34;,&#34;tickWidth&#34;:1},&#34;yAxis&#34;:{&#34;gridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;lineColor&#34;:&#34;#F3F3F3&#34;,&#34;minorGridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;tickColor&#34;:&#34;#F3F3F3&#34;,&#34;tickWidth&#34;:1}},&#34;conf_opts&#34;:{&#34;global&#34;:{&#34;Date&#34;:null,&#34;VMLRadialGradientURL&#34;:&#34;http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png&#34;,&#34;canvasToolsURL&#34;:&#34;http =//code.highcharts.com/list(version)/modules/canvas-tools.js&#34;,&#34;getTimezoneOffset&#34;:null,&#34;timezoneOffset&#34;:0,&#34;useUTC&#34;:true},&#34;lang&#34;:{&#34;contextButtonTitle&#34;:&#34;Chart context menu&#34;,&#34;decimalPoint&#34;:&#34;.&#34;,&#34;downloadJPEG&#34;:&#34;Download JPEG image&#34;,&#34;downloadPDF&#34;:&#34;Download PDF document&#34;,&#34;downloadPNG&#34;:&#34;Download PNG image&#34;,&#34;downloadSVG&#34;:&#34;Download SVG vector image&#34;,&#34;drillUpText&#34;:&#34;Back to {series.name}&#34;,&#34;invalidDate&#34;:null,&#34;loading&#34;:&#34;Loading...&#34;,&#34;months&#34;:[&#34;January&#34;,&#34;February&#34;,&#34;March&#34;,&#34;April&#34;,&#34;May&#34;,&#34;June&#34;,&#34;July&#34;,&#34;August&#34;,&#34;September&#34;,&#34;October&#34;,&#34;November&#34;,&#34;December&#34;],&#34;noData&#34;:&#34;No data to display&#34;,&#34;numericSymbols&#34;:[&#34;k&#34;,&#34;M&#34;,&#34;G&#34;,&#34;T&#34;,&#34;P&#34;,&#34;E&#34;],&#34;printChart&#34;:&#34;Print chart&#34;,&#34;resetZoom&#34;:&#34;Reset zoom&#34;,&#34;resetZoomTitle&#34;:&#34;Reset zoom level 1:1&#34;,&#34;shortMonths&#34;:[&#34;Jan&#34;,&#34;Feb&#34;,&#34;Mar&#34;,&#34;Apr&#34;,&#34;May&#34;,&#34;Jun&#34;,&#34;Jul&#34;,&#34;Aug&#34;,&#34;Sep&#34;,&#34;Oct&#34;,&#34;Nov&#34;,&#34;Dec&#34;],&#34;thousandsSep&#34;:&#34; &#34;,&#34;weekdays&#34;:[&#34;Sunday&#34;,&#34;Monday&#34;,&#34;Tuesday&#34;,&#34;Wednesday&#34;,&#34;Thursday&#34;,&#34;Friday&#34;,&#34;Saturday&#34;]}},&#34;type&#34;:&#34;chart&#34;,&#34;fonts&#34;:&#34;Open+Sans&#34;,&#34;debug&#34;:false},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;As expected, &lt;code&gt;dplyr::bind_rows&lt;/code&gt; and &lt;code&gt;data.table::rbindlist&lt;/code&gt; are faster than the implementation in &lt;code&gt;base&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Also note that &lt;code&gt;dplyr::bind_rows&lt;/code&gt; outperforms &lt;code&gt;data.table::rbindlist&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;multiple-joins&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Multiple joins&lt;/h2&gt;
+&lt;p&gt;I will use the same workflow as before to compare the following approaches:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;single call to &lt;code&gt;base::merge&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;single call to &lt;code&gt;data.table:::merge.data.table&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;use &lt;code&gt;purrr::reduce&lt;/code&gt; to iteratively perform repeated &lt;code&gt;dplyr::left_join&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;for_loop_leftjoin_func &amp;lt;- function(data_list){
+  df = data_list[[1]]
+  for (i in 2:length(data_list)){
+    df = left_join(df, data_list[[i]], by = &amp;quot;key&amp;quot;)
+  }
+  return(df)
+}
+
+base_merge_jn &amp;lt;- reduce(data_list, base::merge, by = c(&amp;quot;key&amp;quot;))
+dplyr_left_join_jn &amp;lt;- reduce(data_list, left_join, by = &amp;quot;key&amp;quot;) 
+datatable_merge_jn &amp;lt;- reduce(data_list, data.table:::merge.data.table, by = c(&amp;quot;key&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#Are the dataframes identical?
+# rename df columns
+pattern = &amp;#39;_jn&amp;#39;
+rename_dfs &amp;lt;- ls(pattern = pattern) %&amp;gt;%
+  map(give_names)
+
+# compare dataframes
+ls(pattern = pattern) %&amp;gt;%
+  map_lgl(compare_dfs) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE TRUE TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# run and plot benchmarks
+microbenchmark(
+  base_merge = reduce(data_list, base::merge, by = c(&amp;quot;key&amp;quot;)),  
+  dplyr_left_join = reduce(data_list, left_join, by = &amp;quot;key&amp;quot;), 
+  datatable_merge = reduce(data_list, data.table:::merge.data.table, 
+                           by = c(&amp;quot;key&amp;quot;)),
+  times = num_of_iterations,
+  unit = &amp;quot;ns&amp;quot;,
+  control = list(warmup = 10)
+  ) %&amp;gt;% 
+  create_boxplot(title = &amp;quot;Joins&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:500px;&#34; class=&#34;highchart html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;hc_opts&#34;:{&#34;title&#34;:{&#34;text&#34;:&#34;&lt;b&gt;Joins&lt;b&gt;&#34;},&#34;yAxis&#34;:{&#34;title&#34;:{&#34;text&#34;:&#34;&lt;b&gt; Time (ns)&lt;b&gt;&#34;}},&#34;credits&#34;:{&#34;enabled&#34;:false},&#34;exporting&#34;:{&#34;enabled&#34;:false},&#34;plotOptions&#34;:{&#34;series&#34;:{&#34;turboThreshold&#34;:0,&#34;marker&#34;:{&#34;symbol&#34;:&#34;circle&#34;},&#34;showInLegend&#34;:false},&#34;treemap&#34;:{&#34;layoutAlgorithm&#34;:&#34;squarified&#34;},&#34;bubble&#34;:{&#34;minSize&#34;:5,&#34;maxSize&#34;:25}},&#34;annotationsOptions&#34;:{&#34;enabledButtons&#34;:false},&#34;tooltip&#34;:{&#34;delayForDisplay&#34;:10},&#34;chart&#34;:{&#34;type&#34;:&#34;column&#34;},&#34;xAxis&#34;:{&#34;type&#34;:&#34;category&#34;,&#34;categories&#34;:&#34;&#34;},&#34;series&#34;:[{&#34;name&#34;:null,&#34;data&#34;:[{&#34;name&#34;:&#34;base_merge&#34;,&#34;low&#34;:1270940,&#34;q1&#34;:1475589,&#34;median&#34;:1583010.5,&#34;q3&#34;:1787283,&#34;high&#34;:2252274},{&#34;name&#34;:&#34;dplyr_left_join&#34;,&#34;low&#34;:1773501,&#34;q1&#34;:2017040.5,&#34;median&#34;:2164486.5,&#34;q3&#34;:2387259.5,&#34;high&#34;:2939095},{&#34;name&#34;:&#34;datatable_merge&#34;,&#34;low&#34;:2794103,&#34;q1&#34;:3208311,&#34;median&#34;:3469974,&#34;q3&#34;:3866057,&#34;high&#34;:4843993}],&#34;type&#34;:&#34;boxplot&#34;,&#34;id&#34;:null,&#34;color&#34;:&#34;tomato&#34;,&#34;fillColor&#34;:&#34;white&#34;,&#34;lineWidth&#34;:1.5}]},&#34;theme&#34;:{&#34;colors&#34;:[&#34;#00AACC&#34;,&#34;#FF4E00&#34;,&#34;#B90000&#34;,&#34;#5F9B0A&#34;,&#34;#CD6723&#34;],&#34;chart&#34;:{&#34;backgroundColor&#34;:{&#34;linearGradient&#34;:[0,0,0,150],&#34;stops&#34;:[[0,&#34;#CAE1F4&#34;],[1,&#34;#EEEEEE&#34;]]},&#34;style&#34;:{&#34;fontFamily&#34;:&#34;Open Sans&#34;}},&#34;title&#34;:{&#34;align&#34;:&#34;left&#34;},&#34;subtitle&#34;:{&#34;align&#34;:&#34;left&#34;},&#34;legend&#34;:{&#34;align&#34;:&#34;right&#34;,&#34;verticalAlign&#34;:&#34;bottom&#34;},&#34;xAxis&#34;:{&#34;gridLineWidth&#34;:1,&#34;gridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;lineColor&#34;:&#34;#F3F3F3&#34;,&#34;minorGridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;tickColor&#34;:&#34;#F3F3F3&#34;,&#34;tickWidth&#34;:1},&#34;yAxis&#34;:{&#34;gridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;lineColor&#34;:&#34;#F3F3F3&#34;,&#34;minorGridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;tickColor&#34;:&#34;#F3F3F3&#34;,&#34;tickWidth&#34;:1}},&#34;conf_opts&#34;:{&#34;global&#34;:{&#34;Date&#34;:null,&#34;VMLRadialGradientURL&#34;:&#34;http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png&#34;,&#34;canvasToolsURL&#34;:&#34;http =//code.highcharts.com/list(version)/modules/canvas-tools.js&#34;,&#34;getTimezoneOffset&#34;:null,&#34;timezoneOffset&#34;:0,&#34;useUTC&#34;:true},&#34;lang&#34;:{&#34;contextButtonTitle&#34;:&#34;Chart context menu&#34;,&#34;decimalPoint&#34;:&#34;.&#34;,&#34;downloadJPEG&#34;:&#34;Download JPEG image&#34;,&#34;downloadPDF&#34;:&#34;Download PDF document&#34;,&#34;downloadPNG&#34;:&#34;Download PNG image&#34;,&#34;downloadSVG&#34;:&#34;Download SVG vector image&#34;,&#34;drillUpText&#34;:&#34;Back to {series.name}&#34;,&#34;invalidDate&#34;:null,&#34;loading&#34;:&#34;Loading...&#34;,&#34;months&#34;:[&#34;January&#34;,&#34;February&#34;,&#34;March&#34;,&#34;April&#34;,&#34;May&#34;,&#34;June&#34;,&#34;July&#34;,&#34;August&#34;,&#34;September&#34;,&#34;October&#34;,&#34;November&#34;,&#34;December&#34;],&#34;noData&#34;:&#34;No data to display&#34;,&#34;numericSymbols&#34;:[&#34;k&#34;,&#34;M&#34;,&#34;G&#34;,&#34;T&#34;,&#34;P&#34;,&#34;E&#34;],&#34;printChart&#34;:&#34;Print chart&#34;,&#34;resetZoom&#34;:&#34;Reset zoom&#34;,&#34;resetZoomTitle&#34;:&#34;Reset zoom level 1:1&#34;,&#34;shortMonths&#34;:[&#34;Jan&#34;,&#34;Feb&#34;,&#34;Mar&#34;,&#34;Apr&#34;,&#34;May&#34;,&#34;Jun&#34;,&#34;Jul&#34;,&#34;Aug&#34;,&#34;Sep&#34;,&#34;Oct&#34;,&#34;Nov&#34;,&#34;Dec&#34;],&#34;thousandsSep&#34;:&#34; &#34;,&#34;weekdays&#34;:[&#34;Sunday&#34;,&#34;Monday&#34;,&#34;Tuesday&#34;,&#34;Wednesday&#34;,&#34;Thursday&#34;,&#34;Friday&#34;,&#34;Saturday&#34;]}},&#34;type&#34;:&#34;chart&#34;,&#34;fonts&#34;:&#34;Open+Sans&#34;,&#34;debug&#34;:false},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;In this example, &lt;code&gt;base::merge&lt;/code&gt; is twice as fast as &lt;code&gt;dplyr::left_join&lt;/code&gt;, and significantly outperforms &lt;code&gt;data.table:::merge.data.table&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;combining-by-columns&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Combining by columns&lt;/h2&gt;
+&lt;p&gt;I will compare the following approaches:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;multiple calls to &lt;code&gt;base::cbind&lt;/code&gt; using a for-loop&lt;/li&gt;
+&lt;li&gt;single call to &lt;code&gt;base::cbind&lt;/code&gt; using &lt;code&gt;do.call&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;single call to &lt;code&gt;dplyr::bind_cols&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;for_loop_cbind &amp;lt;- function(data_list){
+  df = data_list[[1]]
+  for (i in 2:length(data_list)){
+    df = cbind(df, data_list[[i]])
+  }
+  return(df)
+}
+
+base_cbind_for_loop_cols = for_loop_cbind(data_list)
+base_cbind_do_call_cols = do.call(cbind, data_list)
+dplyr_bind_cols = bind_cols(data_list)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#Are the dataframes identical?
+# rename df columns
+pattern = &amp;#39;_cols&amp;#39;
+rename_dfs &amp;lt;- ls(pattern = pattern) %&amp;gt;%
+  map(give_names)
+
+# compare dataframes
+ls(pattern = pattern) %&amp;gt;%
+  map_lgl(compare_dfs) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE TRUE TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Run benchmark&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;microbenchmark(
+  base_cbind_do_call = do.call(cbind, data_list),
+  dplyr_bind_cols = bind_cols(data_list),
+  base_cbind_for_loop = for_loop_cbind(data_list),  
+  times = num_of_iterations,
+  unit = &amp;#39;ns&amp;#39;,
+  control = list(warmup = 10)
+  ) %&amp;gt;% 
+  create_boxplot(title = &amp;quot;Combine by columns&amp;quot;)   &lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:500px;&#34; class=&#34;highchart html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;hc_opts&#34;:{&#34;title&#34;:{&#34;text&#34;:&#34;&lt;b&gt;Combine by columns&lt;b&gt;&#34;},&#34;yAxis&#34;:{&#34;title&#34;:{&#34;text&#34;:&#34;&lt;b&gt; Time (ns)&lt;b&gt;&#34;}},&#34;credits&#34;:{&#34;enabled&#34;:false},&#34;exporting&#34;:{&#34;enabled&#34;:false},&#34;plotOptions&#34;:{&#34;series&#34;:{&#34;turboThreshold&#34;:0,&#34;marker&#34;:{&#34;symbol&#34;:&#34;circle&#34;},&#34;showInLegend&#34;:false},&#34;treemap&#34;:{&#34;layoutAlgorithm&#34;:&#34;squarified&#34;},&#34;bubble&#34;:{&#34;minSize&#34;:5,&#34;maxSize&#34;:25}},&#34;annotationsOptions&#34;:{&#34;enabledButtons&#34;:false},&#34;tooltip&#34;:{&#34;delayForDisplay&#34;:10},&#34;chart&#34;:{&#34;type&#34;:&#34;column&#34;},&#34;xAxis&#34;:{&#34;type&#34;:&#34;category&#34;,&#34;categories&#34;:&#34;&#34;},&#34;series&#34;:[{&#34;name&#34;:null,&#34;data&#34;:[{&#34;name&#34;:&#34;base_cbind_do_call&#34;,&#34;low&#34;:50973,&#34;q1&#34;:54749,&#34;median&#34;:57769,&#34;q3&#34;:66453,&#34;high&#34;:83445},{&#34;name&#34;:&#34;dplyr_bind_cols&#34;,&#34;low&#34;:95150,&#34;q1&#34;:107799,&#34;median&#34;:112519,&#34;q3&#34;:120448,&#34;high&#34;:139327},{&#34;name&#34;:&#34;base_cbind_for_loop&#34;,&#34;low&#34;:107610,&#34;q1&#34;:113274,&#34;median&#34;:121203,&#34;q3&#34;:134041,&#34;high&#34;:165003}],&#34;type&#34;:&#34;boxplot&#34;,&#34;id&#34;:null,&#34;color&#34;:&#34;tomato&#34;,&#34;fillColor&#34;:&#34;white&#34;,&#34;lineWidth&#34;:1.5}]},&#34;theme&#34;:{&#34;colors&#34;:[&#34;#00AACC&#34;,&#34;#FF4E00&#34;,&#34;#B90000&#34;,&#34;#5F9B0A&#34;,&#34;#CD6723&#34;],&#34;chart&#34;:{&#34;backgroundColor&#34;:{&#34;linearGradient&#34;:[0,0,0,150],&#34;stops&#34;:[[0,&#34;#CAE1F4&#34;],[1,&#34;#EEEEEE&#34;]]},&#34;style&#34;:{&#34;fontFamily&#34;:&#34;Open Sans&#34;}},&#34;title&#34;:{&#34;align&#34;:&#34;left&#34;},&#34;subtitle&#34;:{&#34;align&#34;:&#34;left&#34;},&#34;legend&#34;:{&#34;align&#34;:&#34;right&#34;,&#34;verticalAlign&#34;:&#34;bottom&#34;},&#34;xAxis&#34;:{&#34;gridLineWidth&#34;:1,&#34;gridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;lineColor&#34;:&#34;#F3F3F3&#34;,&#34;minorGridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;tickColor&#34;:&#34;#F3F3F3&#34;,&#34;tickWidth&#34;:1},&#34;yAxis&#34;:{&#34;gridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;lineColor&#34;:&#34;#F3F3F3&#34;,&#34;minorGridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;tickColor&#34;:&#34;#F3F3F3&#34;,&#34;tickWidth&#34;:1}},&#34;conf_opts&#34;:{&#34;global&#34;:{&#34;Date&#34;:null,&#34;VMLRadialGradientURL&#34;:&#34;http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png&#34;,&#34;canvasToolsURL&#34;:&#34;http =//code.highcharts.com/list(version)/modules/canvas-tools.js&#34;,&#34;getTimezoneOffset&#34;:null,&#34;timezoneOffset&#34;:0,&#34;useUTC&#34;:true},&#34;lang&#34;:{&#34;contextButtonTitle&#34;:&#34;Chart context menu&#34;,&#34;decimalPoint&#34;:&#34;.&#34;,&#34;downloadJPEG&#34;:&#34;Download JPEG image&#34;,&#34;downloadPDF&#34;:&#34;Download PDF document&#34;,&#34;downloadPNG&#34;:&#34;Download PNG image&#34;,&#34;downloadSVG&#34;:&#34;Download SVG vector image&#34;,&#34;drillUpText&#34;:&#34;Back to {series.name}&#34;,&#34;invalidDate&#34;:null,&#34;loading&#34;:&#34;Loading...&#34;,&#34;months&#34;:[&#34;January&#34;,&#34;February&#34;,&#34;March&#34;,&#34;April&#34;,&#34;May&#34;,&#34;June&#34;,&#34;July&#34;,&#34;August&#34;,&#34;September&#34;,&#34;October&#34;,&#34;November&#34;,&#34;December&#34;],&#34;noData&#34;:&#34;No data to display&#34;,&#34;numericSymbols&#34;:[&#34;k&#34;,&#34;M&#34;,&#34;G&#34;,&#34;T&#34;,&#34;P&#34;,&#34;E&#34;],&#34;printChart&#34;:&#34;Print chart&#34;,&#34;resetZoom&#34;:&#34;Reset zoom&#34;,&#34;resetZoomTitle&#34;:&#34;Reset zoom level 1:1&#34;,&#34;shortMonths&#34;:[&#34;Jan&#34;,&#34;Feb&#34;,&#34;Mar&#34;,&#34;Apr&#34;,&#34;May&#34;,&#34;Jun&#34;,&#34;Jul&#34;,&#34;Aug&#34;,&#34;Sep&#34;,&#34;Oct&#34;,&#34;Nov&#34;,&#34;Dec&#34;],&#34;thousandsSep&#34;:&#34; &#34;,&#34;weekdays&#34;:[&#34;Sunday&#34;,&#34;Monday&#34;,&#34;Tuesday&#34;,&#34;Wednesday&#34;,&#34;Thursday&#34;,&#34;Friday&#34;,&#34;Saturday&#34;]}},&#34;type&#34;:&#34;chart&#34;,&#34;fonts&#34;:&#34;Open+Sans&#34;,&#34;debug&#34;:false},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;In this example, &lt;code&gt;base::cbind&lt;/code&gt; with &lt;code&gt;do.call&lt;/code&gt; is the most efficient.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;aggregation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Aggregation&lt;/h2&gt;
+&lt;p&gt;I will test this using the &lt;code&gt;mtcars&lt;/code&gt; dataset to compute the average weight (in 1000 lbs) of cars grouped by number of cylinders. As usual, I will compare functions in &lt;code&gt;dplyr&lt;/code&gt;, &lt;code&gt;base&lt;/code&gt; and &lt;code&gt;data.table&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;base_agg &amp;lt;- aggregate(mtcars$wt, by = list(mtcars$cyl), mean, na.rm = TRUE) %&amp;gt;% 
+  as_tibble()
+mtcars_dt = data.table(mtcars)
+data_table_agg &amp;lt;- mtcars_dt[ , mean(wt, na.rm = TRUE), cyl] %&amp;gt;% 
+  as_tibble()
+dplyr_agg &amp;lt;- mtcars %&amp;gt;% 
+  group_by(cyl) %&amp;gt;% 
+  summarize(mean(wt, na.rm = TRUE))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# rename df columns
+pattern = &amp;#39;_agg&amp;#39;
+rename_dfs &amp;lt;- ls(pattern = pattern) %&amp;gt;%
+  map(give_names)
+# compare dataframes
+ls(pattern = pattern) %&amp;gt;%
+  map_lgl(compare_dfs) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE TRUE TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;microbenchmark(
+  datatable = mtcars_dt[ , mean(wt, na.rm = TRUE), cyl],  
+  base = aggregate(mtcars$wt, by = list(mtcars$cyl), mean, na.rm = TRUE),
+  dplyr = mtcars %&amp;gt;% group_by(cyl) %&amp;gt;% summarize(mean(wt, na.rm = TRUE)),
+  times = 1000,
+  unit = &amp;quot;ns&amp;quot;,
+  control = list(warmup = 10)
+) %&amp;gt;% 
+  create_boxplot(title = &amp;quot;Aggregation&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:500px;&#34; class=&#34;highchart html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;hc_opts&#34;:{&#34;title&#34;:{&#34;text&#34;:&#34;&lt;b&gt;Aggregation&lt;b&gt;&#34;},&#34;yAxis&#34;:{&#34;title&#34;:{&#34;text&#34;:&#34;&lt;b&gt; Time (ns)&lt;b&gt;&#34;}},&#34;credits&#34;:{&#34;enabled&#34;:false},&#34;exporting&#34;:{&#34;enabled&#34;:false},&#34;plotOptions&#34;:{&#34;series&#34;:{&#34;turboThreshold&#34;:0,&#34;marker&#34;:{&#34;symbol&#34;:&#34;circle&#34;},&#34;showInLegend&#34;:false},&#34;treemap&#34;:{&#34;layoutAlgorithm&#34;:&#34;squarified&#34;},&#34;bubble&#34;:{&#34;minSize&#34;:5,&#34;maxSize&#34;:25}},&#34;annotationsOptions&#34;:{&#34;enabledButtons&#34;:false},&#34;tooltip&#34;:{&#34;delayForDisplay&#34;:10},&#34;chart&#34;:{&#34;type&#34;:&#34;column&#34;},&#34;xAxis&#34;:{&#34;type&#34;:&#34;category&#34;,&#34;categories&#34;:&#34;&#34;},&#34;series&#34;:[{&#34;name&#34;:null,&#34;data&#34;:[{&#34;name&#34;:&#34;datatable&#34;,&#34;low&#34;:350395,&#34;q1&#34;:398159.5,&#34;median&#34;:421758,&#34;q3&#34;:473487,&#34;high&#34;:582230},{&#34;name&#34;:&#34;base&#34;,&#34;low&#34;:604508,&#34;q1&#34;:657935.5,&#34;median&#34;:691729,&#34;q3&#34;:751765,&#34;high&#34;:891470},{&#34;name&#34;:&#34;dplyr&#34;,&#34;low&#34;:887316,&#34;q1&#34;:974726.5,&#34;median&#34;:1016826,&#34;q3&#34;:1110844,&#34;high&#34;:1312473}],&#34;type&#34;:&#34;boxplot&#34;,&#34;id&#34;:null,&#34;color&#34;:&#34;tomato&#34;,&#34;fillColor&#34;:&#34;white&#34;,&#34;lineWidth&#34;:1.5}]},&#34;theme&#34;:{&#34;colors&#34;:[&#34;#00AACC&#34;,&#34;#FF4E00&#34;,&#34;#B90000&#34;,&#34;#5F9B0A&#34;,&#34;#CD6723&#34;],&#34;chart&#34;:{&#34;backgroundColor&#34;:{&#34;linearGradient&#34;:[0,0,0,150],&#34;stops&#34;:[[0,&#34;#CAE1F4&#34;],[1,&#34;#EEEEEE&#34;]]},&#34;style&#34;:{&#34;fontFamily&#34;:&#34;Open Sans&#34;}},&#34;title&#34;:{&#34;align&#34;:&#34;left&#34;},&#34;subtitle&#34;:{&#34;align&#34;:&#34;left&#34;},&#34;legend&#34;:{&#34;align&#34;:&#34;right&#34;,&#34;verticalAlign&#34;:&#34;bottom&#34;},&#34;xAxis&#34;:{&#34;gridLineWidth&#34;:1,&#34;gridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;lineColor&#34;:&#34;#F3F3F3&#34;,&#34;minorGridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;tickColor&#34;:&#34;#F3F3F3&#34;,&#34;tickWidth&#34;:1},&#34;yAxis&#34;:{&#34;gridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;lineColor&#34;:&#34;#F3F3F3&#34;,&#34;minorGridLineColor&#34;:&#34;#F3F3F3&#34;,&#34;tickColor&#34;:&#34;#F3F3F3&#34;,&#34;tickWidth&#34;:1}},&#34;conf_opts&#34;:{&#34;global&#34;:{&#34;Date&#34;:null,&#34;VMLRadialGradientURL&#34;:&#34;http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png&#34;,&#34;canvasToolsURL&#34;:&#34;http =//code.highcharts.com/list(version)/modules/canvas-tools.js&#34;,&#34;getTimezoneOffset&#34;:null,&#34;timezoneOffset&#34;:0,&#34;useUTC&#34;:true},&#34;lang&#34;:{&#34;contextButtonTitle&#34;:&#34;Chart context menu&#34;,&#34;decimalPoint&#34;:&#34;.&#34;,&#34;downloadJPEG&#34;:&#34;Download JPEG image&#34;,&#34;downloadPDF&#34;:&#34;Download PDF document&#34;,&#34;downloadPNG&#34;:&#34;Download PNG image&#34;,&#34;downloadSVG&#34;:&#34;Download SVG vector image&#34;,&#34;drillUpText&#34;:&#34;Back to {series.name}&#34;,&#34;invalidDate&#34;:null,&#34;loading&#34;:&#34;Loading...&#34;,&#34;months&#34;:[&#34;January&#34;,&#34;February&#34;,&#34;March&#34;,&#34;April&#34;,&#34;May&#34;,&#34;June&#34;,&#34;July&#34;,&#34;August&#34;,&#34;September&#34;,&#34;October&#34;,&#34;November&#34;,&#34;December&#34;],&#34;noData&#34;:&#34;No data to display&#34;,&#34;numericSymbols&#34;:[&#34;k&#34;,&#34;M&#34;,&#34;G&#34;,&#34;T&#34;,&#34;P&#34;,&#34;E&#34;],&#34;printChart&#34;:&#34;Print chart&#34;,&#34;resetZoom&#34;:&#34;Reset zoom&#34;,&#34;resetZoomTitle&#34;:&#34;Reset zoom level 1:1&#34;,&#34;shortMonths&#34;:[&#34;Jan&#34;,&#34;Feb&#34;,&#34;Mar&#34;,&#34;Apr&#34;,&#34;May&#34;,&#34;Jun&#34;,&#34;Jul&#34;,&#34;Aug&#34;,&#34;Sep&#34;,&#34;Oct&#34;,&#34;Nov&#34;,&#34;Dec&#34;],&#34;thousandsSep&#34;:&#34; &#34;,&#34;weekdays&#34;:[&#34;Sunday&#34;,&#34;Monday&#34;,&#34;Tuesday&#34;,&#34;Wednesday&#34;,&#34;Thursday&#34;,&#34;Friday&#34;,&#34;Saturday&#34;]}},&#34;type&#34;:&#34;chart&#34;,&#34;fonts&#34;:&#34;Open+Sans&#34;,&#34;debug&#34;:false},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt; In this example, &lt;code&gt;data.table&lt;/code&gt; is the most efficient.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wrapping-up&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Wrapping up&lt;/h2&gt;
+&lt;p&gt;This study is far from a comprehensive benchmark. It is my attempt at quickly exploring the order of magnitude of execution times for common operations on dataframes; and more importantly, setting up a workflow which can be extended to cover other scenarios.&lt;/p&gt;
+&lt;p&gt;Feel free to use the methods identified in these benchmarks to speed up your code but remember that &lt;strong&gt;writing good code trumps writing fast code&lt;/strong&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“We follow two rules in the matters of optimization: Rule 1: Don’t do it. Rule 2 (for experts only): Don’t do it yet - that is, not until you have a perfectly clear and unoptimized solution” – M. A. Jackson&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;For more information about code optimisation, read &lt;a href=&#34;http://adv-r.had.co.nz/Profiling.html&#34;&gt;Hadley Wickham’s take on the topic&lt;/a&gt;, item 67 from &lt;a href=&#34;https://books.google.co.uk/books?id=BIpDDwAAQBAJ&amp;amp;printsec=frontcover&amp;amp;source=gbs_ge_summary_r&amp;amp;cad=0#v=onepage&amp;amp;q&amp;amp;f=false&#34;&gt;Joshua Bloch’s Effective Java&lt;/a&gt; and the &lt;a href=&#34;https://arxiv.org/abs/1210.0530&#34;&gt;Best Practices for Scientific Computing&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -37,17 +299,99 @@ I will record timings using microbenchmark, a package for measuring the performa
       <pubDate>Fri, 13 Apr 2018 21:13:14 -0500</pubDate>
       
       <guid>/blog/installing-missing-packages-from-bioconductor-cran-and-github/</guid>
-      <description>via GIPHYOver the past few days I have had to use computers that are different from my trusty old laptop. One thing I noticed while working with R on the new machines is that the excitement in checking for, and installing, missing packages wears off pretty quickly. This blog post is a walk-through of a function I wrote to make the process less painful.
-A bit more backgroundWhen R developers create open source packages, they typically distribute them through The Comprehensive R Archive Network (CRAN), Github or, if the package concerns computational biology and/or bioinformatics, Bioconductor.</description>
-    </item>
-    
-    <item>
-      <title>Home</title>
-      <link>/home/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/home/</guid>
-      <description></description>
+      <description>&lt;iframe src=&#34;https://giphy.com/embed/DZCtWie9jivao&#34; width=&#34;480&#34; height=&#34;270&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://giphy.com/gifs/disk-floppy-DZCtWie9jivao&#34;&gt;via GIPHY&lt;/a&gt;
+&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/2018/2018-04-14-installing-missing-packages_files/install_wizard.jpg&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;Over the past few days I have had to use computers that are different from my trusty old laptop. One thing I noticed while working with R on the new machines is that the excitement in checking for, and installing, missing packages wears off pretty quickly. This blog post is a walk-through of a function I wrote to make the process less painful.&lt;/p&gt;
+&lt;div id=&#34;a-bit-more-background&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;A bit more background&lt;/h2&gt;
+&lt;p&gt;When R developers create open source packages, they typically distribute them through &lt;a href=&#34;https://cran.r-project.org/&#34;&gt;The Comprehensive R Archive Network (CRAN)&lt;/a&gt;, &lt;a href=&#34;https://github.com/&#34;&gt;Github&lt;/a&gt; or, if the package concerns computational biology and/or bioinformatics, &lt;a href=&#34;https://bioconductor.org/&#34;&gt;Bioconductor.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;This adds to the complication of knowing which source to install a package from, which installation functions to use and, in the case of GitHub packages, the exact repository path to use.&lt;/p&gt;
+&lt;div id=&#34;here-are-a-few-examples-for-context.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Here are a few examples for context.&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;taskscheduleR&lt;/code&gt; package is distributed on &lt;a href=&#34;https://github.com/&#34;&gt;Github.&lt;/a&gt; We can install it with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;quot;bnosac/taskscheduleR&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;GenomicFeatures&lt;/code&gt; package is distributed on &lt;a href=&#34;https://www.bioconductor.org/install/&#34;&gt;Bioconductor&lt;/a&gt; so to install it we do this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;source(&amp;quot;https://bioconductor.org/biocLite.R&amp;quot;)
+biocLite(&amp;quot;GenomicFeatures&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Lastly, &lt;code&gt;Rcpp&lt;/code&gt; is distributed on &lt;a href=&#34;https://cran.r-project.org/&#34;&gt;CRAN&lt;/a&gt; so we install it with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;Rcpp&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-solution&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The solution&lt;/h2&gt;
+&lt;p&gt;We will use the &lt;code&gt;remedy&lt;/code&gt; package as an example to test our code. To install &lt;code&gt;remedy&lt;/code&gt;, we first need to figure out which repository it is distributed on:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(glue)
+package = &amp;quot;remedy&amp;quot; &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Is it available on CRAN?&lt;/p&gt;
+&lt;p&gt;We can use &lt;code&gt;tools::CRAN_package_db()&lt;/code&gt; to extract metadata for the current packages in the CRAN package repository:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;package %in% tools::CRAN_package_db()$Package&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As you can see, &lt;code&gt;remedy&lt;/code&gt; is not on CRAN.&lt;/p&gt;
+&lt;p&gt;Is it on Biconductor?&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;BiocInstaller::all_group()&lt;/code&gt; gives the names of all current packages on Bioconductor:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;package %in% BiocInstaller::all_group()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;remedy&lt;/code&gt; is not available on Bioconductor either.&lt;/p&gt;
+&lt;p&gt;Lastly, we check whether the package is on GitHub. For this, we will use the &lt;a href=&#34;http://rpkg-api.gepuro.net/&#34;&gt;rpkg API&lt;/a&gt; and the &lt;code&gt;jsonlite&lt;/code&gt; package.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;url &amp;lt;- glue::glue(&amp;quot;http://rpkg-api.gepuro.net/rpkg?q={package}&amp;quot;)
+gh_pkgs &amp;lt;- jsonlite::fromJSON(url)
+gh_pkgs&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##             pkg_name                                       title
+## 1 ThinkR-open/remedy RStudio Addins to Simplify Markdown Writing
+##                                     url
+## 1 https://github.com/ThinkR-open/remedy&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that &lt;code&gt;fromJSON&lt;/code&gt; extracts GitHub R package information from the &lt;code&gt;rpkg API&lt;/code&gt; into a dataframe. If the said package is not available on Github, the funciton returns an empty list.&lt;/p&gt;
+&lt;p&gt;In our example, we can see that the package we’re after is available on GitHub. We will go ahead and install it in a while, but in the meantime let’s tidy up the GitHub package metadata we just extracted:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gh_pkg &amp;lt;- gh_pkgs %&amp;gt;% 
+  separate(col = pkg_name, into = c(&amp;quot;repo&amp;quot;, &amp;quot;pkg&amp;quot;), sep = &amp;quot;/&amp;quot;, remove = F) %&amp;gt;% 
+  filter(pkg == package) %&amp;gt;% 
+  select(pkg_name, repo, pkg)
+gh_pkg&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##             pkg_name        repo    pkg
+## 1 ThinkR-open/remedy ThinkR-open remedy&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The package is in the ThinkR-open repository on GitHub so we can install it with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install_github(gh_pkg$pkg_name[1])&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can follow a similar process to install packages on CRAN and Bioconductor.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;putting-it-all-together&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Putting it all together&lt;/h2&gt;
+&lt;p&gt;Let’s finish off by wrapping everything in a function and throwing in a few useful checks for robustness:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install_missing_pkg &amp;lt;- function(package){
+  url &amp;lt;- glue::glue(&amp;quot;http://rpkg-api.gepuro.net/rpkg?q={package}&amp;quot;)
+  cran_pkgs &amp;lt;- tools::CRAN_package_db()$Package
+  gh_pkgs &amp;lt;- jsonlite::fromJSON(url)
+  source(&amp;quot;http://bioconductor.org/biocLite.R&amp;quot;)
+  bioc_pkgs = all_group()
+  
+  if (is.null(nrow(gh_pkgs)) | !(package %in% union(cran_pkgs, bioc_pkgs))) {
+    stop(&amp;quot;`package` is not available on CRAN, Github or Bioconductor&amp;quot;)
+  }
+  # install from CRAN  
+  if (package %in% cran_pkgs){
+    install.packages(package)
+  # install from Bioconductor    
+  } else if (package %in% bioc_pkgs){
+    biocLite(package, suppressUpdates = TRUE)
+  }
+  # install from Github
+  else{
+    gh_pkg &amp;lt;- gh_pkgs %&amp;gt;% 
+      separate(col = pkg_name, into = c(&amp;quot;repo&amp;quot;, &amp;quot;pkg&amp;quot;), sep = &amp;quot;/&amp;quot;, remove = F) %&amp;gt;% 
+      mutate(available = package %in% cran_pkgs) %&amp;gt;% 
+      filter(pkg == package)
+    devtools::install_github(gh_pkg$pkg_name[1])
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>
