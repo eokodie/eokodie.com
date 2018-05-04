@@ -8,6 +8,7 @@ tags: ["rstats"]
 
 <iframe src="https://giphy.com/embed/DZCtWie9jivao" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/disk-floppy-DZCtWie9jivao">via GIPHY</a></p>
 
+![](/2018/2018-04-14-installing-missing-packages_files/install_wizard.jpg)
 
 Over the past few days I have had to use computers that are different from my trusty old laptop. One thing I noticed while working with R on the new machines is that the excitement in checking for, and installing, missing packages wears off   pretty quickly. This blog post is a walk-through of a function I wrote to make the process less painful.
 
@@ -117,4 +118,4 @@ install_missing_pkg <- function(package){
 }
 ```
 
-
+The source code for this blog post is available on [GitHub.](https://github.com/eokodie/posts-rmd/blob/master/Rmd/2018-04-14-installing-missing-packages.Rmd)

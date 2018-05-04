@@ -293,7 +293,7 @@ Rule 2 (for experts only): Don't do it yet - that is, not until you have a perfe
 For more information about code optimisation, read [Hadley Wickham's take on the topic]( http://adv-r.had.co.nz/Profiling.html),  item 67 from [Joshua Bloch's Effective Java](https://books.google.co.uk/books?id=BIpDDwAAQBAJ&printsec=frontcover&source=gbs_ge_summary_r&cad=0#v=onepage&q&f=false) and the [Best Practices for Scientific Computing](https://arxiv.org/abs/1210.0530).
 
 
-
+The source code for this blog post is available on [GitHub.](https://github.com/eokodie/posts-rmd/blob/master/Rmd/2018-04-30-dataframe-benchmarks.Rmd)
 
 
 
