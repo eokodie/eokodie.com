@@ -305,10 +305,6 @@ ls(pattern = pattern) %&amp;gt;%
 &lt;p&gt;
 &lt;a href=&#34;https://giphy.com/gifs/disk-floppy-DZCtWie9jivao&#34;&gt;via GIPHY&lt;/a&gt;
 &lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/2018/2018-04-14-installing-missing-packages_files/install_wizard.jpg&#34; /&gt;
-
-&lt;/div&gt;
 &lt;p&gt;Over the past few days I have had to use computers that are different from my trusty old laptop. One thing I noticed while working with R on the new machines is that the excitement in checking for, and installing, missing packages wears off pretty quickly. This blog post is a walk-through of a function I wrote to make the process less painful.&lt;/p&gt;
 &lt;div id=&#34;a-bit-more-background&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;A bit more background&lt;/h2&gt;
