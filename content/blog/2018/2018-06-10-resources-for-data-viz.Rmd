@@ -8,7 +8,9 @@ tags: ["rstats", "Palette",  "Visualization", "Colour", "Color"]
 
 <iframe src="https://giphy.com/embed/PH8gHFw2YJPaM" width="383" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/paint-knife-palette-PH8gHFw2YJPaM">via GIPHY</a></p>
 
-A curated list of multimedia resources for data visualization. Inspired by [Awesome R](https://awesome-r.com/). Arranged in no particular order.
+A curated list of multimedia resources for data visualization. Inspired by [Awesome R](https://awesome-r.com/). 
+
+Arranged in no particular order.
 
 ## Colour theory & chart design
 
