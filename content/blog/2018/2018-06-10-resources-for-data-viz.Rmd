@@ -91,7 +91,7 @@ cran_pkgs %>%
 + [Visual Thinking for Design](https://www.amazon.co.uk/Visual-Thinking-Kaufmann-Interactive-Technologies-ebook/dp/B006NVY448/ref=tmm_kin_swatch_0?_encoding=UTF8&qid=&sr=) - Colin Ware
 + [Semiology of Graphics: Diagrams, Networks, Maps](https://www.amazon.co.uk/Semiology-Graphics-Diagrams-Networks-Maps/dp/1589482611) - Jacques Berti
 + [Cartographies of Time: A History of the Timeline](https://www.amazon.co.uk/dp/B00E8W7NGA/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1) - Daniel Rosenberg and Anthony Grafton 
-+ [R for Data Science](http://r4ds.had.co.nz/graphics-for-communication.html) - the graphics for communication chapter of Garrett Grolemund and Hadley Wicham's book
++ [R for Data Science](http://r4ds.had.co.nz/graphics-for-communication.html) - the graphics for communication chapter of Garrett Grolemund and Hadley Wickham's book
 
 ## Awesome list of curated awesomeness
 
