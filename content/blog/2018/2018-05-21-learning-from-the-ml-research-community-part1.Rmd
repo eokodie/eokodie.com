@@ -1,0 +1,188 @@
+---
+title: "Drinking from the Firehose: using R to keep up with current ML Research - part 1" 
+author: "Ernest Omane-Kodie"
+date: 2018-06-12T21:13:14-05:00 
+categories: ["R"]
+tags: ["rstats", "machine learning",  "web scraping"]
+---
+
+<iframe src="https://giphy.com/embed/GSgZ1Flo2U9UI" width="480" height="360" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/cat-GSgZ1Flo2U9UI">via GIPHY</a></p>
+
+In this post, I will explore how we can use resources available in the R package ecosystem to keep up with state-of-the-art machine learning research.
+
+## Motivation
+
+Recently, I have been reading books about creativity. The recurring concept in the books is that the key place to start when mastering a skill is by reproducing other people's proven ideas and figuring out their inner workings - a form of apprenticeship.
+
+The 19th Century French writer, [Emile Zola](https://en.wikipedia.org/wiki/%C3%89mile_Zola), captured the essence of this idea in his description of art as __"a corner of creation seen through a temperament"__.  
+
+Will Gompertz neatly paraphrases this in [Think Like an Artist](https://www.amazon.co.uk/dp/B00T3UIYFG/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1) as:
+
+>"Creativity is the presentation of pre-existing elements and ideas filtered through the perceptions and feelings of an individual."
+ 
+The idea permeates all creative endeavours. Would-be singer-songwriters, scientists, painters, and so on, start off by attempting to replicate some established piece of work. Andrew Ng captures this same idea in [this response to a question on Quora](http://qr.ae/TUTrnq) I stumbled upon while writing up this post:
+
+>"To go even further, read research papers (follow ML leaders on twitter to see what papers they're excited about). Even better, try to replicate the results in the research papers. Trying to replicate others' results is a one of the most effective but under-appreciated ways to get good at AI" 
+
+## The problem
+
+The challenge with applying this concept to machine learning practice is that, in many respects, the field is going through exciting times. We are witnessing the relentless creation of new algorithms, drastic improvements in existing algorithms, an explosion of data, significant strides in computer hardware technology, and unprecedented collaboration among researchers from different fields.
+
+Although the internet has made it much easier to source materials and information, the sheer volume of research literature emerging from all the moving parts of machine learning can be overwhelming. 
+
+How do you discover new research literature? How do you find the most relevant research for your work? In the following sections, I will attempt to answer these questions. The aim is to use a few examples to shed a little light on how to stay plugged in to the research community without leaving the R software environment[^1].
+
+[^1]: You can achieve this same end through a combination of various mobile apps, email subscriptions, keeping an eye on machine learning tags on social media and so on, but where is the fun in that? 
+
+## Academic databases and search engines 
+
+There is a comprehensive list of academic databases and search engines on [this Wikipedia page](https://en.wikipedia.org/wiki/List_of_academic_databases_and_search_engines). I will look at one example of the most popular databases in this category.
+
+### arXiv
+
+[arXiv](https://arxiv.org/) is a repository of scientific papers, created in the spirit of the open access movement, where mathematicians and scientists usually upload their papers for worldwide access and sometimes for reviews before they are published in peer-reviewed journals.
+
+I will use [`aRxiv`](https://cran.r-project.org/web/packages/aRxiv/index.html), an R interface to the [arXiv API](https://arxiv.org/help/api/index), and a few [`tidyverse`](https://www.tidyverse.org/) tools to explore arXiv papers.
+```{r, warning=FALSE, message=FALSE}
+library(aRxiv)
+library(tidyverse)
+library(kableExtra)
+
+pretty_print <- function(df){
+  result = df %>% 
+    kable() %>% 
+    kable_styling(font_size = 14) %>% 
+    row_spec(0, bold = T)
+  return(result)
+}
+```
+
+To start off, we need to construct a search query. To do this, we need terms to use as query arguments. The following options are available:
+```{r}
+query_terms %>% pretty_print
+```
+
+Machine learning and related research papers are typically submitted under the following categories:
+```{r, warning=FALSE, message=FALSE}
+ai_ml_categories <- c("Artificial", "Intelligence", "Learning", 
+                   "Robotics", "Vision") %>% 
+  str_flatten("|")
+
+arxiv_cats %>% 
+  dplyr::filter(str_detect(description, ai_ml_categories)) %>% 
+  pretty_print
+```
+
+We can search for papers under specific categories. For example, we can inspect papers submitted under Robotics in the first three months of 2018 using:
+```{r}
+c("cat:cs.RO", 
+  "submittedDate:[201801010000 TO 201802302400]") %>% 
+  str_flatten(" AND ") %>% 
+  arxiv_search(limit = 12, sort_by = "updated", ascending = FALSE) %>% 
+  select(submitted, id, title) %>% 
+  head(5) %>% 
+  pretty_print()
+```
+
+We can search for papers by topic. For example, the following are a few of the most recent papers on Adversarial AI submitted from the beginning of the year to 7th June 2018.
+```{r}
+c("ti:Adversarial", 
+  "submittedDate:[201801010000 TO 201806072400]") %>% 
+  str_flatten(" AND ") %>% 
+  arxiv_search(limit = 12, sort_by = "updated", ascending = FALSE) %>% 
+  select(submitted, id, title) %>% 
+  head(5) %>% 
+  pretty_print()  
+```
+
+We can build complex queries based on specific needs by chaining multiple queries together with `AND`, `OR`, and `ANDNOT`. We can also search Titles, Authors, Abstract and so on. 
+
+## GitHub
+
+Most new research in the machine learning community comprise open-sourced projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart's content. 
+
+In this section, I will explore research projects hosted on GitHub. I will use the `httr` package to access the [GitHub search API](https://developer.github.com/v3/search/), and then use a few `tidyverse` packages to extract the necessary data points.
+
+Suppose we want to find the most starred repositories about Adversarial Neural Networks.
+We can start by creating a URL with a search query and pass that to `httr`.
+```{r, warning=FALSE, message=FALSE}
+library(httr)
+library(magrittr)
+
+url <- glue::glue("https://api.github.com/search/repositories?",
+                 "q=adversarial+networkin:name,description&",
+                 "sort=stars&", 
+                 "order=desc")
+
+gh_repos <- GET(url) %>% 
+  content(encoding = "UTF-8")
+```
+
+Let's inspect all the metadata available on each repository:
+```{r}
+gh_repos %>%
+  use_series("items") %>% 
+  extract2(1) %>% 
+  names()
+```
+
+What we are look for in our example is the GitHub URL and the number of stars for each repository (stargazers_count).
+
+Let's look at the top 5 most starred GitHub repos about Adversarial Neural Networks.
+```{r, warning=FALSE, message=FALSE}
+extract_info <- function(index){
+  repository <- gh_repos %>% 
+    use_series("items") %>% 
+    extract2(index) %>% 
+    extract2("html_url")
+  
+  stars_count <- gh_repos %>% 
+    use_series("items") %>% 
+    extract2(index) %>% 
+    extract2("stargazers_count")
+  
+  return(data.frame(repository = repository, 
+                    stars_count = stars_count))
+}
+
+1:5 %>% map_dfr(extract_info) %>% 
+  pretty_print()
+```
+
+## Journals & RSS feeds
+
+We can explore papers being published in scientific journals by extracting their RSS feeds.
+I will use [`tidyRSS`](https://github.com/RobertMyles/tidyrss), an R package for extracting tidy dataframes from RSS, Atom and JSON feeds. For feeds that do not play nice with [`tidyRSS`](https://github.com/RobertMyles/tidyrss), I will use the [`feedeR`](https://github.com/DataWookie/feedeR) package.
+
+Here are two examples:
+
+We can search new research papers published in [Science magazine](https://www.sciencemag.org/) to see if anything has been published on a specific topic of interest.
+```{r, warning=FALSE, message=FALSE}
+library(tidyRSS)
+science_magazine <- tidyfeed("http://science.sciencemag.org/rss/twis.xml")
+names(science_magazine)
+```
+`item_title` contains a brief description of each paper. We can search this for specific keywords.
+```{r, eval=FALSE}
+science_magazine %>% 
+  filter(str_detect(url, "some_regex")) 
+```
+
+We can search publications in the [Journal of Machine Learning Research](http://jmlr.org/) using:
+```{r, warning=FALSE, message=FALSE}
+library(feedeR)
+jmlr <- feed.extract("http://jmlr.org/jmlr.xml") %>% 
+  use_series("items")
+names(jmlr)
+```
+Again we can search `title` for specific keywords.
+
+## Wrapping up
+
+Using logic similar to what we've stepped through above, we could set up an automated process to regularly scrape these portals for all the relevant information and upload the results in a webpage or set up an email notification whenever something which might be of interest gets published.
+
+In a future post, I will explore social media and other resources.
+
+
+
+

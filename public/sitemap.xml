@@ -3,6 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research---part-1/</loc>
+    <lastmod>2018-06-12T21:13:14-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/colours--impact-resources-for-data-visualization-with-a-splash-of-r/</loc>
+    <lastmod>2018-06-11T21:13:14-05:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/blog/need-for-speed-benchmarks-on-dataframes/</loc>
     <lastmod>2018-04-30T21:13:14-05:00</lastmod>
   </url>
@@ -19,7 +29,7 @@
   
   <url>
     <loc>/blog/</loc>
-    <lastmod>2018-04-30T21:13:14-05:00</lastmod>
+    <lastmod>2018-06-12T21:13:14-05:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -29,8 +39,20 @@
   </url>
   
   <url>
+    <loc>/tags/color/</loc>
+    <lastmod>2018-06-11T21:13:14-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/colour/</loc>
+    <lastmod>2018-06-11T21:13:14-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/</loc>
-    <lastmod>2018-04-30T21:13:14-05:00</lastmod>
+    <lastmod>2018-06-12T21:13:14-05:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -45,26 +67,50 @@
   </url>
   
   <url>
+    <loc>/tags/machine-learning/</loc>
+    <lastmod>2018-06-12T21:13:14-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/microbenchmark/</loc>
     <lastmod>2018-04-30T21:13:14-05:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>/tags/palette/</loc>
+    <lastmod>2018-06-11T21:13:14-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/categories/r/</loc>
-    <lastmod>2018-04-30T21:13:14-05:00</lastmod>
+    <lastmod>2018-06-12T21:13:14-05:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/rstats/</loc>
-    <lastmod>2018-04-30T21:13:14-05:00</lastmod>
+    <lastmod>2018-06-12T21:13:14-05:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/</loc>
-    <lastmod>2018-04-30T21:13:14-05:00</lastmod>
+    <lastmod>2018-06-11T21:13:14-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/visualization/</loc>
+    <lastmod>2018-06-11T21:13:14-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/web-scraping/</loc>
+    <lastmod>2018-06-12T21:13:14-05:00</lastmod>
     <priority>0</priority>
   </url>
   

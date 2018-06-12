@@ -6,10 +6,652 @@
     <description>Recent content on Ernest Omane-Kodie</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 30 Apr 2018 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 12 Jun 2018 21:13:14 -0500</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Drinking from the Firehose: using R to keep up with current ML Research - part 1</title>
+      <link>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research---part-1/</link>
+      <pubDate>Tue, 12 Jun 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research---part-1/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;iframe src=&#34;https://giphy.com/embed/GSgZ1Flo2U9UI&#34; width=&#34;480&#34; height=&#34;360&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://giphy.com/gifs/cat-GSgZ1Flo2U9UI&#34;&gt;via GIPHY&lt;/a&gt;
+&lt;/p&gt;
+&lt;p&gt;In this post, I will explore how we can use resources available in the R package ecosystem to keep up with state-of-the-art machine learning research.&lt;/p&gt;
+&lt;div id=&#34;motivation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Motivation&lt;/h2&gt;
+&lt;p&gt;Recently, I have been reading books about creativity. The recurring concept in the books is that the key place to start when mastering a skill is by reproducing other people’s proven ideas and figuring out their inner workings - a form of apprenticeship.&lt;/p&gt;
+&lt;p&gt;The 19th Century French writer, &lt;a href=&#34;https://en.wikipedia.org/wiki/%C3%89mile_Zola&#34;&gt;Emile Zola&lt;/a&gt;, captured the essence of this idea in his description of art as &lt;strong&gt;“a corner of creation seen through a temperament”&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Will Gompertz neatly paraphrases this in &lt;a href=&#34;https://www.amazon.co.uk/dp/B00T3UIYFG/ref=dp-kindle-redirect?_encoding=UTF8&amp;amp;btkr=1&#34;&gt;Think Like an Artist&lt;/a&gt; as:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“Creativity is the presentation of pre-existing elements and ideas filtered through the perceptions and feelings of an individual.”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The idea permeates all creative endeavours. Would-be singer-songwriters, scientists, painters, and so on, start off by attempting to replicate some established piece of work. Andrew Ng captures this same idea in &lt;a href=&#34;http://qr.ae/TUTrnq&#34;&gt;this response to a question on Quora&lt;/a&gt; I stumbled upon while writing up this post:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“To go even further, read research papers (follow ML leaders on twitter to see what papers they’re excited about). Even better, try to replicate the results in the research papers. Trying to replicate others’ results is a one of the most effective but under-appreciated ways to get good at AI”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-problem&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The problem&lt;/h2&gt;
+&lt;p&gt;The challenge with applying this concept to machine learning practice is that, in many respects, the field is going through exciting times. We are witnessing the relentless creation of new algorithms, drastic improvements in existing algorithms, an explosion of data, significant strides in computer hardware technology, and unprecedented collaboration among researchers from different fields.&lt;/p&gt;
+&lt;p&gt;Although the internet has made it much easier to source materials and information, the sheer volume of research literature emerging from all the moving parts of machine learning can be overwhelming.&lt;/p&gt;
+&lt;p&gt;How do you discover new research literature? How do you find the most relevant research for your work? In the following sections, I will attempt to answer these questions. The aim is to use a few examples to shed a little light on how to stay plugged in to the research community without leaving the R software environment&lt;a href=&#34;#fn1&#34; class=&#34;footnoteRef&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;academic-databases-and-search-engines&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Academic databases and search engines&lt;/h2&gt;
+&lt;p&gt;There is a comprehensive list of academic databases and search engines on &lt;a href=&#34;https://en.wikipedia.org/wiki/List_of_academic_databases_and_search_engines&#34;&gt;this Wikipedia page&lt;/a&gt;. I will look at one example of the most popular databases in this category.&lt;/p&gt;
+&lt;div id=&#34;arxiv&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;arXiv&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://arxiv.org/&#34;&gt;arXiv&lt;/a&gt; is a repository of scientific papers, created in the spirit of the open access movement, where mathematicians and scientists usually upload their papers for worldwide access and sometimes for reviews before they are published in peer-reviewed journals.&lt;/p&gt;
+&lt;p&gt;I will use &lt;a href=&#34;https://cran.r-project.org/web/packages/aRxiv/index.html&#34;&gt;&lt;code&gt;aRxiv&lt;/code&gt;&lt;/a&gt;, an R interface to the &lt;a href=&#34;https://arxiv.org/help/api/index&#34;&gt;arXiv API&lt;/a&gt;, and a few &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;&lt;code&gt;tidyverse&lt;/code&gt;&lt;/a&gt; tools to explore arXiv papers.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(aRxiv)
+library(tidyverse)
+library(kableExtra)
+
+pretty_print &amp;lt;- function(df){
+  result = df %&amp;gt;% 
+    kable() %&amp;gt;% 
+    kable_styling(font_size = 14) %&amp;gt;% 
+    row_spec(0, bold = T)
+  return(result)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To start off, we need to construct a search query. To do this, we need terms to use as query arguments. The following options are available:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;query_terms %&amp;gt;% pretty_print&lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+term
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+description
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+ti
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Title
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+au
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Author
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+abs
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Abstract
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+co
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Comment
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+jr
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Journal Reference
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+cat
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Subject Category
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+rn
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Report Number
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+all
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+All of the above
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+submittedDate
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Date/time of initial submission, as YYYYMMDDHHMM
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+lastUpdatedDate
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Date/time of last update, as YYYYMMDDHHMM
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Machine learning and related research papers are typically submitted under the following categories:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ai_ml_categories &amp;lt;- c(&amp;quot;Artificial&amp;quot;, &amp;quot;Intelligence&amp;quot;, &amp;quot;Learning&amp;quot;, 
+                   &amp;quot;Robotics&amp;quot;, &amp;quot;Vision&amp;quot;) %&amp;gt;% 
+  str_flatten(&amp;quot;|&amp;quot;)
+
+arxiv_cats %&amp;gt;% 
+  dplyr::filter(str_detect(description, ai_ml_categories)) %&amp;gt;% 
+  pretty_print&lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+abbreviation
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+description
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+stat.ML
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Statistics - Machine Learning
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+cs.AI
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Computer Science - Artificial Intelligence
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+cs.CV
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Computer Science - Computer Vision and Pattern Recognition
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+cs.LG
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Computer Science - Learning
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+cs.RO
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Computer Science - Robotics
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can search for papers under specific categories. For example, we can inspect papers submitted under Robotics in the first three months of 2018 using:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c(&amp;quot;cat:cs.RO&amp;quot;, 
+  &amp;quot;submittedDate:[201801010000 TO 201802302400]&amp;quot;) %&amp;gt;% 
+  str_flatten(&amp;quot; AND &amp;quot;) %&amp;gt;% 
+  arxiv_search(limit = 12, sort_by = &amp;quot;updated&amp;quot;, ascending = FALSE) %&amp;gt;% 
+  select(submitted, id, title) %&amp;gt;% 
+  head(5) %&amp;gt;% 
+  pretty_print()&lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+submitted
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+id
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+title
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-02-16 18:57:57
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1802.06070v5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Diversity is All You Need: Learning Skills without a Reward Function
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-02-12 17:47:13
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1802.04205v3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Efficient Hierarchical Robot Motion Planning Under Uncertainty and Hybrid Dynamics
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-02-25 04:47:31
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1802.08953v2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Robust Target-relative Localization with Ultra-Wideband Ranging and Communication
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-01-06 14:50:07
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1801.02025v2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Robot Localisation and 3D Position Estimation Using a Free-Moving Camera and Cascaded Convolutional Neural Networks
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-01-01 23:41:50
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1801.00527v3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Freeform Assembly Planning
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can search for papers by topic. For example, the following are a few of the most recent papers on Adversarial AI submitted from the beginning of the year to 7th June 2018.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c(&amp;quot;ti:Adversarial&amp;quot;, 
+  &amp;quot;submittedDate:[201801010000 TO 201806072400]&amp;quot;) %&amp;gt;% 
+  str_flatten(&amp;quot; AND &amp;quot;) %&amp;gt;% 
+  arxiv_search(limit = 12, sort_by = &amp;quot;updated&amp;quot;, ascending = FALSE) %&amp;gt;% 
+  select(submitted, id, title) %&amp;gt;% 
+  head(5) %&amp;gt;% 
+  pretty_print()  &lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+submitted
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+id
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+title
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-05-09 04:58:57
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1805.03371v2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+PSGAN: A Generative Adversarial Network for Remote Sensing Image Pan-Sharpening
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-05-30 02:27:10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1805.11778v2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Object Detection using Domain Randomization and Generative Adversarial Refinement of Synthetic Images
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-03-19 15:07:51
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1803.06978v2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Improving Transferability of Adversarial Examples with Input Diversity
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-05-25 15:44:20
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1805.10207v2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Conditional Generative Adversarial and Convolutional Networks for X-ray Breast Mass Segmentation and Shape Classification
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-02-07 22:44:37
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1802.02664v3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Geometry Score: A Method For Comparing Generative Adversarial Networks
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can build complex queries based on specific needs by chaining multiple queries together with &lt;code&gt;AND&lt;/code&gt;, &lt;code&gt;OR&lt;/code&gt;, and &lt;code&gt;ANDNOT&lt;/code&gt;. We can also search Titles, Authors, Abstract and so on.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;github&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;GitHub&lt;/h2&gt;
+&lt;p&gt;Most new research in the machine learning community comprise open-sourced projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart’s content.&lt;/p&gt;
+&lt;p&gt;In this section, I will explore research projects hosted on GitHub. I will use the &lt;code&gt;httr&lt;/code&gt; package to access the &lt;a href=&#34;https://developer.github.com/v3/search/&#34;&gt;GitHub search API&lt;/a&gt;, and then use a few &lt;code&gt;tidyverse&lt;/code&gt; packages to extract the necessary data points.&lt;/p&gt;
+&lt;p&gt;Suppose we want to find the most starred repositories about Adversarial Neural Networks. We can start by creating a URL with a search query and pass that to &lt;code&gt;httr&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(httr)
+library(magrittr)
+
+url &amp;lt;- glue::glue(&amp;quot;https://api.github.com/search/repositories?&amp;quot;,
+                 &amp;quot;q=adversarial+networkin:name,description&amp;amp;&amp;quot;,
+                 &amp;quot;sort=stars&amp;amp;&amp;quot;, 
+                 &amp;quot;order=desc&amp;quot;)
+
+gh_repos &amp;lt;- GET(url) %&amp;gt;% 
+  content(encoding = &amp;quot;UTF-8&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s inspect all the metadata available on each repository:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gh_repos %&amp;gt;%
+  use_series(&amp;quot;items&amp;quot;) %&amp;gt;% 
+  extract2(1) %&amp;gt;% 
+  names()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;id&amp;quot;                &amp;quot;node_id&amp;quot;           &amp;quot;name&amp;quot;             
+##  [4] &amp;quot;full_name&amp;quot;         &amp;quot;owner&amp;quot;             &amp;quot;private&amp;quot;          
+##  [7] &amp;quot;html_url&amp;quot;          &amp;quot;description&amp;quot;       &amp;quot;fork&amp;quot;             
+## [10] &amp;quot;url&amp;quot;               &amp;quot;forks_url&amp;quot;         &amp;quot;keys_url&amp;quot;         
+## [13] &amp;quot;collaborators_url&amp;quot; &amp;quot;teams_url&amp;quot;         &amp;quot;hooks_url&amp;quot;        
+## [16] &amp;quot;issue_events_url&amp;quot;  &amp;quot;events_url&amp;quot;        &amp;quot;assignees_url&amp;quot;    
+## [19] &amp;quot;branches_url&amp;quot;      &amp;quot;tags_url&amp;quot;          &amp;quot;blobs_url&amp;quot;        
+## [22] &amp;quot;git_tags_url&amp;quot;      &amp;quot;git_refs_url&amp;quot;      &amp;quot;trees_url&amp;quot;        
+## [25] &amp;quot;statuses_url&amp;quot;      &amp;quot;languages_url&amp;quot;     &amp;quot;stargazers_url&amp;quot;   
+## [28] &amp;quot;contributors_url&amp;quot;  &amp;quot;subscribers_url&amp;quot;   &amp;quot;subscription_url&amp;quot; 
+## [31] &amp;quot;commits_url&amp;quot;       &amp;quot;git_commits_url&amp;quot;   &amp;quot;comments_url&amp;quot;     
+## [34] &amp;quot;issue_comment_url&amp;quot; &amp;quot;contents_url&amp;quot;      &amp;quot;compare_url&amp;quot;      
+## [37] &amp;quot;merges_url&amp;quot;        &amp;quot;archive_url&amp;quot;       &amp;quot;downloads_url&amp;quot;    
+## [40] &amp;quot;issues_url&amp;quot;        &amp;quot;pulls_url&amp;quot;         &amp;quot;milestones_url&amp;quot;   
+## [43] &amp;quot;notifications_url&amp;quot; &amp;quot;labels_url&amp;quot;        &amp;quot;releases_url&amp;quot;     
+## [46] &amp;quot;deployments_url&amp;quot;   &amp;quot;created_at&amp;quot;        &amp;quot;updated_at&amp;quot;       
+## [49] &amp;quot;pushed_at&amp;quot;         &amp;quot;git_url&amp;quot;           &amp;quot;ssh_url&amp;quot;          
+## [52] &amp;quot;clone_url&amp;quot;         &amp;quot;svn_url&amp;quot;           &amp;quot;homepage&amp;quot;         
+## [55] &amp;quot;size&amp;quot;              &amp;quot;stargazers_count&amp;quot;  &amp;quot;watchers_count&amp;quot;   
+## [58] &amp;quot;language&amp;quot;          &amp;quot;has_issues&amp;quot;        &amp;quot;has_projects&amp;quot;     
+## [61] &amp;quot;has_downloads&amp;quot;     &amp;quot;has_wiki&amp;quot;          &amp;quot;has_pages&amp;quot;        
+## [64] &amp;quot;forks_count&amp;quot;       &amp;quot;mirror_url&amp;quot;        &amp;quot;archived&amp;quot;         
+## [67] &amp;quot;open_issues_count&amp;quot; &amp;quot;license&amp;quot;           &amp;quot;forks&amp;quot;            
+## [70] &amp;quot;open_issues&amp;quot;       &amp;quot;watchers&amp;quot;          &amp;quot;default_branch&amp;quot;   
+## [73] &amp;quot;score&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What we are look for in our example is the GitHub URL and the number of stars for each repository (stargazers_count).&lt;/p&gt;
+&lt;p&gt;Let’s look at the top 5 most starred GitHub repos about Adversarial Neural Networks.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_info &amp;lt;- function(index){
+  repository &amp;lt;- gh_repos %&amp;gt;% 
+    use_series(&amp;quot;items&amp;quot;) %&amp;gt;% 
+    extract2(index) %&amp;gt;% 
+    extract2(&amp;quot;html_url&amp;quot;)
+  
+  stars_count &amp;lt;- gh_repos %&amp;gt;% 
+    use_series(&amp;quot;items&amp;quot;) %&amp;gt;% 
+    extract2(index) %&amp;gt;% 
+    extract2(&amp;quot;stargazers_count&amp;quot;)
+  
+  return(data.frame(repository = repository, 
+                    stars_count = stars_count))
+}
+
+1:5 %&amp;gt;% map_dfr(extract_info) %&amp;gt;% 
+  pretty_print()&lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;&#34;&gt;
+repository
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-weight: bold;&#34;&gt;
+stars_count
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;https://github.com/carpedm20/DCGAN-tensorflow&#34; class=&#34;uri&#34;&gt;https://github.com/carpedm20/DCGAN-tensorflow&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4265
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;https://github.com/junyanz/iGAN&#34; class=&#34;uri&#34;&gt;https://github.com/junyanz/iGAN&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2785
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;https://github.com/Newmu/dcgan_code&#34; class=&#34;uri&#34;&gt;https://github.com/Newmu/dcgan_code&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2763
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;https://github.com/eriklindernoren/Keras-GAN&#34; class=&#34;uri&#34;&gt;https://github.com/eriklindernoren/Keras-GAN&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1887
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;https://github.com/nightrome/really-awesome-gan&#34; class=&#34;uri&#34;&gt;https://github.com/nightrome/really-awesome-gan&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1711
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;journals-rss-feeds&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Journals &amp;amp; RSS feeds&lt;/h2&gt;
+&lt;p&gt;We can explore papers being published in scientific journals by extracting their RSS feeds. I will use &lt;a href=&#34;https://github.com/RobertMyles/tidyrss&#34;&gt;&lt;code&gt;tidyRSS&lt;/code&gt;&lt;/a&gt;, an R package for extracting tidy dataframes from RSS, Atom and JSON feeds. For feeds that do not play nice with &lt;a href=&#34;https://github.com/RobertMyles/tidyrss&#34;&gt;&lt;code&gt;tidyRSS&lt;/code&gt;&lt;/a&gt;, I will use the &lt;a href=&#34;https://github.com/DataWookie/feedeR&#34;&gt;&lt;code&gt;feedeR&lt;/code&gt;&lt;/a&gt; package.&lt;/p&gt;
+&lt;p&gt;Here are two examples:&lt;/p&gt;
+&lt;p&gt;We can search new research papers published in &lt;a href=&#34;https://www.sciencemag.org/&#34;&gt;Science magazine&lt;/a&gt; to see if anything has been published on a specific topic of interest.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyRSS)
+science_magazine &amp;lt;- tidyfeed(&amp;quot;http://science.sciencemag.org/rss/twis.xml&amp;quot;)
+names(science_magazine)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;feed_title&amp;quot;       &amp;quot;feed_link&amp;quot;        &amp;quot;feed_description&amp;quot;
+## [4] &amp;quot;item_title&amp;quot;       &amp;quot;item_link&amp;quot;        &amp;quot;item_description&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;item_title&lt;/code&gt; contains a brief description of each paper. We can search this for specific keywords.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;science_magazine %&amp;gt;% 
+  filter(str_detect(url, &amp;quot;some_regex&amp;quot;)) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can search publications in the &lt;a href=&#34;http://jmlr.org/&#34;&gt;Journal of Machine Learning Research&lt;/a&gt; using:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(feedeR)
+jmlr &amp;lt;- feed.extract(&amp;quot;http://jmlr.org/jmlr.xml&amp;quot;) %&amp;gt;% 
+  use_series(&amp;quot;items&amp;quot;)
+names(jmlr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;title&amp;quot; &amp;quot;date&amp;quot;  &amp;quot;link&amp;quot;  &amp;quot;hash&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Again we can search &lt;code&gt;title&lt;/code&gt; for specific keywords.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wrapping-up&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Wrapping up&lt;/h2&gt;
+&lt;p&gt;Using logic similar to what we’ve stepped through above, we could set up an automated process to regularly scrape these portals for all the relevant information and upload the results in a webpage or set up an email notification whenever something which might be of interest gets published.&lt;/p&gt;
+&lt;p&gt;In a future post, I will explore social media and other resources.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;You can achieve this same end through a combination of various mobile apps, email subscriptions, keeping an eye on machine learning tags on social media and so on, but where is the fun in that?&lt;a href=&#34;#fnref1&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Colours &amp; Impact: Resources for Data Visualization with a splash of R</title>
+      <link>/blog/colours--impact-resources-for-data-visualization-with-a-splash-of-r/</link>
+      <pubDate>Mon, 11 Jun 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/colours--impact-resources-for-data-visualization-with-a-splash-of-r/</guid>
+      <description>&lt;iframe src=&#34;https://giphy.com/embed/PH8gHFw2YJPaM&#34; width=&#34;383&#34; height=&#34;480&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://giphy.com/gifs/paint-knife-palette-PH8gHFw2YJPaM&#34;&gt;via GIPHY&lt;/a&gt;
+&lt;/p&gt;
+&lt;p&gt;A curated list of multimedia resources for data visualization. Inspired by &lt;a href=&#34;https://awesome-r.com/&#34;&gt;Awesome R&lt;/a&gt;. Arranged in no particular order.&lt;/p&gt;
+&lt;div id=&#34;colour-theory-chart-design&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Colour theory &amp;amp; chart design&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://earthobservatory.nasa.gov/blogs/elegantfigures/2013/08/05/subtleties-of-color-part-1-of-6/&#34;&gt;Subtleties of Color&lt;/a&gt;- Robert Simmon (2013)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.visualisingdata.com/2015/01/make-grey-best-friend/&#34;&gt;Make grey your best friend&lt;/a&gt; - Andy Kirk (2015)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://towardsdatascience.com/viz-palette-for-data-visualization-color-8e678d996077&#34;&gt;Viz Palette for Data Visualization Color&lt;/a&gt; - Elijah Meeks (2018)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://venngage.com/blog/color-blind-friendly-palette/&#34;&gt;How to Optimize Charts For Color Blind Readers&lt;/a&gt; - Tom Jager (2017)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://venngage.com/blog/infographic-design-the-dos-and-donts-of-color-selection/&#34;&gt;The Do’s And Don’ts of Infographic Color Selection&lt;/a&gt; - Ryan McCready (2016)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://venngage.com/blog/chart-design/&#34;&gt;10 Do’s and Don’ts of Infographic Chart Design&lt;/a&gt; - Midori Nediger (2018)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://venngage.com/blog/data-visualization-tips/&#34;&gt;5 Data Visualization Tips to Guide Your Design Process&lt;/a&gt; - Jan Willem Tulp (2017)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.datawrapper.de/colors/&#34;&gt;What to consider when choosing colors for data visualization&lt;/a&gt; - Lisa Charlotte Rost (2018)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://theblog.adobe.com/the-power-of-the-palette-why-color-is-key-in-data-visualization-and-how-to-use-it/&#34;&gt;The Power of The Palette: Why Color is Key in Data Visualization and How to Use It&lt;/a&gt; - Alan Wilson (2017)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;web-tools&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Web tools&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://colororacle.org/usage.html&#34;&gt;colororacle&lt;/a&gt; - Colour-blindness simulator&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.canva.com/color-palette/&#34;&gt;Canva Color Palette Generator&lt;/a&gt; - creates a palette based on the five main colours of any uploaded image&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.materialpalette.com/&#34;&gt;Material palette&lt;/a&gt; - converts any two colours into a full colour palette&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://vrl.cs.brown.edu/color&#34;&gt;Colorgorical&lt;/a&gt; - tool by Connor Gramazio for creating categorical information visualization colour palettes&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://colorbrewer2.org/#type=sequential&amp;amp;scheme=BuGn&amp;amp;n=3&#34;&gt;Colorbrewer&lt;/a&gt; - tool for choosing choropleth map color schemes, based on Cynthia Brewer’s research&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://color.adobe.com/create/color-wheel/&#34;&gt;Adobe Color CC&lt;/a&gt; - Adobe’s tool for creating categorical palettes&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://tools.medialab.sciences-po.fr/iwanthue/&#34;&gt;i want hue&lt;/a&gt; - tool by Mathieu Jacomy for optimising colours and palettes&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.colorfavs.com&#34;&gt;colorfavs&lt;/a&gt; - tool to create and discover colours and Palettes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;podcasts&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Podcasts&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://datastori.es/&#34;&gt;Data Stories&lt;/a&gt; - data visualization with Enrico Bertini and Moritz Stefaner&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://policyviz.com/podcast/&#34;&gt;policyviz&lt;/a&gt; - helping listeners better communicate their research, analysis, and ideas&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://leapica.com/podcast/&#34;&gt;The Present Beyond Measure&lt;/a&gt; - bi-weekly podcast at the intersection of analytics, data visualization, and digital analytics&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.storytellingwithdata.com/podcast/&#34;&gt;storytelling with data&lt;/a&gt; - covers topics related to data storytelling, better presentations, and all things data visualization&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;websites&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Websites&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.presentationzen.com&#34;&gt;Presentaion Zen&lt;/a&gt; - Garr Reynolds’s popular website on how to design and deliver powerful presentations&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://informationisbeautiful.net&#34;&gt;information is beautiful&lt;/a&gt; - David McCandless’s site dedicated to helping people make clearer, more informed decisions about the world&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.visualcomplexity.com/vc/&#34;&gt;visual complexity&lt;/a&gt; - unified resource space for anyone interested in the visualization of complex networks&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.awwwards.com/websites/data-visualization/&#34;&gt;awwwards&lt;/a&gt; - a meeting point, where digital design professionals from across the globe find inspiration, impart knowledge and experience, connect, and share constructive, respectful critiques&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.gapminder.org&#34;&gt;Gapminder&lt;/a&gt; - Swedish independent foundation which fights misconceptions about global development and promotes a fact-based worldview&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://chartporn.org/&#34;&gt;Chart porn&lt;/a&gt; - curates the cool data analysis work being done in the world&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;r-packages&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;R packages&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/thomasp85/scico&#34;&gt;scico&lt;/a&gt; - Thomas Lin Pedersen’s R interface to Fabio Crameri’s colour palettes based on the Scientific Colour-Maps&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/web/packages/RColorBrewer/index.html&#34;&gt;RColorBrewer&lt;/a&gt; - Erich Neuwirth’s R implementation of Cynthia Brewer’s &lt;a href=&#34;http://colorbrewer2.org&#34;&gt;colobrewer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/AndreaCirilloAC/paletter&#34;&gt;paletter&lt;/a&gt; - Andrea Cirillo’s package for creating an optimised palette from a custom image&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/sjmgarnier/viridis&#34;&gt;viridis&lt;/a&gt; - Simon Garnier’s R Implementation of the Matplolib ‘viridis’ color map&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/calligross/ggthemeassist&#34;&gt;ggThemeAssist&lt;/a&gt; - an RStudio add-in which provides a GUI for editing ggplot2 themes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can search Github for more R packages using:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+# key word search with &amp;quot;palette&amp;quot;, &amp;quot;theme&amp;quot; etc.
+key_word = &amp;quot;palette&amp;quot;
+gh_pkgs &amp;lt;- glue::glue(&amp;quot;http://rpkg-api.gepuro.net/rpkg?q={key_word}&amp;quot;) %&amp;gt;% 
+  jsonlite::fromJSON() &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can search CRAN using:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_pkgs &amp;lt;- tools::CRAN_package_db()
+cran_pkgs &amp;lt;- cran_pkgs[, !duplicated(colnames(cran_pkgs))]
+
+cran_pkgs %&amp;gt;% 
+  filter(str_detect(Description, &amp;quot;palette&amp;quot;) == TRUE) %&amp;gt;% 
+  select(Package, Date, Author, Title, Description)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;books&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Books&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.amazon.co.uk/Visual-Display-Quantitative-Information/dp/0961392142&#34;&gt;The Visual Display of Quantitative Information&lt;/a&gt; - Edward R.Tufte&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.amazon.co.uk/Storytelling-Data-Visualization-Business-Professionals/dp/1119002257&#34;&gt;Storytelling with Data: A Data Visualization Guide for Business Professionals&lt;/a&gt; - Cole Nussbaumer Knaflic&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.amazon.co.uk/Good-Charts-Smarter-Persuasive-Visualizations-ebook/dp/B01BO6QM9Q/ref=tmm_kin_swatch_0?_encoding=UTF8&amp;amp;qid=&amp;amp;sr=&#34;&gt;Good Charts The HBR Guide to Making Smarter, More Persuasive Data Visualizations&lt;/a&gt; - Scott Berinato&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.amazon.co.uk/Truthful-Art-Data-Charts-Communication-ebook/dp/B01BLN09U0/ref=pd_sim_351_5?_encoding=UTF8&amp;amp;psc=1&amp;amp;refRID=3N1YB3PRH0ANZDT42K56&#34;&gt;The Truthful Art&lt;/a&gt; - Albert Cairo&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.amazon.co.uk/Visualize-This-FlowingData-Visualization-Statistics-ebook/dp/B005CCT19M/ref=tmm_kin_swatch_0?_encoding=UTF8&amp;amp;qid=&amp;amp;sr=&#34;&gt;Visualize This: The FlowingData Guide to Design, Visualization, and Statistics&lt;/a&gt; - Nathan Yau&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.amazon.co.uk/Information-Graphics-Sandra-Rendgen/dp/3836528797&#34;&gt;Information Graphics&lt;/a&gt; - Sandra Rendgen, Julius Wiedemann&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.amazon.co.uk/Visual-Thinking-Kaufmann-Interactive-Technologies-ebook/dp/B006NVY448/ref=tmm_kin_swatch_0?_encoding=UTF8&amp;amp;qid=&amp;amp;sr=&#34;&gt;Visual Thinking for Design&lt;/a&gt; - Colin Ware&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.amazon.co.uk/Semiology-Graphics-Diagrams-Networks-Maps/dp/1589482611&#34;&gt;Semiology of Graphics: Diagrams, Networks, Maps&lt;/a&gt; - Jacques Berti&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.amazon.co.uk/dp/B00E8W7NGA/ref=dp-kindle-redirect?_encoding=UTF8&amp;amp;btkr=1&#34;&gt;Cartographies of Time: A History of the Timeline&lt;/a&gt; - Daniel Rosenberg and Anthony Grafton&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://r4ds.had.co.nz/graphics-for-communication.html&#34;&gt;R for Data Science&lt;/a&gt; - the graphics for communication chapter of Garrett Grolemund and Hadley Wicham’s book&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;awesome-list-of-curated-awesomeness&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Awesome list of curated awesomeness&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/mathisonian/awesome-visualization-research&#34;&gt;awesome-visualization-research&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/fasouto/awesome-dataviz&#34;&gt;awesome-dataviz&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/zingchart/awesome-charting&#34;&gt;awesome-charting&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/Siddharth11/Colorful&#34;&gt;Colorful&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/EmilHvitfeldt/r-color-palettes&#34;&gt;r-color-palettes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;meta&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Meta&lt;/h2&gt;
+&lt;p&gt;I have created a &lt;a href=&#34;https://github.com/eokodie/colours-and-impact&#34;&gt;companion GitHub repository&lt;/a&gt; for this blog post. Feel free to contribute by creating a &lt;a href=&#34;https://github.com/eokodie/colours-and-impact/pulls&#34;&gt;pull request&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Need for Speed: Benchmarks on Dataframes</title>

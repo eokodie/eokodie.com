@@ -1,0 +1,526 @@
+---
+title: "Drinking from the Firehose: using R to keep up with current ML Research - part 1" 
+author: "Ernest Omane-Kodie"
+date: 2018-06-12T21:13:14-05:00 
+categories: ["R"]
+tags: ["rstats", "machine learning",  "web scraping"]
+---
+
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+
+
+<iframe src="https://giphy.com/embed/GSgZ1Flo2U9UI" width="480" height="360" frameBorder="0" class="giphy-embed" allowFullScreen>
+</iframe>
+<p>
+<a href="https://giphy.com/gifs/cat-GSgZ1Flo2U9UI">via GIPHY</a>
+</p>
+<p>In this post, I will explore how we can use resources available in the R package ecosystem to keep up with state-of-the-art machine learning research.</p>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>Recently, I have been reading books about creativity. The recurring concept in the books is that the key place to start when mastering a skill is by reproducing other people’s proven ideas and figuring out their inner workings - a form of apprenticeship.</p>
+<p>The 19th Century French writer, <a href="https://en.wikipedia.org/wiki/%C3%89mile_Zola">Emile Zola</a>, captured the essence of this idea in his description of art as <strong>“a corner of creation seen through a temperament”</strong>.</p>
+<p>Will Gompertz neatly paraphrases this in <a href="https://www.amazon.co.uk/dp/B00T3UIYFG/ref=dp-kindle-redirect?_encoding=UTF8&amp;btkr=1">Think Like an Artist</a> as:</p>
+<blockquote>
+<p>“Creativity is the presentation of pre-existing elements and ideas filtered through the perceptions and feelings of an individual.”</p>
+</blockquote>
+<p>The idea permeates all creative endeavours. Would-be singer-songwriters, scientists, painters, and so on, start off by attempting to replicate some established piece of work. Andrew Ng captures this same idea in <a href="http://qr.ae/TUTrnq">this response to a question on Quora</a> I stumbled upon while writing up this post:</p>
+<blockquote>
+<p>“To go even further, read research papers (follow ML leaders on twitter to see what papers they’re excited about). Even better, try to replicate the results in the research papers. Trying to replicate others’ results is a one of the most effective but under-appreciated ways to get good at AI”</p>
+</blockquote>
+</div>
+<div id="the-problem" class="section level2">
+<h2>The problem</h2>
+<p>The challenge with applying this concept to machine learning practice is that, in many respects, the field is going through exciting times. We are witnessing the relentless creation of new algorithms, drastic improvements in existing algorithms, an explosion of data, significant strides in computer hardware technology, and unprecedented collaboration among researchers from different fields.</p>
+<p>Although the internet has made it much easier to source materials and information, the sheer volume of research literature emerging from all the moving parts of machine learning can be overwhelming.</p>
+<p>How do you discover new research literature? How do you find the most relevant research for your work? In the following sections, I will attempt to answer these questions. The aim is to use a few examples to shed a little light on how to stay plugged in to the research community without leaving the R software environment<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
+</div>
+<div id="academic-databases-and-search-engines" class="section level2">
+<h2>Academic databases and search engines</h2>
+<p>There is a comprehensive list of academic databases and search engines on <a href="https://en.wikipedia.org/wiki/List_of_academic_databases_and_search_engines">this Wikipedia page</a>. I will look at one example of the most popular databases in this category.</p>
+<div id="arxiv" class="section level3">
+<h3>arXiv</h3>
+<p><a href="https://arxiv.org/">arXiv</a> is a repository of scientific papers, created in the spirit of the open access movement, where mathematicians and scientists usually upload their papers for worldwide access and sometimes for reviews before they are published in peer-reviewed journals.</p>
+<p>I will use <a href="https://cran.r-project.org/web/packages/aRxiv/index.html"><code>aRxiv</code></a>, an R interface to the <a href="https://arxiv.org/help/api/index">arXiv API</a>, and a few <a href="https://www.tidyverse.org/"><code>tidyverse</code></a> tools to explore arXiv papers.</p>
+<pre class="r"><code>library(aRxiv)
+library(tidyverse)
+library(kableExtra)
+
+pretty_print &lt;- function(df){
+  result = df %&gt;% 
+    kable() %&gt;% 
+    kable_styling(font_size = 14) %&gt;% 
+    row_spec(0, bold = T)
+  return(result)
+}</code></pre>
+<p>To start off, we need to construct a search query. To do this, we need terms to use as query arguments. The following options are available:</p>
+<pre class="r"><code>query_terms %&gt;% pretty_print</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+term
+</th>
+<th style="text-align:left;font-weight: bold;">
+description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ti
+</td>
+<td style="text-align:left;">
+Title
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+au
+</td>
+<td style="text-align:left;">
+Author
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+abs
+</td>
+<td style="text-align:left;">
+Abstract
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+co
+</td>
+<td style="text-align:left;">
+Comment
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+jr
+</td>
+<td style="text-align:left;">
+Journal Reference
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cat
+</td>
+<td style="text-align:left;">
+Subject Category
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+rn
+</td>
+<td style="text-align:left;">
+Report Number
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+all
+</td>
+<td style="text-align:left;">
+All of the above
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+submittedDate
+</td>
+<td style="text-align:left;">
+Date/time of initial submission, as YYYYMMDDHHMM
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+lastUpdatedDate
+</td>
+<td style="text-align:left;">
+Date/time of last update, as YYYYMMDDHHMM
+</td>
+</tr>
+</tbody>
+</table>
+<p>Machine learning and related research papers are typically submitted under the following categories:</p>
+<pre class="r"><code>ai_ml_categories &lt;- c(&quot;Artificial&quot;, &quot;Intelligence&quot;, &quot;Learning&quot;, 
+                   &quot;Robotics&quot;, &quot;Vision&quot;) %&gt;% 
+  str_flatten(&quot;|&quot;)
+
+arxiv_cats %&gt;% 
+  dplyr::filter(str_detect(description, ai_ml_categories)) %&gt;% 
+  pretty_print</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+abbreviation
+</th>
+<th style="text-align:left;font-weight: bold;">
+description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+stat.ML
+</td>
+<td style="text-align:left;">
+Statistics - Machine Learning
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cs.AI
+</td>
+<td style="text-align:left;">
+Computer Science - Artificial Intelligence
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cs.CV
+</td>
+<td style="text-align:left;">
+Computer Science - Computer Vision and Pattern Recognition
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cs.LG
+</td>
+<td style="text-align:left;">
+Computer Science - Learning
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cs.RO
+</td>
+<td style="text-align:left;">
+Computer Science - Robotics
+</td>
+</tr>
+</tbody>
+</table>
+<p>We can search for papers under specific categories. For example, we can inspect papers submitted under Robotics in the first three months of 2018 using:</p>
+<pre class="r"><code>c(&quot;cat:cs.RO&quot;, 
+  &quot;submittedDate:[201801010000 TO 201802302400]&quot;) %&gt;% 
+  str_flatten(&quot; AND &quot;) %&gt;% 
+  arxiv_search(limit = 12, sort_by = &quot;updated&quot;, ascending = FALSE) %&gt;% 
+  select(submitted, id, title) %&gt;% 
+  head(5) %&gt;% 
+  pretty_print()</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+submitted
+</th>
+<th style="text-align:left;font-weight: bold;">
+id
+</th>
+<th style="text-align:left;font-weight: bold;">
+title
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2018-02-16 18:57:57
+</td>
+<td style="text-align:left;">
+1802.06070v5
+</td>
+<td style="text-align:left;">
+Diversity is All You Need: Learning Skills without a Reward Function
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-02-12 17:47:13
+</td>
+<td style="text-align:left;">
+1802.04205v3
+</td>
+<td style="text-align:left;">
+Efficient Hierarchical Robot Motion Planning Under Uncertainty and Hybrid Dynamics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-02-25 04:47:31
+</td>
+<td style="text-align:left;">
+1802.08953v2
+</td>
+<td style="text-align:left;">
+Robust Target-relative Localization with Ultra-Wideband Ranging and Communication
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-01-06 14:50:07
+</td>
+<td style="text-align:left;">
+1801.02025v2
+</td>
+<td style="text-align:left;">
+Robot Localisation and 3D Position Estimation Using a Free-Moving Camera and Cascaded Convolutional Neural Networks
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-01-01 23:41:50
+</td>
+<td style="text-align:left;">
+1801.00527v3
+</td>
+<td style="text-align:left;">
+Freeform Assembly Planning
+</td>
+</tr>
+</tbody>
+</table>
+<p>We can search for papers by topic. For example, the following are a few of the most recent papers on Adversarial AI submitted from the beginning of the year to 7th June 2018.</p>
+<pre class="r"><code>c(&quot;ti:Adversarial&quot;, 
+  &quot;submittedDate:[201801010000 TO 201806072400]&quot;) %&gt;% 
+  str_flatten(&quot; AND &quot;) %&gt;% 
+  arxiv_search(limit = 12, sort_by = &quot;updated&quot;, ascending = FALSE) %&gt;% 
+  select(submitted, id, title) %&gt;% 
+  head(5) %&gt;% 
+  pretty_print()  </code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+submitted
+</th>
+<th style="text-align:left;font-weight: bold;">
+id
+</th>
+<th style="text-align:left;font-weight: bold;">
+title
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2018-05-09 04:58:57
+</td>
+<td style="text-align:left;">
+1805.03371v2
+</td>
+<td style="text-align:left;">
+PSGAN: A Generative Adversarial Network for Remote Sensing Image Pan-Sharpening
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-05-30 02:27:10
+</td>
+<td style="text-align:left;">
+1805.11778v2
+</td>
+<td style="text-align:left;">
+Object Detection using Domain Randomization and Generative Adversarial Refinement of Synthetic Images
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-03-19 15:07:51
+</td>
+<td style="text-align:left;">
+1803.06978v2
+</td>
+<td style="text-align:left;">
+Improving Transferability of Adversarial Examples with Input Diversity
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-05-25 15:44:20
+</td>
+<td style="text-align:left;">
+1805.10207v2
+</td>
+<td style="text-align:left;">
+Conditional Generative Adversarial and Convolutional Networks for X-ray Breast Mass Segmentation and Shape Classification
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-02-07 22:44:37
+</td>
+<td style="text-align:left;">
+1802.02664v3
+</td>
+<td style="text-align:left;">
+Geometry Score: A Method For Comparing Generative Adversarial Networks
+</td>
+</tr>
+</tbody>
+</table>
+<p>We can build complex queries based on specific needs by chaining multiple queries together with <code>AND</code>, <code>OR</code>, and <code>ANDNOT</code>. We can also search Titles, Authors, Abstract and so on.</p>
+</div>
+</div>
+<div id="github" class="section level2">
+<h2>GitHub</h2>
+<p>Most new research in the machine learning community comprise open-sourced projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart’s content.</p>
+<p>In this section, I will explore research projects hosted on GitHub. I will use the <code>httr</code> package to access the <a href="https://developer.github.com/v3/search/">GitHub search API</a>, and then use a few <code>tidyverse</code> packages to extract the necessary data points.</p>
+<p>Suppose we want to find the most starred repositories about Adversarial Neural Networks. We can start by creating a URL with a search query and pass that to <code>httr</code>.</p>
+<pre class="r"><code>library(httr)
+library(magrittr)
+
+url &lt;- glue::glue(&quot;https://api.github.com/search/repositories?&quot;,
+                 &quot;q=adversarial+networkin:name,description&amp;&quot;,
+                 &quot;sort=stars&amp;&quot;, 
+                 &quot;order=desc&quot;)
+
+gh_repos &lt;- GET(url) %&gt;% 
+  content(encoding = &quot;UTF-8&quot;)</code></pre>
+<p>Let’s inspect all the metadata available on each repository:</p>
+<pre class="r"><code>gh_repos %&gt;%
+  use_series(&quot;items&quot;) %&gt;% 
+  extract2(1) %&gt;% 
+  names()</code></pre>
+<pre><code>##  [1] &quot;id&quot;                &quot;node_id&quot;           &quot;name&quot;             
+##  [4] &quot;full_name&quot;         &quot;owner&quot;             &quot;private&quot;          
+##  [7] &quot;html_url&quot;          &quot;description&quot;       &quot;fork&quot;             
+## [10] &quot;url&quot;               &quot;forks_url&quot;         &quot;keys_url&quot;         
+## [13] &quot;collaborators_url&quot; &quot;teams_url&quot;         &quot;hooks_url&quot;        
+## [16] &quot;issue_events_url&quot;  &quot;events_url&quot;        &quot;assignees_url&quot;    
+## [19] &quot;branches_url&quot;      &quot;tags_url&quot;          &quot;blobs_url&quot;        
+## [22] &quot;git_tags_url&quot;      &quot;git_refs_url&quot;      &quot;trees_url&quot;        
+## [25] &quot;statuses_url&quot;      &quot;languages_url&quot;     &quot;stargazers_url&quot;   
+## [28] &quot;contributors_url&quot;  &quot;subscribers_url&quot;   &quot;subscription_url&quot; 
+## [31] &quot;commits_url&quot;       &quot;git_commits_url&quot;   &quot;comments_url&quot;     
+## [34] &quot;issue_comment_url&quot; &quot;contents_url&quot;      &quot;compare_url&quot;      
+## [37] &quot;merges_url&quot;        &quot;archive_url&quot;       &quot;downloads_url&quot;    
+## [40] &quot;issues_url&quot;        &quot;pulls_url&quot;         &quot;milestones_url&quot;   
+## [43] &quot;notifications_url&quot; &quot;labels_url&quot;        &quot;releases_url&quot;     
+## [46] &quot;deployments_url&quot;   &quot;created_at&quot;        &quot;updated_at&quot;       
+## [49] &quot;pushed_at&quot;         &quot;git_url&quot;           &quot;ssh_url&quot;          
+## [52] &quot;clone_url&quot;         &quot;svn_url&quot;           &quot;homepage&quot;         
+## [55] &quot;size&quot;              &quot;stargazers_count&quot;  &quot;watchers_count&quot;   
+## [58] &quot;language&quot;          &quot;has_issues&quot;        &quot;has_projects&quot;     
+## [61] &quot;has_downloads&quot;     &quot;has_wiki&quot;          &quot;has_pages&quot;        
+## [64] &quot;forks_count&quot;       &quot;mirror_url&quot;        &quot;archived&quot;         
+## [67] &quot;open_issues_count&quot; &quot;license&quot;           &quot;forks&quot;            
+## [70] &quot;open_issues&quot;       &quot;watchers&quot;          &quot;default_branch&quot;   
+## [73] &quot;score&quot;</code></pre>
+<p>What we are look for in our example is the GitHub URL and the number of stars for each repository (stargazers_count).</p>
+<p>Let’s look at the top 5 most starred GitHub repos about Adversarial Neural Networks.</p>
+<pre class="r"><code>extract_info &lt;- function(index){
+  repository &lt;- gh_repos %&gt;% 
+    use_series(&quot;items&quot;) %&gt;% 
+    extract2(index) %&gt;% 
+    extract2(&quot;html_url&quot;)
+  
+  stars_count &lt;- gh_repos %&gt;% 
+    use_series(&quot;items&quot;) %&gt;% 
+    extract2(index) %&gt;% 
+    extract2(&quot;stargazers_count&quot;)
+  
+  return(data.frame(repository = repository, 
+                    stars_count = stars_count))
+}
+
+1:5 %&gt;% map_dfr(extract_info) %&gt;% 
+  pretty_print()</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+repository
+</th>
+<th style="text-align:right;font-weight: bold;">
+stars_count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/carpedm20/DCGAN-tensorflow" class="uri">https://github.com/carpedm20/DCGAN-tensorflow</a>
+</td>
+<td style="text-align:right;">
+4265
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/junyanz/iGAN" class="uri">https://github.com/junyanz/iGAN</a>
+</td>
+<td style="text-align:right;">
+2785
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/Newmu/dcgan_code" class="uri">https://github.com/Newmu/dcgan_code</a>
+</td>
+<td style="text-align:right;">
+2763
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/eriklindernoren/Keras-GAN" class="uri">https://github.com/eriklindernoren/Keras-GAN</a>
+</td>
+<td style="text-align:right;">
+1887
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/nightrome/really-awesome-gan" class="uri">https://github.com/nightrome/really-awesome-gan</a>
+</td>
+<td style="text-align:right;">
+1711
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="journals-rss-feeds" class="section level2">
+<h2>Journals &amp; RSS feeds</h2>
+<p>We can explore papers being published in scientific journals by extracting their RSS feeds. I will use <a href="https://github.com/RobertMyles/tidyrss"><code>tidyRSS</code></a>, an R package for extracting tidy dataframes from RSS, Atom and JSON feeds. For feeds that do not play nice with <a href="https://github.com/RobertMyles/tidyrss"><code>tidyRSS</code></a>, I will use the <a href="https://github.com/DataWookie/feedeR"><code>feedeR</code></a> package.</p>
+<p>Here are two examples:</p>
+<p>We can search new research papers published in <a href="https://www.sciencemag.org/">Science magazine</a> to see if anything has been published on a specific topic of interest.</p>
+<pre class="r"><code>library(tidyRSS)
+science_magazine &lt;- tidyfeed(&quot;http://science.sciencemag.org/rss/twis.xml&quot;)
+names(science_magazine)</code></pre>
+<pre><code>## [1] &quot;feed_title&quot;       &quot;feed_link&quot;        &quot;feed_description&quot;
+## [4] &quot;item_title&quot;       &quot;item_link&quot;        &quot;item_description&quot;</code></pre>
+<p><code>item_title</code> contains a brief description of each paper. We can search this for specific keywords.</p>
+<pre class="r"><code>science_magazine %&gt;% 
+  filter(str_detect(url, &quot;some_regex&quot;)) </code></pre>
+<p>We can search publications in the <a href="http://jmlr.org/">Journal of Machine Learning Research</a> using:</p>
+<pre class="r"><code>library(feedeR)
+jmlr &lt;- feed.extract(&quot;http://jmlr.org/jmlr.xml&quot;) %&gt;% 
+  use_series(&quot;items&quot;)
+names(jmlr)</code></pre>
+<pre><code>## [1] &quot;title&quot; &quot;date&quot;  &quot;link&quot;  &quot;hash&quot;</code></pre>
+<p>Again we can search <code>title</code> for specific keywords.</p>
+</div>
+<div id="wrapping-up" class="section level2">
+<h2>Wrapping up</h2>
+<p>Using logic similar to what we’ve stepped through above, we could set up an automated process to regularly scrape these portals for all the relevant information and upload the results in a webpage or set up an email notification whenever something which might be of interest gets published.</p>
+<p>In a future post, I will explore social media and other resources.</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>You can achieve this same end through a combination of various mobile apps, email subscriptions, keeping an eye on machine learning tags on social media and so on, but where is the fun in that?<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>

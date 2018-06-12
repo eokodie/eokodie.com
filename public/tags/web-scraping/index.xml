@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Web Scraping on Ernest Omane-Kodie</title>
+    <link>/tags/web-scraping/</link>
+    <description>Recent content in Web Scraping on Ernest Omane-Kodie</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Tue, 12 Jun 2018 21:13:14 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/web-scraping/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Drinking from the Firehose: using R to keep up with current ML Research - part 1</title>
+      <link>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research---part-1/</link>
+      <pubDate>Tue, 12 Jun 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research---part-1/</guid>
+      <description>via GIPHYIn this post, I will explore how we can use resources available in the R package ecosystem to keep up with state-of-the-art machine learning research.
+MotivationRecently, I have been reading books about creativity. The recurring concept in the books is that the key place to start when mastering a skill is by reproducing other people’s proven ideas and figuring out their inner workings - a form of apprenticeship.</description>
+    </item>
+    
+  </channel>
+</rss>
