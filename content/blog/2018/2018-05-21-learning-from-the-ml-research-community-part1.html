@@ -25,7 +25,7 @@ tags: ["rstats", "machine learning",  "web scraping"]
 </blockquote>
 <p>The idea permeates all creative endeavours. Would-be singer-songwriters, scientists, painters, and so on, start off by attempting to replicate some established piece of work. Andrew Ng captures this same idea in <a href="http://qr.ae/TUTrnq">this response to a question on Quora</a> I stumbled upon while writing up this post:</p>
 <blockquote>
-<p>“To go even further, read research papers (follow ML leaders on twitter to see what papers they’re excited about). Even better, try to replicate the results in the research papers. Trying to replicate others’ results is a one of the most effective but under-appreciated ways to get good at AI”</p>
+<p>“To go even further, read research papers (follow ML leaders on twitter to see what papers they’re excited about). Even better, try to replicate the results in the research papers. Trying to replicate others’ results is one of the most effective but under-appreciated ways to get good at AI”</p>
 </blockquote>
 </div>
 <div id="the-problem" class="section level2">
@@ -210,7 +210,7 @@ Computer Science - Robotics
 </tr>
 </tbody>
 </table>
-<p>We can search for papers under specific categories. For example, we can inspect papers submitted under Robotics in the first three months of 2018 using:</p>
+<p>We can search for papers under specific categories. For example, we can inspect papers submitted under robotics in the first three months of 2018 using:</p>
 <pre class="r"><code>c(&quot;cat:cs.RO&quot;, 
   &quot;submittedDate:[201801010000 TO 201802302400]&quot;) %&gt;% 
   str_flatten(&quot; AND &quot;) %&gt;% 
@@ -290,7 +290,7 @@ Freeform Assembly Planning
 </tr>
 </tbody>
 </table>
-<p>We can search for papers by topic. For example, the following are a few of the most recent papers on Adversarial AI submitted from the beginning of the year to 7th June 2018.</p>
+<p>We can search for papers by topic. For example, the following are a few of the most recent papers on adversarial AI submitted from the beginning of the year to 7th June 2018.</p>
 <pre class="r"><code>c(&quot;ti:Adversarial&quot;, 
   &quot;submittedDate:[201801010000 TO 201806072400]&quot;) %&gt;% 
   str_flatten(&quot; AND &quot;) %&gt;% 
@@ -315,57 +315,57 @@ title
 <tbody>
 <tr>
 <td style="text-align:left;">
-2018-05-09 04:58:57
+2018-02-15 17:13:18
 </td>
 <td style="text-align:left;">
-1805.03371v2
+1802.05666v2
 </td>
 <td style="text-align:left;">
-PSGAN: A Generative Adversarial Network for Remote Sensing Image Pan-Sharpening
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2018-05-30 02:27:10
-</td>
-<td style="text-align:left;">
-1805.11778v2
-</td>
-<td style="text-align:left;">
-Object Detection using Domain Randomization and Generative Adversarial Refinement of Synthetic Images
+Adversarial Risk and the Dangers of Evaluating Against Weak Attacks
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2018-03-19 15:07:51
+2018-05-21 10:58:10
 </td>
 <td style="text-align:left;">
-1803.06978v2
+1805.07984v3
 </td>
 <td style="text-align:left;">
-Improving Transferability of Adversarial Examples with Input Diversity
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2018-05-25 15:44:20
-</td>
-<td style="text-align:left;">
-1805.10207v2
-</td>
-<td style="text-align:left;">
-Conditional Generative Adversarial and Convolutional Networks for X-ray Breast Mass Segmentation and Shape Classification
+Adversarial Attacks on Neural Networks for Graph Data
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2018-02-07 22:44:37
+2018-06-05 17:04:37
 </td>
 <td style="text-align:left;">
-1802.02664v3
+1806.02299v2
 </td>
 <td style="text-align:left;">
-Geometry Score: A Method For Comparing Generative Adversarial Networks
+DPatch: Attacking Object Detectors with Adversarial Patches
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-06-07 23:27:16
+</td>
+<td style="text-align:left;">
+1806.02924v2
+</td>
+<td style="text-align:left;">
+On Adversarial Risk and Training
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-05-30 00:05:53
+</td>
+<td style="text-align:left;">
+1805.11752v2
+</td>
+<td style="text-align:left;">
+Multi-turn Dialogue Response Generation in an Adversarial Learning Framework
 </td>
 </tr>
 </tbody>
@@ -377,12 +377,12 @@ Geometry Score: A Method For Comparing Generative Adversarial Networks
 <h2>GitHub</h2>
 <p>Most new research in the machine learning community comprise open-source projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart’s content.</p>
 <p>In this section, I will explore research projects hosted on GitHub. I will use the <code>httr</code> package to access the <a href="https://developer.github.com/v3/search/">GitHub search API</a>, and then use a few <code>tidyverse</code> packages to extract the necessary data points.</p>
-<p>Suppose we want to find the most starred repositories about Adversarial Neural Networks. We can start by creating a URL with a search query and pass that to <code>httr</code>.</p>
+<p>Suppose we want to find the most starred repositories about generative adversarial networks. We can start by creating a URL with a search query and pass that to <code>httr</code>.</p>
 <pre class="r"><code>library(httr)
 library(magrittr)
 
 url &lt;- glue::glue(&quot;https://api.github.com/search/repositories?&quot;,
-                 &quot;q=adversarial+networkin:name,description&amp;&quot;,
+                 &quot;q=generative+adversarial+networkin:name,description&amp;&quot;,
                  &quot;sort=stars&amp;&quot;, 
                  &quot;order=desc&quot;)
 
@@ -419,7 +419,7 @@ gh_repos &lt;- GET(url) %&gt;%
 ## [70] &quot;open_issues&quot;       &quot;watchers&quot;          &quot;default_branch&quot;   
 ## [73] &quot;score&quot;</code></pre>
 <p>What we are looking for in our example is the GitHub URL and the number of stars for each repository (stargazers_count).</p>
-<p>Let’s look at the top 5 most starred GitHub repos about Adversarial Neural Networks.</p>
+<p>Let’s look at the top 5 most starred GitHub repositories in this category.</p>
 <pre class="r"><code>extract_info &lt;- function(index){
   repository &lt;- gh_repos %&gt;% 
     use_series(&quot;items&quot;) %&gt;% 
@@ -454,7 +454,7 @@ stars_count
 <a href="https://github.com/carpedm20/DCGAN-tensorflow" class="uri">https://github.com/carpedm20/DCGAN-tensorflow</a>
 </td>
 <td style="text-align:right;">
-4265
+4271
 </td>
 </tr>
 <tr>
@@ -470,7 +470,7 @@ stars_count
 <a href="https://github.com/Newmu/dcgan_code" class="uri">https://github.com/Newmu/dcgan_code</a>
 </td>
 <td style="text-align:right;">
-2763
+2762
 </td>
 </tr>
 <tr>
@@ -478,7 +478,7 @@ stars_count
 <a href="https://github.com/eriklindernoren/Keras-GAN" class="uri">https://github.com/eriklindernoren/Keras-GAN</a>
 </td>
 <td style="text-align:right;">
-1888
+1895
 </td>
 </tr>
 <tr>
@@ -486,7 +486,7 @@ stars_count
 <a href="https://github.com/nightrome/really-awesome-gan" class="uri">https://github.com/nightrome/really-awesome-gan</a>
 </td>
 <td style="text-align:right;">
-1711
+1715
 </td>
 </tr>
 </tbody>

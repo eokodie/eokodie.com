@@ -36,7 +36,7 @@
 &lt;/blockquote&gt;
 &lt;p&gt;The idea permeates all creative endeavours. Would-be singer-songwriters, scientists, painters, and so on, start off by attempting to replicate some established piece of work. Andrew Ng captures this same idea in &lt;a href=&#34;http://qr.ae/TUTrnq&#34;&gt;this response to a question on Quora&lt;/a&gt; I stumbled upon while writing up this post:&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;“To go even further, read research papers (follow ML leaders on twitter to see what papers they’re excited about). Even better, try to replicate the results in the research papers. Trying to replicate others’ results is a one of the most effective but under-appreciated ways to get good at AI”&lt;/p&gt;
+&lt;p&gt;“To go even further, read research papers (follow ML leaders on twitter to see what papers they’re excited about). Even better, try to replicate the results in the research papers. Trying to replicate others’ results is one of the most effective but under-appreciated ways to get good at AI”&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-problem&#34; class=&#34;section level2&#34;&gt;
@@ -221,7 +221,7 @@ Computer Science - Robotics
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;We can search for papers under specific categories. For example, we can inspect papers submitted under Robotics in the first three months of 2018 using:&lt;/p&gt;
+&lt;p&gt;We can search for papers under specific categories. For example, we can inspect papers submitted under robotics in the first three months of 2018 using:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c(&amp;quot;cat:cs.RO&amp;quot;, 
   &amp;quot;submittedDate:[201801010000 TO 201802302400]&amp;quot;) %&amp;gt;% 
   str_flatten(&amp;quot; AND &amp;quot;) %&amp;gt;% 
@@ -301,7 +301,7 @@ Freeform Assembly Planning
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;We can search for papers by topic. For example, the following are a few of the most recent papers on Adversarial AI submitted from the beginning of the year to 7th June 2018.&lt;/p&gt;
+&lt;p&gt;We can search for papers by topic. For example, the following are a few of the most recent papers on adversarial AI submitted from the beginning of the year to 7th June 2018.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c(&amp;quot;ti:Adversarial&amp;quot;, 
   &amp;quot;submittedDate:[201801010000 TO 201806072400]&amp;quot;) %&amp;gt;% 
   str_flatten(&amp;quot; AND &amp;quot;) %&amp;gt;% 
@@ -326,57 +326,57 @@ title
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left;&#34;&gt;
-2018-05-09 04:58:57
+2018-02-15 17:13:18
 &lt;/td&gt;
 &lt;td style=&#34;text-align:left;&#34;&gt;
-1805.03371v2
+1802.05666v2
 &lt;/td&gt;
 &lt;td style=&#34;text-align:left;&#34;&gt;
-PSGAN: A Generative Adversarial Network for Remote Sensing Image Pan-Sharpening
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left;&#34;&gt;
-2018-05-30 02:27:10
-&lt;/td&gt;
-&lt;td style=&#34;text-align:left;&#34;&gt;
-1805.11778v2
-&lt;/td&gt;
-&lt;td style=&#34;text-align:left;&#34;&gt;
-Object Detection using Domain Randomization and Generative Adversarial Refinement of Synthetic Images
+Adversarial Risk and the Dangers of Evaluating Against Weak Attacks
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left;&#34;&gt;
-2018-03-19 15:07:51
+2018-05-21 10:58:10
 &lt;/td&gt;
 &lt;td style=&#34;text-align:left;&#34;&gt;
-1803.06978v2
+1805.07984v3
 &lt;/td&gt;
 &lt;td style=&#34;text-align:left;&#34;&gt;
-Improving Transferability of Adversarial Examples with Input Diversity
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left;&#34;&gt;
-2018-05-25 15:44:20
-&lt;/td&gt;
-&lt;td style=&#34;text-align:left;&#34;&gt;
-1805.10207v2
-&lt;/td&gt;
-&lt;td style=&#34;text-align:left;&#34;&gt;
-Conditional Generative Adversarial and Convolutional Networks for X-ray Breast Mass Segmentation and Shape Classification
+Adversarial Attacks on Neural Networks for Graph Data
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left;&#34;&gt;
-2018-02-07 22:44:37
+2018-06-05 17:04:37
 &lt;/td&gt;
 &lt;td style=&#34;text-align:left;&#34;&gt;
-1802.02664v3
+1806.02299v2
 &lt;/td&gt;
 &lt;td style=&#34;text-align:left;&#34;&gt;
-Geometry Score: A Method For Comparing Generative Adversarial Networks
+DPatch: Attacking Object Detectors with Adversarial Patches
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-06-07 23:27:16
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1806.02924v2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+On Adversarial Risk and Training
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2018-05-30 00:05:53
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1805.11752v2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Multi-turn Dialogue Response Generation in an Adversarial Learning Framework
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -388,12 +388,12 @@ Geometry Score: A Method For Comparing Generative Adversarial Networks
 &lt;h2&gt;GitHub&lt;/h2&gt;
 &lt;p&gt;Most new research in the machine learning community comprise open-source projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart’s content.&lt;/p&gt;
 &lt;p&gt;In this section, I will explore research projects hosted on GitHub. I will use the &lt;code&gt;httr&lt;/code&gt; package to access the &lt;a href=&#34;https://developer.github.com/v3/search/&#34;&gt;GitHub search API&lt;/a&gt;, and then use a few &lt;code&gt;tidyverse&lt;/code&gt; packages to extract the necessary data points.&lt;/p&gt;
-&lt;p&gt;Suppose we want to find the most starred repositories about Adversarial Neural Networks. We can start by creating a URL with a search query and pass that to &lt;code&gt;httr&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Suppose we want to find the most starred repositories about generative adversarial networks. We can start by creating a URL with a search query and pass that to &lt;code&gt;httr&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(httr)
 library(magrittr)
 
 url &amp;lt;- glue::glue(&amp;quot;https://api.github.com/search/repositories?&amp;quot;,
-                 &amp;quot;q=adversarial+networkin:name,description&amp;amp;&amp;quot;,
+                 &amp;quot;q=generative+adversarial+networkin:name,description&amp;amp;&amp;quot;,
                  &amp;quot;sort=stars&amp;amp;&amp;quot;, 
                  &amp;quot;order=desc&amp;quot;)
 
@@ -430,7 +430,7 @@ gh_repos &amp;lt;- GET(url) %&amp;gt;%
 ## [70] &amp;quot;open_issues&amp;quot;       &amp;quot;watchers&amp;quot;          &amp;quot;default_branch&amp;quot;   
 ## [73] &amp;quot;score&amp;quot;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;What we are looking for in our example is the GitHub URL and the number of stars for each repository (stargazers_count).&lt;/p&gt;
-&lt;p&gt;Let’s look at the top 5 most starred GitHub repos about Adversarial Neural Networks.&lt;/p&gt;
+&lt;p&gt;Let’s look at the top 5 most starred GitHub repositories in this category.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_info &amp;lt;- function(index){
   repository &amp;lt;- gh_repos %&amp;gt;% 
     use_series(&amp;quot;items&amp;quot;) %&amp;gt;% 
@@ -465,7 +465,7 @@ stars_count
 &lt;a href=&#34;https://github.com/carpedm20/DCGAN-tensorflow&#34; class=&#34;uri&#34;&gt;https://github.com/carpedm20/DCGAN-tensorflow&lt;/a&gt;
 &lt;/td&gt;
 &lt;td style=&#34;text-align:right;&#34;&gt;
-4265
+4271
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -481,7 +481,7 @@ stars_count
 &lt;a href=&#34;https://github.com/Newmu/dcgan_code&#34; class=&#34;uri&#34;&gt;https://github.com/Newmu/dcgan_code&lt;/a&gt;
 &lt;/td&gt;
 &lt;td style=&#34;text-align:right;&#34;&gt;
-2763
+2762
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -489,7 +489,7 @@ stars_count
 &lt;a href=&#34;https://github.com/eriklindernoren/Keras-GAN&#34; class=&#34;uri&#34;&gt;https://github.com/eriklindernoren/Keras-GAN&lt;/a&gt;
 &lt;/td&gt;
 &lt;td style=&#34;text-align:right;&#34;&gt;
-1888
+1895
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -497,7 +497,7 @@ stars_count
 &lt;a href=&#34;https://github.com/nightrome/really-awesome-gan&#34; class=&#34;uri&#34;&gt;https://github.com/nightrome/really-awesome-gan&lt;/a&gt;
 &lt;/td&gt;
 &lt;td style=&#34;text-align:right;&#34;&gt;
-1711
+1715
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;

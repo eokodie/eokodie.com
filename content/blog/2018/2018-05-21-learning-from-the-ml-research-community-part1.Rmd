@@ -22,7 +22,7 @@ Will Gompertz neatly paraphrases this in [Think Like an Artist](https://www.amaz
  
 The idea permeates all creative endeavours. Would-be singer-songwriters, scientists, painters, and so on, start off by attempting to replicate some established piece of work. Andrew Ng captures this same idea in [this response to a question on Quora](http://qr.ae/TUTrnq) I stumbled upon while writing up this post:
 
->"To go even further, read research papers (follow ML leaders on twitter to see what papers they're excited about). Even better, try to replicate the results in the research papers. Trying to replicate others' results is a one of the most effective but under-appreciated ways to get good at AI" 
+>"To go even further, read research papers (follow ML leaders on twitter to see what papers they're excited about). Even better, try to replicate the results in the research papers. Trying to replicate others' results is one of the most effective but under-appreciated ways to get good at AI" 
 
 ## The problem
 
@@ -73,7 +73,7 @@ arxiv_cats %>%
   pretty_print
 ```
 
-We can search for papers under specific categories. For example, we can inspect papers submitted under Robotics in the first three months of 2018 using:
+We can search for papers under specific categories. For example, we can inspect papers submitted under robotics in the first three months of 2018 using:
 ```{r}
 c("cat:cs.RO", 
   "submittedDate:[201801010000 TO 201802302400]") %>% 
@@ -84,7 +84,7 @@ c("cat:cs.RO",
   pretty_print()
 ```
 
-We can search for papers by topic. For example, the following are a few of the most recent papers on Adversarial AI submitted from the beginning of the year to 7th June 2018.
+We can search for papers by topic. For example, the following are a few of the most recent papers on adversarial AI submitted from the beginning of the year to 7th June 2018.
 ```{r}
 c("ti:Adversarial", 
   "submittedDate:[201801010000 TO 201806072400]") %>% 
@@ -103,14 +103,14 @@ Most new research in the machine learning community comprise open-source project
 
 In this section, I will explore research projects hosted on GitHub. I will use the `httr` package to access the [GitHub search API](https://developer.github.com/v3/search/), and then use a few `tidyverse` packages to extract the necessary data points.
 
-Suppose we want to find the most starred repositories about Adversarial Neural Networks.
+Suppose we want to find the most starred repositories about generative adversarial networks.
 We can start by creating a URL with a search query and pass that to `httr`.
 ```{r, warning=FALSE, message=FALSE}
 library(httr)
 library(magrittr)
 
 url <- glue::glue("https://api.github.com/search/repositories?",
-                 "q=adversarial+networkin:name,description&",
+                 "q=generative+adversarial+networkin:name,description&",
                  "sort=stars&", 
                  "order=desc")
 
@@ -128,7 +128,7 @@ gh_repos %>%
 
 What we are looking for in our example is the GitHub URL and the number of stars for each repository (stargazers_count).
 
-Let's look at the top 5 most starred GitHub repos about Adversarial Neural Networks.
+Let's look at the top 5 most starred GitHub repositories in this category.
 ```{r, warning=FALSE, message=FALSE}
 extract_info <- function(index){
   repository <- gh_repos %>% 
