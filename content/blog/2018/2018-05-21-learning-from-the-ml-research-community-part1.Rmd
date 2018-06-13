@@ -126,7 +126,7 @@ gh_repos %>%
   names()
 ```
 
-What we are look for in our example is the GitHub URL and the number of stars for each repository (stargazers_count).
+What we are looking for in our example is the GitHub URL and the number of stars for each repository (stargazers_count).
 
 Let's look at the top 5 most starred GitHub repos about Adversarial Neural Networks.
 ```{r, warning=FALSE, message=FALSE}
