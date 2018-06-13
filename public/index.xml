@@ -386,7 +386,7 @@ Geometry Score: A Method For Comparing Generative Adversarial Networks
 &lt;/div&gt;
 &lt;div id=&#34;github&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;GitHub&lt;/h2&gt;
-&lt;p&gt;Most new research in the machine learning community comprise open-sourced projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart’s content.&lt;/p&gt;
+&lt;p&gt;Most new research in the machine learning community comprise open-source projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart’s content.&lt;/p&gt;
 &lt;p&gt;In this section, I will explore research projects hosted on GitHub. I will use the &lt;code&gt;httr&lt;/code&gt; package to access the &lt;a href=&#34;https://developer.github.com/v3/search/&#34;&gt;GitHub search API&lt;/a&gt;, and then use a few &lt;code&gt;tidyverse&lt;/code&gt; packages to extract the necessary data points.&lt;/p&gt;
 &lt;p&gt;Suppose we want to find the most starred repositories about Adversarial Neural Networks. We can start by creating a URL with a search query and pass that to &lt;code&gt;httr&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(httr)

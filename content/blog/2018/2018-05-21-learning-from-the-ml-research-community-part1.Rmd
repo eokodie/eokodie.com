@@ -99,7 +99,7 @@ We can build complex queries based on specific needs by chaining multiple querie
 
 ## GitHub
 
-Most new research in the machine learning community comprise open-sourced projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart's content. 
+Most new research in the machine learning community comprise open-source projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart's content. 
 
 In this section, I will explore research projects hosted on GitHub. I will use the `httr` package to access the [GitHub search API](https://developer.github.com/v3/search/), and then use a few `tidyverse` packages to extract the necessary data points.
 
