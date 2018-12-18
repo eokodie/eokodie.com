@@ -13,9 +13,9 @@
 <meta property="og:site_name" content="Ernest Omane-Kodie" />
 <meta property="og:locale" content="nn_NO" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/about/" />
-<meta property="og:title" content="About" />
-<meta property="twitter:title" content="About">
+<meta property="og:url" content="/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/" />
+<meta property="og:title" content="FP helpers from purrr and friends, part 1 | Rowwise operations" />
+<meta property="twitter:title" content="FP helpers from purrr and friends, part 1 | Rowwise operations">
 
     <meta property="twitter:card" content="summary">
 
@@ -25,10 +25,10 @@
 <title>
 
 
-     Ernest Omane-Kodie - About 
+     Ernest Omane-Kodie - FP helpers from purrr and friends, part 1 | Rowwise operations 
 
 </title>
-<link rel="canonical" href="/about/">
+<link rel="canonical" href="/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/">
 
 
 <style media="screen">
@@ -1090,35 +1090,547 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
     </div>
 </div>
 
-<div class="main column">
+
+
+
+<div class="main post non-narrow zero-top-spacing column">
     <div class="container">
         <div class="content">
-            <div class="page-heading">
+            <div class="front-matter">
+                <div class="title-container">
+                    <div class="page-heading">
 
-    About
+    FP helpers from purrr and friends, part 1 | Rowwise operations
 
 </div>
 
+                </div>
+                <div class="meta">
+                    <div class="date" title="Tue Dec 18 2018 21:13:14 -0500">Dec 18, 2018</div>
+                    
+                        
+                        <div class="author middot" title="Ernest Omane-Kodie">Ernest Omane-Kodie</div>
+                        
+                    
+                    <div class="reading-time middot">4 minute read</div>
+                    <div class="tags">
+                        <ul>
+                          
+                            <li class="middot"><a href="/tags/rstats">rstats</a> </li>
+                          
+                            <li class="middot"><a href="/tags/functional-programming">functional programming</a> </li>
+                          
+                        </ul>
+                    </div>
+                    <div class="tags">
+                        <ul>
+                          
+                          
+                        </ul>
+                    </div>
+                </div>
+            </div>
             <div class="markdown">
                 
     
-    <p>My name is Ernest Omane-Kodie. I work at <a href="https://www.lloydsbankinggroup.com/" title="Views expressed here are my own and do not represent the views of my employer">Lloyds Banking Group</a> where I use open-source technologies, data engineering and data science techniques to come up with answers to interesting questions concerning data of all kinds.</p>
+    
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
 
+
+<iframe src="https://giphy.com/embed/3oriO0OEd9QIDdllqo" width="480" height="477" frameBorder="0" class="giphy-embed" allowFullScreen>
+</iframe>
+<p>
+<a href="https://giphy.com/gifs/jerseydemic-3oriO0OEd9QIDdllqo">via GIPHY</a>
+</p>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>This series of blog posts is inspired by <a href="https://twitter.com/drob?lang=en">David Robinson’s</a> tweet:</p>
 <blockquote>
-<p>&ldquo;The impulse to keep to yourself what you have learned is not only shameful, it is destructive. Anything you do not give freely and abundantly becomes lost to you. You open your safe and find ashes&rdquo; - Annie Dillard</p>
+<p>When you’ve given the same in-person advice 3 times, write a blog post.</p>
 </blockquote>
+<p>In each instalment in the series, I will walk through simple scenarios to illustrate how functional programming tools from <a href="https://purrr.tidyverse.org/"><code>purrr</code></a> and related packages can bring quality of life improvements to tidyverse workflows.</p>
+<pre class="r"><code>library(tidyverse)
+library(magrittr)
+library(kableExtra)</code></pre>
+<pre class="r"><code>pretty_print &lt;- function(df){
+  result &lt;- df %&gt;% 
+    kable() %&gt;% 
+    kable_styling(font_size = 14) %&gt;% 
+    row_spec(0, bold = T, font_size = 14)
+  return(result)
+}</code></pre>
+</div>
+<div id="rowwise-operations-on-all-columns-in-a-dataframe" class="section level2">
+<h2>Rowwise operations on all columns in a dataframe</h2>
+<div id="background" class="section level3">
+<h3>Background</h3>
+<p>We will use a small subset of the <code>planes</code> dataset to illustrate this example.</p>
+<pre class="r"><code>df &lt;- nycflights13::planes %&gt;% 
+  select(tailnum, year, engine) %&gt;% 
+  head(4)
 
-<p>I have learned a lot from the amazing rstats community over the years. I started this blog as a way of giving back, through musings on the R programming language, data and visualisation.</p>
+df %&gt;% pretty_print</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+</tr>
+</tbody>
+</table>
+<p>Suppose we want to create a new column by concatenating elements in each row of the dataframe to form a string.</p>
+<p>Base R provides a way of performing this type operation: <code>apply</code>. <code>apply</code> is an example of a <a href="https://adv-r.hadley.nz/functionals.html">functional</a> (a function that takes a function as an input and returns a vector as the output).</p>
+<p>How does it work?</p>
+<p><code>apply</code> generates results by applying a function to the margins of an array or matrix. So, in our example, we can implement rowwise string concatenation by setting <code>apply</code>’s <code>MARGIN</code> argument to 1:</p>
+<pre class="r"><code>df_base &lt;- df
+df_base$id = apply(df, 1, paste, collapse = &quot; &quot;)
+pretty_print(df_base)</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N10156 2004 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N102UW 1998 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N103US 1999 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N104UW 1999 Turbo-fan
+</td>
+</tr>
+</tbody>
+</table>
+<p>How can we implement this with tidyverse tools?</p>
+</div>
+<div id="pmap-mutate" class="section level3">
+<h3>pmap + mutate</h3>
+<p>We can solve this with <code>purrr::pmap</code> in a <code>dplyr::mutate</code> call. <code>pmap</code> is a member of the <code>map</code> family of functionals from <code>purrr</code> which allows vectorised iteration over more than one argument. If you are new to <code>map</code>, the <a href="https://r4ds.had.co.nz/iteration.html">iteration chapter of R for Data Science</a> is worth reading.</p>
+<p>We will solve the problem in our example in two steps:</p>
+<ul>
+<li><p>Create an anonymous function which performs string concatenation on any number of arguments passed to it</p></li>
+<li><p>Pass the anonymous function as an argument to <code>purrr::pmap_chr</code>.</p></li>
+</ul>
+<p><code>pmap_chr</code> is a stricter variant of <code>pmap</code> which always returns a character vector. This ensures that there are no surprises in our output as a result of R’s weak type system.</p>
+<pre class="r"><code>df %&gt;% 
+  mutate(id = pmap_chr(., ~paste(..., collapse = &quot; &quot;))) %&gt;% 
+  pretty_print() </code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N10156 2004 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N102UW 1998 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N103US 1999 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N104UW 1999 Turbo-fan
+</td>
+</tr>
+</tbody>
+</table>
+<p>Notice that instead of passing an anonymous function to <code>pmap</code> we passed a formula. <code>purrr</code> supports this syntax to make it possible for users to create very compact anonymous functions on the fly.</p>
+<p>This works because, under the hood, <code>pmap</code> (like all <code>purrr</code> functionals) translates formulas into mapper functions using <code>purrr::as_mapper</code>. This means that the formula in our example will look like this behind the scenes:</p>
+<pre class="r"><code>as_mapper(~paste(..., collapse = &quot; &quot;))</code></pre>
+<pre><code>## &lt;lambda&gt;
+## function (..., .x = ..1, .y = ..2, . = ..1) 
+## paste(..., collapse = &quot; &quot;)
+## attr(,&quot;class&quot;)
+## [1] &quot;rlang_lambda_function&quot;</code></pre>
+</div>
+</div>
+<div id="rowwise-operations-on-specific-columns-in-a-dataframe" class="section level2">
+<h2>Rowwise operations on specific columns in a dataframe</h2>
+<p>As a concrete example, imagine we want to create a new column by concatenating year and tailnum.</p>
+<p>How do we achieve this with tidyverse tools?</p>
+<div id="mutate-pmap" class="section level3">
+<h3>mutate + pmap</h3>
+<p>There are a few ways of doing this with a similar approach to the <code>mutate</code> + <code>pmap</code> workflow from the previous example.</p>
+<p>We can solve the problem with a neat trick by taking <a href="https://community.rstudio.com/t/dplyr-alternatives-to-rowwise/8071/29">a leaf out of Hadley Wickham’s book.</a> This approach uses <code>list()</code>, instead of the dot placeholder, to match arguments (to the anonymous function) by name.</p>
+<pre class="r"><code>df %&gt;% 
+  mutate(id = pmap_chr(list(year, tailnum), ~paste(..., collapse = &quot; &quot;))) %&gt;% 
+  pretty_print() </code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+2004 N10156
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1998 N102UW
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1999 N103US
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1999 N104UW
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="rap" class="section level3">
+<h3>rap</h3>
+<p>While writing up this post, I stumbled upon <a href="https://github.com/romainfrancois/rap">Romain Francois’ rap package</a> which provides a nice alternative to the <code>pmap</code> + <code>mutate</code> approach to row-oriented operations.</p>
+<p><code>rap</code>, like <code>map</code>, works with anonymous functions supplied as formulas. The main difference is that with <code>rap</code> the anonymous functions can directly use column names.</p>
+<pre class="r"><code>library(rap)
 
-<p>This blog is built entirely in R using <a href="https://github.com/rstudio/blogdown">blogdown</a>, and deployed with <a href="https://www.netlify.com/">Netlify</a>. All articles posted on this blog are released under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+df %&gt;% 
+  rap(id = character() ~ paste(year, tailnum, collapse = &quot; &quot;)) %&gt;% 
+  pretty_print</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+2004 N10156
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1998 N102UW
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1999 N103US
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1999 N104UW
+</td>
+</tr>
+</tbody>
+</table>
+<p>Note that the left hand side (lhs) of the formula specifies the type of results returned. If the lhs is empty, <code>rap</code> adds a list column to the dataframe.</p>
+</div>
+</div>
 
-<p>My posts are published on <a href="https://rweekly.org/">R Weekly</a> and <a href="https://www.r-bloggers.com/">R-Bloggers</a> along with lots of great R related content.</p>
 
-
+                <br>
             </div>
+            
+            <div class="share">
+                  
+                  <a href="" class="ssk ssk-facebook"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-twitter"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-google-plus"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-linkedin"></a>
+                  
+            </div>
+            
+            
+                <div class="navigation">
+                    
+                    <div>
+                        <img class="icon" src="/img/back.svg" alt="back" />
+                        <a href="/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research-part-1/">Drinking from the Firehose: using R to keep up with current ML Research - part 1</a>
+                    </div>
+                    
+                    <div style="width: 100%;"></div>
+                    
+                </div>
+            
+            <br>
+            <div class="disqus">
+                
+            </div>
+            
         </div>
     </div>
 </div>
+
 <div class="footer column">
     <div class="container">
 

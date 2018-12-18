@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Functional Programming on Ernest Omane-Kodie</title>
+    <link>/tags/functional-programming/</link>
+    <description>Recent content in Functional Programming on Ernest Omane-Kodie</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Tue, 18 Dec 2018 21:13:14 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/functional-programming/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>FP helpers from purrr and friends, part 1 | Rowwise operations</title>
+      <link>/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/</link>
+      <pubDate>Tue, 18 Dec 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/</guid>
+      <description>via GIPHYMotivationThis series of blog posts is inspired by David Robinson’s tweet:
+When you’ve given the same in-person advice 3 times, write a blog post.
+In each instalment in the series, I will walk through simple scenarios to illustrate how functional programming tools from purrr and related packages can bring quality of life improvements to tidyverse workflows.
+library(tidyverse)library(magrittr)library(kableExtra)pretty_print &amp;lt;- function(df){result &amp;lt;- df %&amp;gt;% kable() %&amp;gt;% kable_styling(font_size = 14) %&amp;gt;% row_spec(0, bold = T, font_size = 14)return(result)}Rowwise operations on all columns in a dataframeBackgroundWe will use a small subset of the planes dataset to illustrate this example.</description>
+    </item>
+    
+  </channel>
+</rss>

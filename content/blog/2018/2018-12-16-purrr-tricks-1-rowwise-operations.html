@@ -1,0 +1,464 @@
+---
+title: "FP helpers from purrr and friends, part 1 | Rowwise operations" 
+author: "Ernest Omane-Kodie"
+date: 2018-12-18T21:13:14-05:00 
+categories: ["R"]
+tags: ["rstats", "functional programming"]
+---
+
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+
+
+<iframe src="https://giphy.com/embed/3oriO0OEd9QIDdllqo" width="480" height="477" frameBorder="0" class="giphy-embed" allowFullScreen>
+</iframe>
+<p>
+<a href="https://giphy.com/gifs/jerseydemic-3oriO0OEd9QIDdllqo">via GIPHY</a>
+</p>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>This series of blog posts is inspired by <a href="https://twitter.com/drob?lang=en">David Robinson’s</a> tweet:</p>
+<blockquote>
+<p>When you’ve given the same in-person advice 3 times, write a blog post.</p>
+</blockquote>
+<p>In each instalment in the series, I will walk through simple scenarios to illustrate how functional programming tools from <a href="https://purrr.tidyverse.org/"><code>purrr</code></a> and related packages can bring quality of life improvements to tidyverse workflows.</p>
+<pre class="r"><code>library(tidyverse)
+library(magrittr)
+library(kableExtra)</code></pre>
+<pre class="r"><code>pretty_print &lt;- function(df){
+  result &lt;- df %&gt;% 
+    kable() %&gt;% 
+    kable_styling(font_size = 14) %&gt;% 
+    row_spec(0, bold = T, font_size = 14)
+  return(result)
+}</code></pre>
+</div>
+<div id="rowwise-operations-on-all-columns-in-a-dataframe" class="section level2">
+<h2>Rowwise operations on all columns in a dataframe</h2>
+<div id="background" class="section level3">
+<h3>Background</h3>
+<p>We will use a small subset of the <code>planes</code> dataset to illustrate this example.</p>
+<pre class="r"><code>df &lt;- nycflights13::planes %&gt;% 
+  select(tailnum, year, engine) %&gt;% 
+  head(4)
+
+df %&gt;% pretty_print</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+</tr>
+</tbody>
+</table>
+<p>Suppose we want to create a new column by concatenating elements in each row of the dataframe to form a string.</p>
+<p>Base R provides a way of performing this type operation: <code>apply</code>. <code>apply</code> is an example of a <a href="https://adv-r.hadley.nz/functionals.html">functional</a> (a function that takes a function as an input and returns a vector as the output).</p>
+<p>How does it work?</p>
+<p><code>apply</code> generates results by applying a function to the margins of an array or matrix. So, in our example, we can implement rowwise string concatenation by setting <code>apply</code>’s <code>MARGIN</code> argument to 1:</p>
+<pre class="r"><code>df_base &lt;- df
+df_base$id = apply(df, 1, paste, collapse = &quot; &quot;)
+pretty_print(df_base)</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N10156 2004 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N102UW 1998 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N103US 1999 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N104UW 1999 Turbo-fan
+</td>
+</tr>
+</tbody>
+</table>
+<p>How can we implement this with tidyverse tools?</p>
+</div>
+<div id="pmap-mutate" class="section level3">
+<h3>pmap + mutate</h3>
+<p>We can solve this with <code>purrr::pmap</code> in a <code>dplyr::mutate</code> call. <code>pmap</code> is a member of the <code>map</code> family of functionals from <code>purrr</code> which allows vectorised iteration over more than one argument. If you are new to <code>map</code>, the <a href="https://r4ds.had.co.nz/iteration.html">iteration chapter of R for Data Science</a> is worth reading.</p>
+<p>We will solve the problem in our example in two steps:</p>
+<ul>
+<li><p>Create an anonymous function which performs string concatenation on any number of arguments passed to it</p></li>
+<li><p>Pass the anonymous function as an argument to <code>purrr::pmap_chr</code>.</p></li>
+</ul>
+<p><code>pmap_chr</code> is a stricter variant of <code>pmap</code> which always returns a character vector. This ensures that there are no surprises in our output as a result of R’s weak type system.</p>
+<pre class="r"><code>df %&gt;% 
+  mutate(id = pmap_chr(., ~paste(..., collapse = &quot; &quot;))) %&gt;% 
+  pretty_print() </code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N10156 2004 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N102UW 1998 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N103US 1999 Turbo-fan
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+N104UW 1999 Turbo-fan
+</td>
+</tr>
+</tbody>
+</table>
+<p>Notice that instead of passing an anonymous function to <code>pmap</code> we passed a formula. <code>purrr</code> supports this syntax to make it possible for users to create very compact anonymous functions on the fly.</p>
+<p>This works because, under the hood, <code>pmap</code> (like all <code>purrr</code> functionals) translates formulas into mapper functions using <code>purrr::as_mapper</code>. This means that the formula in our example will look like this behind the scenes:</p>
+<pre class="r"><code>as_mapper(~paste(..., collapse = &quot; &quot;))</code></pre>
+<pre><code>## &lt;lambda&gt;
+## function (..., .x = ..1, .y = ..2, . = ..1) 
+## paste(..., collapse = &quot; &quot;)
+## attr(,&quot;class&quot;)
+## [1] &quot;rlang_lambda_function&quot;</code></pre>
+</div>
+</div>
+<div id="rowwise-operations-on-specific-columns-in-a-dataframe" class="section level2">
+<h2>Rowwise operations on specific columns in a dataframe</h2>
+<p>As a concrete example, imagine we want to create a new column by concatenating year and tailnum.</p>
+<p>How do we achieve this with tidyverse tools?</p>
+<div id="mutate-pmap" class="section level3">
+<h3>mutate + pmap</h3>
+<p>There are a few ways of doing this with a similar approach to the <code>mutate</code> + <code>pmap</code> workflow from the previous example.</p>
+<p>We can solve the problem with a neat trick by taking <a href="https://community.rstudio.com/t/dplyr-alternatives-to-rowwise/8071/29">a leaf out of Hadley Wickham’s book.</a> This approach uses <code>list()</code>, instead of the dot placeholder, to match arguments (to the anonymous function) by name.</p>
+<pre class="r"><code>df %&gt;% 
+  mutate(id = pmap_chr(list(year, tailnum), ~paste(..., collapse = &quot; &quot;))) %&gt;% 
+  pretty_print() </code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+2004 N10156
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1998 N102UW
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1999 N103US
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1999 N104UW
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="rap" class="section level3">
+<h3>rap</h3>
+<p>While writing up this post, I stumbled upon <a href="https://github.com/romainfrancois/rap">Romain Francois’ rap package</a> which provides a nice alternative to the <code>pmap</code> + <code>mutate</code> approach to row-oriented operations.</p>
+<p><code>rap</code>, like <code>map</code>, works with anonymous functions supplied as formulas. The main difference is that with <code>rap</code> the anonymous functions can directly use column names.</p>
+<pre class="r"><code>library(rap)
+
+df %&gt;% 
+  rap(id = character() ~ paste(year, tailnum, collapse = &quot; &quot;)) %&gt;% 
+  pretty_print</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+tailnum
+</th>
+<th style="text-align:right;font-weight: bold;font-size: 14px;">
+year
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+engine
+</th>
+<th style="text-align:left;font-weight: bold;font-size: 14px;">
+id
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+N10156
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+2004 N10156
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N102UW
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1998 N102UW
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N103US
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1999 N103US
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N104UW
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:left;">
+Turbo-fan
+</td>
+<td style="text-align:left;">
+1999 N104UW
+</td>
+</tr>
+</tbody>
+</table>
+<p>Note that the left hand side (lhs) of the formula specifies the type of results returned. If the lhs is empty, <code>rap</code> adds a list column to the dataframe.</p>
+</div>
+</div>

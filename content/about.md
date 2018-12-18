@@ -3,7 +3,7 @@ date = "2018-04-19"
 title = "About"
 +++
 
-My name is Ernest Omane-Kodie. I work at [AXA](https://www.axa.com/en/about-us/emerging-risks "Views represented here are my own and do not represent the views of my employer") where I use open-source technology, data science techniques and pricing principles to come up with answers to interesting questions concerning data of all kinds.
+My name is Ernest Omane-Kodie. I work at [Lloyds Banking Group](https://www.lloydsbankinggroup.com/ "Views expressed here are my own and do not represent the views of my employer") where I use open-source technologies, data engineering and data science techniques to come up with answers to interesting questions concerning data of all kinds.
 
 >"The impulse to keep to yourself what you have learned is not only shameful, it is destructive. Anything you do not give freely and abundantly becomes lost to you. You open your safe and find ashes" - Annie Dillard
 
