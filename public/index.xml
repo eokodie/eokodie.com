@@ -6,18 +6,485 @@
     <description>Recent content on Ernest Omane-Kodie</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 12 Jun 2018 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 18 Dec 2018 21:13:14 -0500</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>FP helpers from purrr and friends, part 1 | Rowwise operations</title>
+      <link>/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/</link>
+      <pubDate>Tue, 18 Dec 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;iframe src=&#34;https://giphy.com/embed/3oriO0OEd9QIDdllqo&#34; width=&#34;480&#34; height=&#34;477&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://giphy.com/gifs/jerseydemic-3oriO0OEd9QIDdllqo&#34;&gt;via GIPHY&lt;/a&gt;
+&lt;/p&gt;
+&lt;div id=&#34;motivation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Motivation&lt;/h2&gt;
+&lt;p&gt;This series of blog posts is inspired by &lt;a href=&#34;https://twitter.com/drob?lang=en&#34;&gt;David Robinson’s&lt;/a&gt; tweet:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;When you’ve given the same in-person advice 3 times, write a blog post.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In each instalment in the series, I will walk through simple scenarios to illustrate how functional programming tools from &lt;a href=&#34;https://purrr.tidyverse.org/&#34;&gt;&lt;code&gt;purrr&lt;/code&gt;&lt;/a&gt; and related packages can bring quality of life improvements to tidyverse workflows.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(magrittr)
+library(kableExtra)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pretty_print &amp;lt;- function(df){
+  result &amp;lt;- df %&amp;gt;% 
+    kable() %&amp;gt;% 
+    kable_styling(font_size = 14) %&amp;gt;% 
+    row_spec(0, bold = T, font_size = 14)
+  return(result)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rowwise-operations-on-all-columns-in-a-dataframe&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Rowwise operations on all columns in a dataframe&lt;/h2&gt;
+&lt;div id=&#34;background&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Background&lt;/h3&gt;
+&lt;p&gt;We will use a small subset of the &lt;code&gt;planes&lt;/code&gt; dataset to illustrate this example.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- nycflights13::planes %&amp;gt;% 
+  select(tailnum, year, engine) %&amp;gt;% 
+  head(4)
+
+df %&amp;gt;% pretty_print&lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+tailnum
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-weight: bold;font-size: 14px;&#34;&gt;
+year
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+engine
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N10156
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2004
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N102UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1998
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N103US
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N104UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Suppose we want to create a new column by concatenating elements in each row of the dataframe to form a string.&lt;/p&gt;
+&lt;p&gt;Base R provides a way of performing this type operation: &lt;code&gt;apply&lt;/code&gt;. &lt;code&gt;apply&lt;/code&gt; is an example of a &lt;a href=&#34;https://adv-r.hadley.nz/functionals.html&#34;&gt;functional&lt;/a&gt; (a function that takes a function as an input and returns a vector as the output).&lt;/p&gt;
+&lt;p&gt;How does it work?&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;apply&lt;/code&gt; generates results by applying a function to the margins of an array or matrix. So, in our example, we can implement rowwise string concatenation by setting &lt;code&gt;apply&lt;/code&gt;’s &lt;code&gt;MARGIN&lt;/code&gt; argument to 1:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_base &amp;lt;- df
+df_base$id = apply(df, 1, paste, collapse = &amp;quot; &amp;quot;)
+pretty_print(df_base)&lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+tailnum
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-weight: bold;font-size: 14px;&#34;&gt;
+year
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+engine
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+id
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N10156
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2004
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N10156 2004 Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N102UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1998
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N102UW 1998 Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N103US
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N103US 1999 Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N104UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N104UW 1999 Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;How can we implement this with tidyverse tools?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pmap-mutate&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;pmap + mutate&lt;/h3&gt;
+&lt;p&gt;We can solve this with &lt;code&gt;purrr::pmap&lt;/code&gt; in a &lt;code&gt;dplyr::mutate&lt;/code&gt; call. &lt;code&gt;pmap&lt;/code&gt; is a member of the &lt;code&gt;map&lt;/code&gt; family of functionals from &lt;code&gt;purrr&lt;/code&gt; which allows vectorised iteration over more than one argument. If you are new to &lt;code&gt;map&lt;/code&gt;, the &lt;a href=&#34;https://r4ds.had.co.nz/iteration.html&#34;&gt;iteration chapter of R for Data Science&lt;/a&gt; is worth reading.&lt;/p&gt;
+&lt;p&gt;We will solve the problem in our example in two steps:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Create an anonymous function which performs string concatenation on any number of arguments passed to it&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pass the anonymous function as an argument to &lt;code&gt;purrr::pmap_chr&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;pmap_chr&lt;/code&gt; is a stricter variant of &lt;code&gt;pmap&lt;/code&gt; which always returns a character vector. This ensures that there are no surprises in our output as a result of R’s weak type system.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df %&amp;gt;% 
+  mutate(id = pmap_chr(., ~paste(..., collapse = &amp;quot; &amp;quot;))) %&amp;gt;% 
+  pretty_print() &lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+tailnum
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-weight: bold;font-size: 14px;&#34;&gt;
+year
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+engine
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+id
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N10156
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2004
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N10156 2004 Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N102UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1998
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N102UW 1998 Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N103US
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N103US 1999 Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N104UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N104UW 1999 Turbo-fan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Notice that instead of passing an anonymous function to &lt;code&gt;pmap&lt;/code&gt; we passed a formula. &lt;code&gt;purrr&lt;/code&gt; supports this syntax to make it possible for users to create very compact anonymous functions on the fly.&lt;/p&gt;
+&lt;p&gt;This works because, under the hood, &lt;code&gt;pmap&lt;/code&gt; (like all &lt;code&gt;purrr&lt;/code&gt; functionals) translates formulas into mapper functions using &lt;code&gt;purrr::as_mapper&lt;/code&gt;. This means that the formula in our example will look like this behind the scenes:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;as_mapper(~paste(..., collapse = &amp;quot; &amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;lambda&amp;gt;
+## function (..., .x = ..1, .y = ..2, . = ..1) 
+## paste(..., collapse = &amp;quot; &amp;quot;)
+## attr(,&amp;quot;class&amp;quot;)
+## [1] &amp;quot;rlang_lambda_function&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rowwise-operations-on-specific-columns-in-a-dataframe&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Rowwise operations on specific columns in a dataframe&lt;/h2&gt;
+&lt;p&gt;As a concrete example, imagine we want to create a new column by concatenating year and tailnum.&lt;/p&gt;
+&lt;p&gt;How do we achieve this with tidyverse tools?&lt;/p&gt;
+&lt;div id=&#34;mutate-pmap&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;mutate + pmap&lt;/h3&gt;
+&lt;p&gt;There are a few ways of doing this with a similar approach to the &lt;code&gt;mutate&lt;/code&gt; + &lt;code&gt;pmap&lt;/code&gt; workflow from the previous example.&lt;/p&gt;
+&lt;p&gt;We can solve the problem with a neat trick by taking &lt;a href=&#34;https://community.rstudio.com/t/dplyr-alternatives-to-rowwise/8071/29&#34;&gt;a leaf out of Hadley Wickham’s book.&lt;/a&gt; This approach uses &lt;code&gt;list()&lt;/code&gt;, instead of the dot placeholder, to match arguments (to the anonymous function) by name.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df %&amp;gt;% 
+  mutate(id = pmap_chr(list(year, tailnum), ~paste(..., collapse = &amp;quot; &amp;quot;))) %&amp;gt;% 
+  pretty_print() &lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+tailnum
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-weight: bold;font-size: 14px;&#34;&gt;
+year
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+engine
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+id
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N10156
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2004
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2004 N10156
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N102UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1998
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1998 N102UW
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N103US
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1999 N103US
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N104UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1999 N104UW
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rap&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;rap&lt;/h3&gt;
+&lt;p&gt;While writing up this post, I stumbled upon &lt;a href=&#34;https://github.com/romainfrancois/rap&#34;&gt;Romain Francois’ rap package&lt;/a&gt; which provides a nice alternative to the &lt;code&gt;pmap&lt;/code&gt; + &lt;code&gt;mutate&lt;/code&gt; approach to row-oriented operations.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;rap&lt;/code&gt;, like &lt;code&gt;map&lt;/code&gt;, works with anonymous functions supplied as formulas. The main difference is that with &lt;code&gt;rap&lt;/code&gt; the anonymous functions can directly use column names.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rap)
+
+df %&amp;gt;% 
+  rap(id = character() ~ paste(year, tailnum, collapse = &amp;quot; &amp;quot;)) %&amp;gt;% 
+  pretty_print&lt;/code&gt;&lt;/pre&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 14px; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+tailnum
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-weight: bold;font-size: 14px;&#34;&gt;
+year
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+engine
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-weight: bold;font-size: 14px;&#34;&gt;
+id
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N10156
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2004
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2004 N10156
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N102UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1998
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1998 N102UW
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N103US
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1999 N103US
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+N104UW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1999
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Turbo-fan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1999 N104UW
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Note that the left hand side (lhs) of the formula specifies the type of results returned. If the lhs is empty, &lt;code&gt;rap&lt;/code&gt; adds a list column to the dataframe.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Drinking from the Firehose: using R to keep up with current ML Research - part 1</title>
-      <link>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research---part-1/</link>
+      <link>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research-part-1/</link>
       <pubDate>Tue, 12 Jun 2018 21:13:14 -0500</pubDate>
       
-      <guid>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research---part-1/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+      <guid>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research-part-1/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;iframe src=&#34;https://giphy.com/embed/GSgZ1Flo2U9UI&#34; width=&#34;480&#34; height=&#34;360&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
@@ -540,11 +1007,14 @@ names(jmlr)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Colours &amp; Impact: Resources for Data Visualization with a splash of R</title>
-      <link>/blog/colours--impact-resources-for-data-visualization-with-a-splash-of-r/</link>
+      <link>/blog/colours-impact-resources-for-data-visualization-with-a-splash-of-r/</link>
       <pubDate>Mon, 11 Jun 2018 21:13:14 -0500</pubDate>
       
-      <guid>/blog/colours--impact-resources-for-data-visualization-with-a-splash-of-r/</guid>
-      <description>&lt;iframe src=&#34;https://giphy.com/embed/PH8gHFw2YJPaM&#34; width=&#34;383&#34; height=&#34;480&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
+      <guid>/blog/colours-impact-resources-for-data-visualization-with-a-splash-of-r/</guid>
+      <description>
+
+
+&lt;iframe src=&#34;https://giphy.com/embed/PH8gHFw2YJPaM&#34; width=&#34;383&#34; height=&#34;480&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
 &lt;/iframe&gt;
 &lt;p&gt;
 &lt;a href=&#34;https://giphy.com/gifs/paint-knife-palette-PH8gHFw2YJPaM&#34;&gt;via GIPHY&lt;/a&gt;
@@ -660,7 +1130,8 @@ cran_pkgs %&amp;gt;%
       <pubDate>Mon, 30 Apr 2018 21:13:14 -0500</pubDate>
       
       <guid>/blog/need-for-speed-benchmarks-on-dataframes/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;/rmarkdown-libs/proj4js/proj4.js&#34;&gt;&lt;/script&gt;
 &lt;link href=&#34;/rmarkdown-libs/highcharts/css/motion.css&#34; rel=&#34;stylesheet&#34; /&gt;
@@ -943,7 +1414,10 @@ ls(pattern = pattern) %&amp;gt;%
       <pubDate>Fri, 13 Apr 2018 21:13:14 -0500</pubDate>
       
       <guid>/blog/installing-missing-packages-from-bioconductor-cran-and-github/</guid>
-      <description>&lt;iframe src=&#34;https://giphy.com/embed/DZCtWie9jivao&#34; width=&#34;480&#34; height=&#34;270&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
+      <description>
+
+
+&lt;iframe src=&#34;https://giphy.com/embed/DZCtWie9jivao&#34; width=&#34;480&#34; height=&#34;270&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
 &lt;/iframe&gt;
 &lt;p&gt;
 &lt;a href=&#34;https://giphy.com/gifs/disk-floppy-DZCtWie9jivao&#34;&gt;via GIPHY&lt;/a&gt;
