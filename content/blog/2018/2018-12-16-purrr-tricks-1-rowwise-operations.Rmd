@@ -52,7 +52,7 @@ Suppose we want to create a new column by concatenating elements in each row of 
 
 Base R provides a [__functional__](https://adv-r.hadley.nz/functionals.html) (a function which takes one or more functions as arguments) for performing this type of operation: `apply`. `apply` belongs to a special group of functionals: the [`map family`](https://en.wikipedia.org/wiki/Map_(higher-order_function)) (functions that take a function and a list as inputs, and return a new list with the function applied to each element from the list).
 
-__How does it work?__ 
+How does it work?
 
 Under the hood, `apply` inspects the object to which the function will be applied and coerces it to a matrix if the object is two-dimentional (e.g. a dataframe). Otherwise, the object is coerced to an array. After this step, the function is applied to either the rows (along `MARGIN` 1) or columns (along `MARGIN` 2) of the matrix or array.
 
