@@ -12,11 +12,11 @@
     
     
     <item>
-      <title>FP helpers from purrr and friends, part 1 | Rowwise operations</title>
-      <link>/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/</link>
+      <title>Functional Programming helpers from purrr and friends, part 1 | Rowwise operations</title>
+      <link>/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/</link>
       <pubDate>Tue, 18 Dec 2018 21:13:14 -0500</pubDate>
       
-      <guid>/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/</guid>
+      <guid>/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/</guid>
       <description>via GIPHYMotivationThis series of blog posts is inspired by David Robinson’s tweet:
 When you’ve given the same in-person advice 3 times, write a blog post.
 In each instalment in the series, I will walk through simple scenarios to illustrate how functional programming tools from purrr and related packages can bring quality of life improvements to tidyverse workflows.

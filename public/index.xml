@@ -12,11 +12,11 @@
     
     
     <item>
-      <title>FP helpers from purrr and friends, part 1 | Rowwise operations</title>
-      <link>/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/</link>
+      <title>Functional Programming helpers from purrr and friends, part 1 | Rowwise operations</title>
+      <link>/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/</link>
       <pubDate>Tue, 18 Dec 2018 21:13:14 -0500</pubDate>
       
-      <guid>/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/</guid>
+      <guid>/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/</guid>
       <description>
 &lt;script src=&#34;/rmarkdown-libs/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
 
@@ -116,9 +116,10 @@ Turbo-fan
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Suppose we want to create a new column by concatenating elements in each row of the dataframe to form a string.&lt;/p&gt;
-&lt;p&gt;Base R provides a way of performing this type operation: &lt;code&gt;apply&lt;/code&gt;. &lt;code&gt;apply&lt;/code&gt; is an example of a &lt;a href=&#34;https://adv-r.hadley.nz/functionals.html&#34;&gt;functional&lt;/a&gt; (a function that takes a function as an input and returns a vector as the output).&lt;/p&gt;
-&lt;p&gt;How does it work?&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;apply&lt;/code&gt; generates results by applying a function to the margins of an array or matrix. So, in our example, we can implement rowwise string concatenation by setting &lt;code&gt;apply&lt;/code&gt;’s &lt;code&gt;MARGIN&lt;/code&gt; argument to 1:&lt;/p&gt;
+&lt;p&gt;Base R provides a &lt;a href=&#34;https://adv-r.hadley.nz/functionals.html&#34;&gt;&lt;strong&gt;functional&lt;/strong&gt;&lt;/a&gt; (a function which takes one or more functions as arguments) for performing this type of operation: &lt;code&gt;apply&lt;/code&gt;. &lt;code&gt;apply&lt;/code&gt; belongs to a special group of functionals: the &lt;a href=&#34;https://en.wikipedia.org/wiki/Map_(higher-order_function)&#34;&gt;&lt;code&gt;map family&lt;/code&gt;&lt;/a&gt; (functions that take a function and a list as inputs, and return a new list with the function applied to each element from the list).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How does it work?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Under the hood, &lt;code&gt;apply&lt;/code&gt; inspects the object to which the function will be applied and coerces it to a matrix if the object is two-dimentional (e.g. a dataframe). Otherwise, the object is coerced to an array. After this step, the function is applied to either the rows (along &lt;code&gt;MARGIN&lt;/code&gt; 1) or columns (along &lt;code&gt;MARGIN&lt;/code&gt; 2) of the matrix or array.&lt;/p&gt;
+&lt;p&gt;This means that the base R implementation of rowwise string concatenation becomes:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_base &amp;lt;- df
 df_base$id = apply(df, 1, paste, collapse = &amp;quot; &amp;quot;)
 pretty_print(df_base)&lt;/code&gt;&lt;/pre&gt;
@@ -198,15 +199,16 @@ N104UW 1999 Turbo-fan
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;How can we implement this with tidyverse tools?&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;pmap-mutate&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;pmap + mutate&lt;/h3&gt;
-&lt;p&gt;We can solve this with &lt;code&gt;purrr::pmap&lt;/code&gt; in a &lt;code&gt;dplyr::mutate&lt;/code&gt; call. &lt;code&gt;pmap&lt;/code&gt; is a member of the &lt;code&gt;map&lt;/code&gt; family of functionals from &lt;code&gt;purrr&lt;/code&gt; which allows vectorised iteration over more than one argument. If you are new to &lt;code&gt;map&lt;/code&gt;, the &lt;a href=&#34;https://r4ds.had.co.nz/iteration.html&#34;&gt;iteration chapter of R for Data Science&lt;/a&gt; is worth reading.&lt;/p&gt;
+&lt;div id=&#34;how-can-we-implement-this-operation-with-tidyverse-tools&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;How can we implement this operation with tidyverse tools?&lt;/h3&gt;
+&lt;!-- ### pmap + mutate --&gt;
+&lt;p&gt;We can solve this with &lt;code&gt;purrr::pmap&lt;/code&gt; in a &lt;code&gt;dplyr::mutate&lt;/code&gt; call. &lt;code&gt;pmap&lt;/code&gt; is a member of &lt;code&gt;purrr&lt;/code&gt;’s implementation the &lt;code&gt;map&lt;/code&gt; family of functions which allows vectorized iteration over more than one argument.&lt;/p&gt;
+&lt;p&gt;If you are new to &lt;code&gt;purrr&lt;/code&gt;, the &lt;a href=&#34;https://r4ds.had.co.nz/iteration.html&#34;&gt;iteration chapter of R for Data Science&lt;/a&gt; is worth reading.&lt;/p&gt;
 &lt;p&gt;We will solve the problem in our example in two steps:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Create an anonymous function which performs string concatenation on any number of arguments passed to it&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Pass the anonymous function as an argument to &lt;code&gt;purrr::pmap_chr&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pass the anonymous function as an argument to &lt;code&gt;pmap_chr&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;code&gt;pmap_chr&lt;/code&gt; is a stricter variant of &lt;code&gt;pmap&lt;/code&gt; which always returns a character vector. This ensures that there are no surprises in our output as a result of R’s weak type system.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df %&amp;gt;% 

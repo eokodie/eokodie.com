@@ -1,5 +1,5 @@
 ---
-title: "FP helpers from purrr and friends, part 1 | Rowwise operations" 
+title: "Functional Programming helpers from purrr and friends, part 1 | Rowwise operations" 
 author: "Ernest Omane-Kodie"
 date: 2018-12-18T21:13:14-05:00 
 categories: ["R"]
@@ -104,9 +104,10 @@ Turbo-fan
 </tbody>
 </table>
 <p>Suppose we want to create a new column by concatenating elements in each row of the dataframe to form a string.</p>
-<p>Base R provides a way of performing this type operation: <code>apply</code>. <code>apply</code> is an example of a <a href="https://adv-r.hadley.nz/functionals.html">functional</a> (a function that takes a function as an input and returns a vector as the output).</p>
-<p>How does it work?</p>
-<p><code>apply</code> generates results by applying a function to the margins of an array or matrix. So, in our example, we can implement rowwise string concatenation by setting <code>apply</code>’s <code>MARGIN</code> argument to 1:</p>
+<p>Base R provides a <a href="https://adv-r.hadley.nz/functionals.html"><strong>functional</strong></a> (a function which takes one or more functions as arguments) for performing this type of operation: <code>apply</code>. <code>apply</code> belongs to a special group of functionals: the <a href="https://en.wikipedia.org/wiki/Map_(higher-order_function)"><code>map family</code></a> (functions that take a function and a list as inputs, and return a new list with the function applied to each element from the list).</p>
+<p><strong>How does it work?</strong></p>
+<p>Under the hood, <code>apply</code> inspects the object to which the function will be applied and coerces it to a matrix if the object is two-dimentional (e.g. a dataframe). Otherwise, the object is coerced to an array. After this step, the function is applied to either the rows (along <code>MARGIN</code> 1) or columns (along <code>MARGIN</code> 2) of the matrix or array.</p>
+<p>This means that the base R implementation of rowwise string concatenation becomes:</p>
 <pre class="r"><code>df_base &lt;- df
 df_base$id = apply(df, 1, paste, collapse = &quot; &quot;)
 pretty_print(df_base)</code></pre>
@@ -186,15 +187,16 @@ N104UW 1999 Turbo-fan
 </tr>
 </tbody>
 </table>
-<p>How can we implement this with tidyverse tools?</p>
 </div>
-<div id="pmap-mutate" class="section level3">
-<h3>pmap + mutate</h3>
-<p>We can solve this with <code>purrr::pmap</code> in a <code>dplyr::mutate</code> call. <code>pmap</code> is a member of the <code>map</code> family of functionals from <code>purrr</code> which allows vectorised iteration over more than one argument. If you are new to <code>map</code>, the <a href="https://r4ds.had.co.nz/iteration.html">iteration chapter of R for Data Science</a> is worth reading.</p>
+<div id="how-can-we-implement-this-operation-with-tidyverse-tools" class="section level3">
+<h3>How can we implement this operation with tidyverse tools?</h3>
+<!-- ### pmap + mutate -->
+<p>We can solve this with <code>purrr::pmap</code> in a <code>dplyr::mutate</code> call. <code>pmap</code> is a member of <code>purrr</code>’s implementation the <code>map</code> family of functions which allows vectorized iteration over more than one argument.</p>
+<p>If you are new to <code>purrr</code>, the <a href="https://r4ds.had.co.nz/iteration.html">iteration chapter of R for Data Science</a> is worth reading.</p>
 <p>We will solve the problem in our example in two steps:</p>
 <ul>
 <li><p>Create an anonymous function which performs string concatenation on any number of arguments passed to it</p></li>
-<li><p>Pass the anonymous function as an argument to <code>purrr::pmap_chr</code>.</p></li>
+<li><p>Pass the anonymous function as an argument to <code>pmap_chr</code>.</p></li>
 </ul>
 <p><code>pmap_chr</code> is a stricter variant of <code>pmap</code> which always returns a character vector. This ensures that there are no surprises in our output as a result of R’s weak type system.</p>
 <pre class="r"><code>df %&gt;% 

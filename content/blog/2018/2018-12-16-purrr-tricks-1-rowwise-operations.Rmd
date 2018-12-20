@@ -1,0 +1,128 @@
+---
+title: "Functional Programming helpers from purrr and friends, part 1 | Rowwise operations" 
+author: "Ernest Omane-Kodie"
+date: 2018-12-18T21:13:14-05:00 
+categories: ["R"]
+tags: ["rstats", "functional programming"]
+---
+
+<iframe src="https://giphy.com/embed/3oriO0OEd9QIDdllqo" width="480" height="477" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/jerseydemic-3oriO0OEd9QIDdllqo">via GIPHY</a></p>
+
+
+## Motivation
+
+This series of blog posts is inspired by [David Robinson's](https://twitter.com/drob?lang=en) tweet:
+
+> When you've given the same in-person advice 3 times, 
+> write a blog post.
+
+
+In each instalment in the series, I will walk through simple scenarios to illustrate how functional programming tools from [`purrr`](https://purrr.tidyverse.org/) and related packages can bring quality of life improvements to tidyverse workflows.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(magrittr)
+library(kableExtra)
+```
+
+```{r message=FALSE, warning=FALSE}
+pretty_print <- function(df){
+  result <- df %>% 
+    kable() %>% 
+    kable_styling(font_size = 14) %>% 
+    row_spec(0, bold = T, font_size = 14)
+  return(result)
+}
+```
+
+## Rowwise operations on all columns in a dataframe
+
+### Background
+
+We will use a small subset of the `planes` dataset to illustrate this example.
+```{r}
+df <- nycflights13::planes %>% 
+  select(tailnum, year, engine) %>% 
+  head(4)
+
+df %>% pretty_print
+```
+
+Suppose we want to create a new column by concatenating elements in each row of the dataframe to form a string.
+
+Base R provides a [__functional__](https://adv-r.hadley.nz/functionals.html) (a function which takes one or more functions as arguments) for performing this type of operation: `apply`. `apply` belongs to a special group of functionals: the [`map family`](https://en.wikipedia.org/wiki/Map_(higher-order_function)) (functions that take a function and a list as inputs, and return a new list with the function applied to each element from the list).
+
+__How does it work?__ 
+
+Under the hood, `apply` inspects the object to which the function will be applied and coerces it to a matrix if the object is two-dimentional (e.g. a dataframe). Otherwise, the object is coerced to an array. After this step, the function is applied to either the rows (along `MARGIN` 1) or columns (along `MARGIN` 2) of the matrix or array.
+
+This means that the base R implementation of rowwise string concatenation becomes:
+```{r}
+df_base <- df
+df_base$id = apply(df, 1, paste, collapse = " ")
+pretty_print(df_base)
+```
+
+### How can we implement this operation with tidyverse tools?
+
+<!-- ### pmap + mutate -->
+
+We can solve this with `purrr::pmap` in a `dplyr::mutate` call. `pmap` is a member of `purrr`'s implementation the `map` family  of functions which allows vectorized iteration over more than one argument. 
+
+If you are new to `purrr`, the [iteration chapter of R for Data Science](https://r4ds.had.co.nz/iteration.html) is worth reading.
+
+We will solve the problem in our example in two steps:
+
++ Create an anonymous function which performs string concatenation on any number of arguments passed to it
+
++ Pass the anonymous function as an argument to `pmap_chr`. 
+
+`pmap_chr` is a stricter variant of `pmap` which always returns a character vector. This ensures that there are no surprises in our output as a result of R's weak type system. 
+```{r}
+df %>% 
+  mutate(id = pmap_chr(., ~paste(..., collapse = " "))) %>% 
+  pretty_print() 
+```
+
+Notice that instead of passing an anonymous function to `pmap` we passed a formula. `purrr` supports this syntax to make it possible for users to create very compact anonymous functions on the fly.
+
+This works because, under the hood, `pmap` (like all `purrr` functionals) translates formulas into mapper functions using `purrr::as_mapper`. This means that the formula in our example will look like this behind the scenes:
+```{r}
+as_mapper(~paste(..., collapse = " "))
+```
+
+
+## Rowwise operations on specific columns in a dataframe
+
+As a concrete example, imagine we want to create a new column by concatenating year and tailnum. 
+
+How do we achieve this with tidyverse tools?
+
+### mutate + pmap
+
+There are a few ways of doing this with a similar approach to the `mutate` + `pmap` workflow from the previous example. 
+
+We can solve the problem with a neat trick by taking [a leaf out of Hadley Wickham's book.](https://community.rstudio.com/t/dplyr-alternatives-to-rowwise/8071/29) This approach uses `list()`, instead of the dot placeholder, to match arguments (to the anonymous function) by name.
+```{r}
+df %>% 
+  mutate(id = pmap_chr(list(year, tailnum), ~paste(..., collapse = " "))) %>% 
+  pretty_print() 
+```
+
+### rap
+
+While writing up this post, I stumbled upon [Romain Francois' rap package](https://github.com/romainfrancois/rap) which provides a nice alternative to the `pmap` + `mutate` approach to row-oriented operations. 
+
+`rap`, like `map`, works with anonymous functions supplied as formulas. The main difference is that with `rap` the anonymous functions can directly use column names. 
+```{r}
+library(rap)
+
+df %>% 
+  rap(id = character() ~ paste(year, tailnum, collapse = " ")) %>% 
+  pretty_print
+```
+
+Note that the left hand side (lhs) of the formula specifies the type of results returned. 
+If the lhs is empty, `rap` adds a list column to the dataframe. 
+
+
