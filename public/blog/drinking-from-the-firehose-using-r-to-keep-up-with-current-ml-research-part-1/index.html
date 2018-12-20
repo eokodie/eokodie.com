@@ -13,9 +13,9 @@
 <meta property="og:site_name" content="Ernest Omane-Kodie" />
 <meta property="og:locale" content="nn_NO" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/blog/need-for-speed-benchmarks-on-dataframes/" />
-<meta property="og:title" content="Need for Speed: Benchmarks on Dataframes" />
-<meta property="twitter:title" content="Need for Speed: Benchmarks on Dataframes">
+<meta property="og:url" content="/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research-part-1/" />
+<meta property="og:title" content="Drinking from the Firehose: using R to keep up with current ML Research - part 1" />
+<meta property="twitter:title" content="Drinking from the Firehose: using R to keep up with current ML Research - part 1">
 
     <meta property="twitter:card" content="summary">
 
@@ -25,10 +25,10 @@
 <title>
 
 
-     Ernest Omane-Kodie - Need for Speed: Benchmarks on Dataframes 
+     Ernest Omane-Kodie - Drinking from the Firehose: using R to keep up with current ML Research - part 1 
 
 </title>
-<link rel="canonical" href="/blog/need-for-speed-benchmarks-on-dataframes/">
+<link rel="canonical" href="/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research-part-1/">
 
 
 <style media="screen">
@@ -1100,13 +1100,13 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
                 <div class="title-container">
                     <div class="page-heading">
 
-    Need for Speed: Benchmarks on Dataframes
+    Drinking from the Firehose: using R to keep up with current ML Research - part 1
 
 </div>
 
                 </div>
                 <div class="meta">
-                    <div class="date" title="Mon Apr 30 2018 21:13:14 -0500">Apr 30, 2018</div>
+                    <div class="date" title="Tue Jun 12 2018 21:13:14 -0500">Jun 12, 2018</div>
                     
                         
                         <div class="author middot" title="Ernest Omane-Kodie">Ernest Omane-Kodie</div>
@@ -1118,9 +1118,9 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
                           
                             <li class="middot"><a href="/tags/rstats">rstats</a> </li>
                           
-                            <li class="middot"><a href="/tags/microbenchmark">microbenchmark</a> </li>
+                            <li class="middot"><a href="/tags/machine-learning">machine learning</a> </li>
                           
-                            <li class="middot"><a href="/tags/highcharts">highcharts</a> </li>
+                            <li class="middot"><a href="/tags/web-scraping">web scraping</a> </li>
                           
                         </ul>
                     </div>
@@ -1136,279 +1136,523 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
                 
     
     
-<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
-<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
-<script src="/rmarkdown-libs/proj4js/proj4.js"></script>
-<link href="/rmarkdown-libs/highcharts/css/motion.css" rel="stylesheet" />
-<script src="/rmarkdown-libs/highcharts/highstock.js"></script>
-<script src="/rmarkdown-libs/highcharts/highcharts-3d.js"></script>
-<script src="/rmarkdown-libs/highcharts/highcharts-more.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/annotations.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/broken-axis.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/data.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/drilldown.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/exporting.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/funnel.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/heatmap.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/map.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/no-data-to-display.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/offline-exporting.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/solid-gauge.js"></script>
-<script src="/rmarkdown-libs/highcharts/modules/treemap.js"></script>
-<script src="/rmarkdown-libs/highcharts/plugins/annotations.js"></script>
-<script src="/rmarkdown-libs/highcharts/plugins/draggable-legend.js"></script>
-<script src="/rmarkdown-libs/highcharts/plugins/draggable-points.js"></script>
-<script src="/rmarkdown-libs/highcharts/plugins/export-csv.js"></script>
-<script src="/rmarkdown-libs/highcharts/plugins/grouped-categories.js"></script>
-<script src="/rmarkdown-libs/highcharts/plugins/motion.js"></script>
-<script src="/rmarkdown-libs/highcharts/plugins/pattern-fill-v2.js"></script>
-<script src="/rmarkdown-libs/highcharts/plugins/tooltip-delay.js"></script>
-<script src="/rmarkdown-libs/highcharts/custom/reset.js"></script>
-<script src="/rmarkdown-libs/highcharts/custom/symbols-extra.js"></script>
-<script src="/rmarkdown-libs/highcharts/custom/text-symbols.js"></script>
-<link href="/rmarkdown-libs/fontawesome/font-awesome.min.css" rel="stylesheet" />
-<link href="/rmarkdown-libs/htmlwdgtgrid/htmlwdgtgrid.css" rel="stylesheet" />
-<script src="/rmarkdown-libs/highchart-binding/highchart.js"></script>
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
 
 
-<iframe src="https://giphy.com/embed/MZkHHFNtF9B8k" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen>
+<iframe src="https://giphy.com/embed/GSgZ1Flo2U9UI" width="480" height="360" frameBorder="0" class="giphy-embed" allowFullScreen>
 </iframe>
 <p>
-<a href="https://giphy.com/gifs/MZkHHFNtF9B8k">via GIPHY</a>
+<a href="https://giphy.com/gifs/cat-GSgZ1Flo2U9UI">via GIPHY</a>
 </p>
-<p>In this post, I will explore the execution speed of various implementations of dataframe aggregation and combining operations in R.</p>
-<p>I will record timings using <a href="https://cran.r-project.org/web/packages/microbenchmark/">microbenchmark</a>, a package for measuring the performance of very small pieces of R code.</p>
+<p>In this post, I will explore how we can use resources available in the R package ecosystem to keep up with state-of-the-art machine learning research.</p>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>Recently, I have been reading books about creativity. The recurring concept in the books is that the key place to start when mastering a skill is by reproducing other people’s proven ideas and figuring out their inner workings - a form of apprenticeship.</p>
+<p>The 19th Century French writer, <a href="https://en.wikipedia.org/wiki/%C3%89mile_Zola">Emile Zola</a>, captured the essence of this idea in his description of art as <strong>“a corner of creation seen through a temperament”</strong>.</p>
+<p>Will Gompertz neatly paraphrases this in <a href="https://www.amazon.co.uk/dp/B00T3UIYFG/ref=dp-kindle-redirect?_encoding=UTF8&amp;btkr=1">Think Like an Artist</a> as:</p>
 <blockquote>
-<p>“The most productive way to make code fast is… to make it work correctly, determine whether it’s actually worth speeding it up, and–in those cases where it is–to use a profiler to identify bottlenecks” – <a href="https://arxiv.org/abs/1210.0530">Best Practices for Scientific Computing</a></p>
+<p>“Creativity is the presentation of pre-existing elements and ideas filtered through the perceptions and feelings of an individual.”</p>
 </blockquote>
-<p>For larger, fully-functioning chunks of R code, where a clear need for optimisation has been established, you might want to consider rewriting bottlenecks using lower level languages like C and Fortran, but bear in mind that any speed gains will come at the expense of readability and development time.</p>
-<p>As a general rule of thumb, whenever possible, first tune the performance of R code using R solutions and resort to lower level languages only when you are certain that the performance gain will outstrip development time.</p>
+<p>The idea permeates all creative endeavours. Would-be singer-songwriters, scientists, painters, and so on, start off by attempting to replicate some established piece of work. Andrew Ng captures this same idea in <a href="http://qr.ae/TUTrnq">this response to a question on Quora</a> I stumbled upon while writing up this post:</p>
 <blockquote>
-<p>“The conventional wisdom shared by many of today’s software engineers calls for ignoring efficiency in the small; but I believe this is simply an overreaction… In established engineering disciplines a 12% improvement, easily obtained, is never considered marginal.” – Donald Knuth</p>
+<p>“To go even further, read research papers (follow ML leaders on twitter to see what papers they’re excited about). Even better, try to replicate the results in the research papers. Trying to replicate others’ results is one of the most effective but under-appreciated ways to get good at AI”</p>
 </blockquote>
-<div id="disclaimer" class="section level2">
-<h2>Disclaimer</h2>
-<p>The benchmarks are based on simple dataframes and do not take into account the impact of datasets of varying complexity on performance. The results may not be representative of your use case, since any difference in your system hardware and the structure of your datasets may affect actual test results. Always benchmark against your specific data and use case.</p>
 </div>
-<div id="setup" class="section level2">
-<h2>Setup</h2>
-<p>The tests are performed on a single Windows 10 laptop (i7 6820HK <span class="citation">@2.7</span> GHz) with 64GB RAM and a decent SSD (M.2 Samsung SM951).</p>
-<p>For each test, there are 10 warm-up iterations followed by the actual benchmark. Execution times are based on running each expression 1,000 times and randomly shuffling the order of expressions evaluated.</p>
+<div id="the-problem" class="section level2">
+<h2>The problem</h2>
+<p>The challenge with applying this concept to machine learning practice is that, in many respects, the field is going through exciting times. We are witnessing the relentless creation of new algorithms, drastic improvements in existing algorithms, an explosion of data, significant strides in computer hardware technology, and unprecedented collaboration among researchers from different fields.</p>
+<p>Although the internet has made it much easier to source materials and information, the sheer volume of research literature emerging from all the moving parts of machine learning can be overwhelming.</p>
+<p>How do you discover new research literature? How do you find the most relevant research for your work? In the following sections, I will attempt to answer these questions. The aim is to use a few examples to shed a little light on how to stay plugged in to the research community without leaving the R software environment<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
 </div>
-<div id="data" class="section level2">
-<h2>Data</h2>
-<p>First up, we need example datasets to run the tests on. Let’s create a few dataframes and store them in a list for convenience.</p>
-<pre class="r"><code>library(tidyverse)
-library(microbenchmark)
-library(data.table)
-library(highcharter)
-library(magrittr) 
-library(glue)
-num_of_iterations = 1000 </code></pre>
-<pre class="r"><code>create_data &lt;- function(i){
-  df = data.frame(key = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;), value = i*(1:3))
-  return(df)
-} 
-data_list &lt;- 1:4 %&gt;% map(create_data) </code></pre>
-</div>
-<div id="helpers" class="section level2">
-<h2>Helpers</h2>
-<p>Next, we will simplify our workflow with a few helper functions, each serving a specific purpose.</p>
-<pre class="r"><code>compare_dfs &lt;- function(df_name){
-  df1 &lt;- get(ls(pattern = pattern, envir = .GlobalEnv)[1])
-  setequal(df1, get(df_name))
+<div id="academic-databases-and-search-engines" class="section level2">
+<h2>Academic databases and search engines</h2>
+<p>There is a comprehensive list of academic databases and search engines on <a href="https://en.wikipedia.org/wiki/List_of_academic_databases_and_search_engines">this Wikipedia page</a>. I will look at one example of the most popular databases in this category.</p>
+<div id="arxiv" class="section level3">
+<h3>arXiv</h3>
+<p><a href="https://arxiv.org/">arXiv</a> is a repository of scientific papers, created in the spirit of the open access movement, where mathematicians and scientists usually upload their papers for worldwide access and sometimes for reviews before they are published in peer-reviewed journals.</p>
+<p>I will use <a href="https://cran.r-project.org/web/packages/aRxiv/index.html"><code>aRxiv</code></a>, an R interface to the <a href="https://arxiv.org/help/api/index">arXiv API</a>, and a few <a href="https://www.tidyverse.org/"><code>tidyverse</code></a> tools to explore arXiv papers.</p>
+<pre class="r"><code>library(aRxiv)
+library(tidyverse)
+library(kableExtra)
+
+pretty_print &lt;- function(df){
+  result = df %&gt;% 
+    kable() %&gt;% 
+    kable_styling(font_size = 14) %&gt;% 
+    row_spec(0, bold = T)
+  return(result)
 }</code></pre>
-<pre class="r"><code>create_boxplot &lt;- function(data, title){
-  p &lt;- hcboxplot(x = data$time, var = data$expr, 
-                 outliers = FALSE, color = &#39;tomato&#39;, 
-                 fillColor = &#39;white&#39;, lineWidth = 1.5) %&gt;%
-    hc_chart(type = &quot;column&quot;)  %&gt;% 
-    hc_title(text = glue(&quot;&lt;b&gt;{title}&lt;b&gt;&quot;))  %&gt;%
-    hc_yAxis(title = list(text = &quot;&lt;b&gt; Time (ns)&lt;b&gt;&quot;)) %&gt;% 
-    hc_add_theme(hc_theme_ffx())
-  return(p)
-}</code></pre>
-<pre class="r"><code>give_names &lt;- function(name){
-  df &lt;- get(name)
-  df %&lt;&gt;% setnames(c(&quot;key&quot;, paste0(&quot;value_&quot;, 1:(ncol(df)-1))))
-}</code></pre>
-<ul>
-<li><code>compare_dfs</code>: a function which takes a list of dataframes and checks that all dataframes in the list are identical</li>
-<li><code>create_boxplot</code>: a function which creates a boxplot of microbenchmark timings by passing a <code>microbenchmark</code> object to <code>highcharter</code>; an R wrapper for the <a href="https://www.highcharts.com">Highcharts javascript library</a></li>
-<li><code>give_names</code>: a function to rename the columns of a dataframe</li>
-</ul>
+<p>To start off, we need to construct a search query. To do this, we need terms to use as query arguments. The following options are available:</p>
+<pre class="r"><code>query_terms %&gt;% pretty_print</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+term
+</th>
+<th style="text-align:left;font-weight: bold;">
+description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ti
+</td>
+<td style="text-align:left;">
+Title
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+au
+</td>
+<td style="text-align:left;">
+Author
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+abs
+</td>
+<td style="text-align:left;">
+Abstract
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+co
+</td>
+<td style="text-align:left;">
+Comment
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+jr
+</td>
+<td style="text-align:left;">
+Journal Reference
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cat
+</td>
+<td style="text-align:left;">
+Subject Category
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+rn
+</td>
+<td style="text-align:left;">
+Report Number
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+all
+</td>
+<td style="text-align:left;">
+All of the above
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+submittedDate
+</td>
+<td style="text-align:left;">
+Date/time of initial submission, as YYYYMMDDHHMM
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+lastUpdatedDate
+</td>
+<td style="text-align:left;">
+Date/time of last update, as YYYYMMDDHHMM
+</td>
+</tr>
+</tbody>
+</table>
+<p>Machine learning and related research papers are typically submitted under the following categories:</p>
+<pre class="r"><code>ai_ml_categories &lt;- c(&quot;Artificial&quot;, &quot;Intelligence&quot;, &quot;Learning&quot;, 
+                   &quot;Robotics&quot;, &quot;Vision&quot;) %&gt;% 
+  str_flatten(&quot;|&quot;)
+
+arxiv_cats %&gt;% 
+  dplyr::filter(str_detect(description, ai_ml_categories)) %&gt;% 
+  pretty_print</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+abbreviation
+</th>
+<th style="text-align:left;font-weight: bold;">
+description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+stat.ML
+</td>
+<td style="text-align:left;">
+Statistics - Machine Learning
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cs.AI
+</td>
+<td style="text-align:left;">
+Computer Science - Artificial Intelligence
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cs.CV
+</td>
+<td style="text-align:left;">
+Computer Science - Computer Vision and Pattern Recognition
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cs.LG
+</td>
+<td style="text-align:left;">
+Computer Science - Learning
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cs.RO
+</td>
+<td style="text-align:left;">
+Computer Science - Robotics
+</td>
+</tr>
+</tbody>
+</table>
+<p>We can search for papers under specific categories. For example, we can inspect papers submitted under robotics in the first three months of 2018 using:</p>
+<pre class="r"><code>c(&quot;cat:cs.RO&quot;, 
+  &quot;submittedDate:[201801010000 TO 201802302400]&quot;) %&gt;% 
+  str_flatten(&quot; AND &quot;) %&gt;% 
+  arxiv_search(limit = 12, sort_by = &quot;updated&quot;, ascending = FALSE) %&gt;% 
+  select(submitted, id, title) %&gt;% 
+  head(5) %&gt;% 
+  pretty_print()</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+submitted
+</th>
+<th style="text-align:left;font-weight: bold;">
+id
+</th>
+<th style="text-align:left;font-weight: bold;">
+title
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2018-02-16 18:57:57
+</td>
+<td style="text-align:left;">
+1802.06070v5
+</td>
+<td style="text-align:left;">
+Diversity is All You Need: Learning Skills without a Reward Function
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-02-12 17:47:13
+</td>
+<td style="text-align:left;">
+1802.04205v3
+</td>
+<td style="text-align:left;">
+Efficient Hierarchical Robot Motion Planning Under Uncertainty and Hybrid Dynamics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-02-25 04:47:31
+</td>
+<td style="text-align:left;">
+1802.08953v2
+</td>
+<td style="text-align:left;">
+Robust Target-relative Localization with Ultra-Wideband Ranging and Communication
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-01-06 14:50:07
+</td>
+<td style="text-align:left;">
+1801.02025v2
+</td>
+<td style="text-align:left;">
+Robot Localisation and 3D Position Estimation Using a Free-Moving Camera and Cascaded Convolutional Neural Networks
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-01-01 23:41:50
+</td>
+<td style="text-align:left;">
+1801.00527v3
+</td>
+<td style="text-align:left;">
+Freeform Assembly Planning
+</td>
+</tr>
+</tbody>
+</table>
+<p>We can search for papers by topic. For example, the following are a few of the most recent papers on adversarial AI submitted from the beginning of the year to 7th June 2018.</p>
+<pre class="r"><code>c(&quot;ti:Adversarial&quot;, 
+  &quot;submittedDate:[201801010000 TO 201806072400]&quot;) %&gt;% 
+  str_flatten(&quot; AND &quot;) %&gt;% 
+  arxiv_search(limit = 12, sort_by = &quot;updated&quot;, ascending = FALSE) %&gt;% 
+  select(submitted, id, title) %&gt;% 
+  head(5) %&gt;% 
+  pretty_print()  </code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+submitted
+</th>
+<th style="text-align:left;font-weight: bold;">
+id
+</th>
+<th style="text-align:left;font-weight: bold;">
+title
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2018-02-15 17:13:18
+</td>
+<td style="text-align:left;">
+1802.05666v2
+</td>
+<td style="text-align:left;">
+Adversarial Risk and the Dangers of Evaluating Against Weak Attacks
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-05-21 10:58:10
+</td>
+<td style="text-align:left;">
+1805.07984v3
+</td>
+<td style="text-align:left;">
+Adversarial Attacks on Neural Networks for Graph Data
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-06-05 17:04:37
+</td>
+<td style="text-align:left;">
+1806.02299v2
+</td>
+<td style="text-align:left;">
+DPatch: Attacking Object Detectors with Adversarial Patches
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-06-07 23:27:16
+</td>
+<td style="text-align:left;">
+1806.02924v2
+</td>
+<td style="text-align:left;">
+On Adversarial Risk and Training
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-05-30 00:05:53
+</td>
+<td style="text-align:left;">
+1805.11752v2
+</td>
+<td style="text-align:left;">
+Multi-turn Dialogue Response Generation in an Adversarial Learning Framework
+</td>
+</tr>
+</tbody>
+</table>
+<p>We can build complex queries based on specific needs by chaining multiple queries together with <code>AND</code>, <code>OR</code>, and <code>ANDNOT</code>. We can also search Titles, Authors, Abstract and so on.</p>
 </div>
-<div id="stacking-dataframes" class="section level2">
-<h2>Stacking dataframes</h2>
-<p>R provides several ways of combining dataframes by rows to create a larger dataframe. Note that this type of operation only works if the dataframes have the same variable names.</p>
-<p>I will compare four approaches:</p>
-<ul>
-<li>multiple calls to <code>base::rbind</code> using a for-loop</li>
-<li>a call to <code>base::rbind</code> using <code>do.call</code></li>
-<li>a call to <code>data.table::rbindlist</code></li>
-<li>a call to <code>dplyr::bind_rows</code></li>
-</ul>
-<p>Let’s start by stacking up the dataframes using these approaches:</p>
-<pre class="r"><code>for_loop_rbind &lt;- function(data_list){
-  df = data_list[[1]]
-  for (i in 2:length(data_list)){
-    df = rbind(df, data_list[[i]])
-  }
-  return(df)
+</div>
+<div id="github" class="section level2">
+<h2>GitHub</h2>
+<p>Most new research in the machine learning community comprise open-source projects hosted on GitHub. This is great news in the sense that you can easily obtain a copy of the source code of a project of interest and tinker with it to your heart’s content.</p>
+<p>In this section, I will explore research projects hosted on GitHub. I will use the <code>httr</code> package to access the <a href="https://developer.github.com/v3/search/">GitHub search API</a>, and then use a few <code>tidyverse</code> packages to extract the necessary data points.</p>
+<p>Suppose we want to find the most starred repositories about generative adversarial networks. We can start by creating a URL with a search query and pass that to <code>httr</code>.</p>
+<pre class="r"><code>library(httr)
+library(magrittr)
+
+url &lt;- glue::glue(&quot;https://api.github.com/search/repositories?&quot;,
+                 &quot;q=generative+adversarial+networkin:name,description&amp;&quot;,
+                 &quot;sort=stars&amp;&quot;, 
+                 &quot;order=desc&quot;)
+
+gh_repos &lt;- GET(url) %&gt;% 
+  content(encoding = &quot;UTF-8&quot;)</code></pre>
+<p>Let’s inspect all the metadata available on each repository:</p>
+<pre class="r"><code>gh_repos %&gt;%
+  use_series(&quot;items&quot;) %&gt;% 
+  extract2(1) %&gt;% 
+  names()</code></pre>
+<pre><code>##  [1] &quot;id&quot;                &quot;node_id&quot;           &quot;name&quot;             
+##  [4] &quot;full_name&quot;         &quot;owner&quot;             &quot;private&quot;          
+##  [7] &quot;html_url&quot;          &quot;description&quot;       &quot;fork&quot;             
+## [10] &quot;url&quot;               &quot;forks_url&quot;         &quot;keys_url&quot;         
+## [13] &quot;collaborators_url&quot; &quot;teams_url&quot;         &quot;hooks_url&quot;        
+## [16] &quot;issue_events_url&quot;  &quot;events_url&quot;        &quot;assignees_url&quot;    
+## [19] &quot;branches_url&quot;      &quot;tags_url&quot;          &quot;blobs_url&quot;        
+## [22] &quot;git_tags_url&quot;      &quot;git_refs_url&quot;      &quot;trees_url&quot;        
+## [25] &quot;statuses_url&quot;      &quot;languages_url&quot;     &quot;stargazers_url&quot;   
+## [28] &quot;contributors_url&quot;  &quot;subscribers_url&quot;   &quot;subscription_url&quot; 
+## [31] &quot;commits_url&quot;       &quot;git_commits_url&quot;   &quot;comments_url&quot;     
+## [34] &quot;issue_comment_url&quot; &quot;contents_url&quot;      &quot;compare_url&quot;      
+## [37] &quot;merges_url&quot;        &quot;archive_url&quot;       &quot;downloads_url&quot;    
+## [40] &quot;issues_url&quot;        &quot;pulls_url&quot;         &quot;milestones_url&quot;   
+## [43] &quot;notifications_url&quot; &quot;labels_url&quot;        &quot;releases_url&quot;     
+## [46] &quot;deployments_url&quot;   &quot;created_at&quot;        &quot;updated_at&quot;       
+## [49] &quot;pushed_at&quot;         &quot;git_url&quot;           &quot;ssh_url&quot;          
+## [52] &quot;clone_url&quot;         &quot;svn_url&quot;           &quot;homepage&quot;         
+## [55] &quot;size&quot;              &quot;stargazers_count&quot;  &quot;watchers_count&quot;   
+## [58] &quot;language&quot;          &quot;has_issues&quot;        &quot;has_projects&quot;     
+## [61] &quot;has_downloads&quot;     &quot;has_wiki&quot;          &quot;has_pages&quot;        
+## [64] &quot;forks_count&quot;       &quot;mirror_url&quot;        &quot;archived&quot;         
+## [67] &quot;open_issues_count&quot; &quot;license&quot;           &quot;forks&quot;            
+## [70] &quot;open_issues&quot;       &quot;watchers&quot;          &quot;default_branch&quot;   
+## [73] &quot;score&quot;</code></pre>
+<p>What we are looking for in our example is the GitHub URL and the number of stars for each repository (stargazers_count).</p>
+<p>Let’s look at the top 5 most starred GitHub repositories in this category.</p>
+<pre class="r"><code>extract_info &lt;- function(index){
+  repository &lt;- gh_repos %&gt;% 
+    use_series(&quot;items&quot;) %&gt;% 
+    extract2(index) %&gt;% 
+    extract2(&quot;html_url&quot;)
+  
+  stars_count &lt;- gh_repos %&gt;% 
+    use_series(&quot;items&quot;) %&gt;% 
+    extract2(index) %&gt;% 
+    extract2(&quot;stargazers_count&quot;)
+  
+  return(data.frame(repository = repository, 
+                    stars_count = stars_count))
 }
 
-rbind_for_loop_stk = for_loop_rbind(data_list)
-rbind_do_call_stk = do.call(rbind, data_list)
-data_table_rbindlist_stk = rbindlist(data_list)
-dplyr_bind_rows_stk = bind_rows(data_list)</code></pre>
-<p>Do the different methods produce the same dataframe?</p>
-<pre class="r"><code>pattern = &#39;_stk&#39;
-ls(pattern = pattern) %&gt;%
-  map_lgl(compare_dfs)</code></pre>
-<pre><code>## [1] TRUE TRUE TRUE TRUE</code></pre>
-<p>As expected, the results are identical. We can now test the execution speed of each method but before we proceed, let’s do a quick sense check of what to expect. <code>dplyr::bind_rows</code> and <code>data.table::rbindlist</code> both accept a list of dataframes and are optimized for iterating over many dataframes. So you would expect these to be faster than any other implementation which combines two dataframes at a time (i.e. the base R versions).</p>
-<pre class="r"><code>microbenchmark(
-  dplyr_bind_rows = bind_rows(data_list),
-  data_table_rbindlist = rbindlist(data_list),
-  do_call_rbind = do.call(rbind, data_list),  
-  for_loop_rbind = for_loop_rbind(data_list),
-  times = num_of_iterations,
-  unit = &#39;ns&#39;,
-  control = list(warmup = 10)
-  ) %&gt;% 
-  create_boxplot(title = &quot;Stacking&quot;)</code></pre>
-<div id="htmlwidget-1" style="width:100%;height:500px;" class="highchart html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1">{"x":{"hc_opts":{"title":{"text":"<b>Stacking<b>"},"yAxis":{"title":{"text":"<b> Time (ns)<b>"}},"credits":{"enabled":false},"exporting":{"enabled":false},"plotOptions":{"series":{"turboThreshold":0,"marker":{"symbol":"circle"},"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"bubble":{"minSize":5,"maxSize":25}},"annotationsOptions":{"enabledButtons":false},"tooltip":{"delayForDisplay":10},"chart":{"type":"column"},"xAxis":{"type":"category","categories":""},"series":[{"name":null,"data":[{"name":"dplyr_bind_rows","low":13971,"q1":21522.5,"median":25299,"q3":27564,"high":36626},{"name":"data_table_rbindlist","low":70230,"q1":90998,"median":97794,"q3":105724,"high":127246},{"name":"do_call_rbind","low":234101,"q1":262420,"median":275635,"q3":316791,"high":397972},{"name":"for_loop_rbind","low":413075,"q1":459517,"median":490101,"q3":548815.5,"high":682291}],"type":"boxplot","id":null,"color":"tomato","fillColor":"white","lineWidth":1.5}]},"theme":{"colors":["#00AACC","#FF4E00","#B90000","#5F9B0A","#CD6723"],"chart":{"backgroundColor":{"linearGradient":[0,0,0,150],"stops":[[0,"#CAE1F4"],[1,"#EEEEEE"]]},"style":{"fontFamily":"Open Sans"}},"title":{"align":"left"},"subtitle":{"align":"left"},"legend":{"align":"right","verticalAlign":"bottom"},"xAxis":{"gridLineWidth":1,"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1},"yAxis":{"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":"Open+Sans","debug":false},"evals":[],"jsHooks":[]}</script>
-<p>As expected, <code>dplyr::bind_rows</code> and <code>data.table::rbindlist</code> are faster than the implementation in <code>base</code>.</p>
-<p>Also note that <code>dplyr::bind_rows</code> outperforms <code>data.table::rbindlist</code>.</p>
+1:5 %&gt;% map_dfr(extract_info) %&gt;% 
+  pretty_print()</code></pre>
+<table class="table" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+repository
+</th>
+<th style="text-align:right;font-weight: bold;">
+stars_count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/carpedm20/DCGAN-tensorflow" class="uri">https://github.com/carpedm20/DCGAN-tensorflow</a>
+</td>
+<td style="text-align:right;">
+4271
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/junyanz/iGAN" class="uri">https://github.com/junyanz/iGAN</a>
+</td>
+<td style="text-align:right;">
+2785
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/Newmu/dcgan_code" class="uri">https://github.com/Newmu/dcgan_code</a>
+</td>
+<td style="text-align:right;">
+2762
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/eriklindernoren/Keras-GAN" class="uri">https://github.com/eriklindernoren/Keras-GAN</a>
+</td>
+<td style="text-align:right;">
+1895
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/nightrome/really-awesome-gan" class="uri">https://github.com/nightrome/really-awesome-gan</a>
+</td>
+<td style="text-align:right;">
+1715
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="multiple-joins" class="section level2">
-<h2>Multiple joins</h2>
-<p>I will use the same workflow as before to compare the following approaches:</p>
-<ul>
-<li>single call to <code>base::merge</code></li>
-<li>single call to <code>data.table:::merge.data.table</code></li>
-<li>use <code>purrr::reduce</code> to iteratively perform repeated <code>dplyr::left_join</code></li>
-</ul>
-<pre class="r"><code>for_loop_leftjoin_func &lt;- function(data_list){
-  df = data_list[[1]]
-  for (i in 2:length(data_list)){
-    df = left_join(df, data_list[[i]], by = &quot;key&quot;)
-  }
-  return(df)
-}
-
-base_merge_jn &lt;- reduce(data_list, base::merge, by = c(&quot;key&quot;))
-dplyr_left_join_jn &lt;- reduce(data_list, left_join, by = &quot;key&quot;) 
-datatable_merge_jn &lt;- reduce(data_list, data.table:::merge.data.table, by = c(&quot;key&quot;))</code></pre>
-<pre class="r"><code>#Are the dataframes identical?
-# rename df columns
-pattern = &#39;_jn&#39;
-rename_dfs &lt;- ls(pattern = pattern) %&gt;%
-  map(give_names)
-
-# compare dataframes
-ls(pattern = pattern) %&gt;%
-  map_lgl(compare_dfs) </code></pre>
-<pre><code>## [1] TRUE TRUE TRUE</code></pre>
-<pre class="r"><code># run and plot benchmarks
-microbenchmark(
-  base_merge = reduce(data_list, base::merge, by = c(&quot;key&quot;)),  
-  dplyr_left_join = reduce(data_list, left_join, by = &quot;key&quot;), 
-  datatable_merge = reduce(data_list, data.table:::merge.data.table, 
-                           by = c(&quot;key&quot;)),
-  times = num_of_iterations,
-  unit = &quot;ns&quot;,
-  control = list(warmup = 10)
-  ) %&gt;% 
-  create_boxplot(title = &quot;Joins&quot;) </code></pre>
-<div id="htmlwidget-2" style="width:100%;height:500px;" class="highchart html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2">{"x":{"hc_opts":{"title":{"text":"<b>Joins<b>"},"yAxis":{"title":{"text":"<b> Time (ns)<b>"}},"credits":{"enabled":false},"exporting":{"enabled":false},"plotOptions":{"series":{"turboThreshold":0,"marker":{"symbol":"circle"},"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"bubble":{"minSize":5,"maxSize":25}},"annotationsOptions":{"enabledButtons":false},"tooltip":{"delayForDisplay":10},"chart":{"type":"column"},"xAxis":{"type":"category","categories":""},"series":[{"name":null,"data":[{"name":"base_merge","low":1225252,"q1":1406491.5,"median":1480875.5,"q3":1604344,"high":1900368},{"name":"dplyr_left_join","low":1679861,"q1":1909996.5,"median":2005147.5,"q3":2158822.5,"high":2529797},{"name":"datatable_merge","low":2704616,"q1":3050481.5,"median":3196039,"q3":3420322.5,"high":3972157}],"type":"boxplot","id":null,"color":"tomato","fillColor":"white","lineWidth":1.5}]},"theme":{"colors":["#00AACC","#FF4E00","#B90000","#5F9B0A","#CD6723"],"chart":{"backgroundColor":{"linearGradient":[0,0,0,150],"stops":[[0,"#CAE1F4"],[1,"#EEEEEE"]]},"style":{"fontFamily":"Open Sans"}},"title":{"align":"left"},"subtitle":{"align":"left"},"legend":{"align":"right","verticalAlign":"bottom"},"xAxis":{"gridLineWidth":1,"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1},"yAxis":{"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":"Open+Sans","debug":false},"evals":[],"jsHooks":[]}</script>
-<p>In this example, <code>base::merge</code> is twice as fast as <code>dplyr::left_join</code>, and significantly outperforms <code>data.table:::merge.data.table</code>.</p>
-</div>
-<div id="combining-by-columns" class="section level2">
-<h2>Combining by columns</h2>
-<p>I will compare the following approaches:</p>
-<ul>
-<li>multiple calls to <code>base::cbind</code> using a for-loop</li>
-<li>single call to <code>base::cbind</code> using <code>do.call</code></li>
-<li>single call to <code>dplyr::bind_cols</code></li>
-</ul>
-<pre class="r"><code>for_loop_cbind &lt;- function(data_list){
-  df = data_list[[1]]
-  for (i in 2:length(data_list)){
-    df = cbind(df, data_list[[i]])
-  }
-  return(df)
-}
-
-base_cbind_for_loop_cols = for_loop_cbind(data_list)
-base_cbind_do_call_cols = do.call(cbind, data_list)
-dplyr_bind_cols = bind_cols(data_list)</code></pre>
-<pre class="r"><code>#Are the dataframes identical?
-# rename df columns
-pattern = &#39;_cols&#39;
-rename_dfs &lt;- ls(pattern = pattern) %&gt;%
-  map(give_names)
-
-# compare dataframes
-ls(pattern = pattern) %&gt;%
-  map_lgl(compare_dfs) </code></pre>
-<pre><code>## [1] TRUE TRUE TRUE</code></pre>
-<p>Run benchmark</p>
-<pre class="r"><code>microbenchmark(
-  base_cbind_do_call = do.call(cbind, data_list),
-  dplyr_bind_cols = bind_cols(data_list),
-  base_cbind_for_loop = for_loop_cbind(data_list),  
-  times = num_of_iterations,
-  unit = &#39;ns&#39;,
-  control = list(warmup = 10)
-  ) %&gt;% 
-  create_boxplot(title = &quot;Combine by columns&quot;)   </code></pre>
-<div id="htmlwidget-3" style="width:100%;height:500px;" class="highchart html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3">{"x":{"hc_opts":{"title":{"text":"<b>Combine by columns<b>"},"yAxis":{"title":{"text":"<b> Time (ns)<b>"}},"credits":{"enabled":false},"exporting":{"enabled":false},"plotOptions":{"series":{"turboThreshold":0,"marker":{"symbol":"circle"},"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"bubble":{"minSize":5,"maxSize":25}},"annotationsOptions":{"enabledButtons":false},"tooltip":{"delayForDisplay":10},"chart":{"type":"column"},"xAxis":{"type":"category","categories":""},"series":[{"name":null,"data":[{"name":"base_cbind_do_call","low":48708,"q1":53239,"median":55883,"q3":63434.5,"high":78538},{"name":"dplyr_bind_cols","low":90242,"q1":103081,"median":108366,"q3":114408,"high":131021},{"name":"base_cbind_for_loop","low":101570,"q1":109877,"median":115540,"q3":126867.5,"high":152166}],"type":"boxplot","id":null,"color":"tomato","fillColor":"white","lineWidth":1.5}]},"theme":{"colors":["#00AACC","#FF4E00","#B90000","#5F9B0A","#CD6723"],"chart":{"backgroundColor":{"linearGradient":[0,0,0,150],"stops":[[0,"#CAE1F4"],[1,"#EEEEEE"]]},"style":{"fontFamily":"Open Sans"}},"title":{"align":"left"},"subtitle":{"align":"left"},"legend":{"align":"right","verticalAlign":"bottom"},"xAxis":{"gridLineWidth":1,"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1},"yAxis":{"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":"Open+Sans","debug":false},"evals":[],"jsHooks":[]}</script>
-<p>In this example, <code>base::cbind</code> with <code>do.call</code> is the most efficient.</p>
-</div>
-<div id="aggregation" class="section level2">
-<h2>Aggregation</h2>
-<p>I will test this using the <code>mtcars</code> dataset to compute the average weight (in 1000 lbs) of cars grouped by number of cylinders. As usual, I will compare functions in <code>dplyr</code>, <code>base</code> and <code>data.table</code>.</p>
-<pre class="r"><code>base_agg &lt;- aggregate(mtcars$wt, by = list(mtcars$cyl), mean, na.rm = TRUE) %&gt;% 
-  as_tibble()
-mtcars_dt = data.table(mtcars)
-data_table_agg &lt;- mtcars_dt[ , mean(wt, na.rm = TRUE), cyl] %&gt;% 
-  as_tibble()
-dplyr_agg &lt;- mtcars %&gt;% 
-  group_by(cyl) %&gt;% 
-  summarize(mean(wt, na.rm = TRUE))</code></pre>
-<pre class="r"><code># rename df columns
-pattern = &#39;_agg&#39;
-rename_dfs &lt;- ls(pattern = pattern) %&gt;%
-  map(give_names)
-# compare dataframes
-ls(pattern = pattern) %&gt;%
-  map_lgl(compare_dfs) </code></pre>
-<pre><code>## [1] TRUE TRUE TRUE</code></pre>
-<pre class="r"><code>microbenchmark(
-  datatable = mtcars_dt[ , mean(wt, na.rm = TRUE), cyl],  
-  base = aggregate(mtcars$wt, by = list(mtcars$cyl), mean, na.rm = TRUE),
-  dplyr = mtcars %&gt;% group_by(cyl) %&gt;% summarize(mean(wt, na.rm = TRUE)),
-  times = 1000,
-  unit = &quot;ns&quot;,
-  control = list(warmup = 10)
-) %&gt;% 
-  create_boxplot(title = &quot;Aggregation&quot;)</code></pre>
-<p><div id="htmlwidget-4" style="width:100%;height:500px;" class="highchart html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4">{"x":{"hc_opts":{"title":{"text":"<b>Aggregation<b>"},"yAxis":{"title":{"text":"<b> Time (ns)<b>"}},"credits":{"enabled":false},"exporting":{"enabled":false},"plotOptions":{"series":{"turboThreshold":0,"marker":{"symbol":"circle"},"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"bubble":{"minSize":5,"maxSize":25}},"annotationsOptions":{"enabledButtons":false},"tooltip":{"delayForDisplay":10},"chart":{"type":"column"},"xAxis":{"type":"category","categories":""},"series":[{"name":null,"data":[{"name":"datatable","low":350396,"q1":395705,"median":422890.5,"q3":478395.5,"high":601487},{"name":"base","low":579587,"q1":643399,"median":683421.5,"q3":749310,"high":906195},{"name":"dplyr","low":871835,"q1":958490.5,"median":1014183,"q3":1114431,"high":1344567}],"type":"boxplot","id":null,"color":"tomato","fillColor":"white","lineWidth":1.5}]},"theme":{"colors":["#00AACC","#FF4E00","#B90000","#5F9B0A","#CD6723"],"chart":{"backgroundColor":{"linearGradient":[0,0,0,150],"stops":[[0,"#CAE1F4"],[1,"#EEEEEE"]]},"style":{"fontFamily":"Open Sans"}},"title":{"align":"left"},"subtitle":{"align":"left"},"legend":{"align":"right","verticalAlign":"bottom"},"xAxis":{"gridLineWidth":1,"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1},"yAxis":{"gridLineColor":"#F3F3F3","lineColor":"#F3F3F3","minorGridLineColor":"#F3F3F3","tickColor":"#F3F3F3","tickWidth":1}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":"Open+Sans","debug":false},"evals":[],"jsHooks":[]}</script> In this example, <code>data.table</code> is the most efficient.</p>
+<div id="journals-rss-feeds" class="section level2">
+<h2>Journals &amp; RSS feeds</h2>
+<p>We can explore papers being published in scientific journals by extracting their RSS feeds. I will use <a href="https://github.com/RobertMyles/tidyrss"><code>tidyRSS</code></a>, an R package for extracting tidy dataframes from RSS, Atom and JSON feeds. For feeds that do not play nice with <a href="https://github.com/RobertMyles/tidyrss"><code>tidyRSS</code></a>, I will use the <a href="https://github.com/DataWookie/feedeR"><code>feedeR</code></a> package.</p>
+<p>Here are two examples:</p>
+<p>We can search new research papers published in <a href="https://www.sciencemag.org/">Science magazine</a> to see if anything has been published on a specific topic of interest.</p>
+<pre class="r"><code>library(tidyRSS)
+science_magazine &lt;- tidyfeed(&quot;http://science.sciencemag.org/rss/twis.xml&quot;)
+names(science_magazine)</code></pre>
+<pre><code>## [1] &quot;feed_title&quot;       &quot;feed_link&quot;        &quot;feed_description&quot;
+## [4] &quot;item_title&quot;       &quot;item_link&quot;        &quot;item_description&quot;</code></pre>
+<p><code>item_title</code> contains a brief description of each paper. We can search this for specific keywords.</p>
+<pre class="r"><code>science_magazine %&gt;% 
+  filter(str_detect(url, &quot;some_regex&quot;)) </code></pre>
+<p>We can search publications in the <a href="http://jmlr.org/">Journal of Machine Learning Research</a> using:</p>
+<pre class="r"><code>library(feedeR)
+jmlr &lt;- feed.extract(&quot;http://jmlr.org/jmlr.xml&quot;) %&gt;% 
+  use_series(&quot;items&quot;)
+names(jmlr)</code></pre>
+<pre><code>## [1] &quot;title&quot; &quot;date&quot;  &quot;link&quot;  &quot;hash&quot;</code></pre>
+<p>Again we can search <code>title</code> for specific keywords.</p>
 </div>
 <div id="wrapping-up" class="section level2">
 <h2>Wrapping up</h2>
-<p>This study is far from a comprehensive benchmark. It is my attempt at quickly exploring the order of magnitude of execution times for common operations on dataframes; and more importantly, setting up a workflow which can be extended to cover other scenarios.</p>
-<p>Feel free to use the methods identified in these benchmarks to speed up your code but remember that <strong>writing good code trumps writing fast code</strong>.</p>
-<blockquote>
-<p>“We follow two rules in the matters of optimization: Rule 1: Don’t do it. Rule 2 (for experts only): Don’t do it yet - that is, not until you have a perfectly clear and unoptimized solution” – M. A. Jackson</p>
-</blockquote>
-<p>For more information about code optimisation, read <a href="http://adv-r.had.co.nz/Profiling.html">Hadley Wickham’s take on the topic</a>, item 67 from <a href="https://books.google.co.uk/books?id=BIpDDwAAQBAJ&amp;printsec=frontcover&amp;source=gbs_ge_summary_r&amp;cad=0#v=onepage&amp;q&amp;f=false">Joshua Bloch’s Effective Java</a> and the <a href="https://arxiv.org/abs/1210.0530">Best Practices for Scientific Computing</a>.</p>
-<p>The source code for this blog post is available on <a href="https://github.com/eokodie/posts-rmd/blob/master/Rmd/2018-04-30-dataframe-benchmarks.Rmd">GitHub.</a></p>
+<p>Using logic similar to what we’ve stepped through above, we could set up an automated process to regularly scrape these portals for all the relevant information and upload the results in a webpage or set up an email notification whenever something which might be of interest gets published.</p>
+<p>In a future post, I will explore social media and other resources.</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>You can achieve this same end through a combination of various mobile apps, email subscriptions, keeping an eye on machine learning tags on social media and so on, but where is the fun in that?<a href="#fnref1">↩</a></p></li>
+</ol>
 </div>
 
 
@@ -1435,13 +1679,13 @@ ls(pattern = pattern) %&gt;%
                     
                     <div>
                         <img class="icon" src="/img/back.svg" alt="back" />
-                        <a href="/blog/installing-missing-packages-from-bioconductor-cran-and-github/">Installing Missing Packages from Bioconductor, CRAN and Github</a>
+                        <a href="/blog/colours-impact-resources-for-data-visualization-with-a-splash-of-r/">Colours &amp; Impact: Resources for Data Visualization with a splash of R</a>
                     </div>
                     
                     <div style="width: 100%;"></div>
                     
                     <div>
-                        <a href="/blog/colours-impact-resources-for-data-visualization-with-a-splash-of-r/">Colours &amp; Impact: Resources for Data Visualization with a splash of R</a>
+                        <a href="/blog/fp-helpers-from-purrr-and-friends-part-1-rowwise-operations/">FP helpers from purrr and friends, part 1 | Rowwise operations</a>
                         <img class="icon" src="/img/next.svg" alt="next" />
                     </div>
                     

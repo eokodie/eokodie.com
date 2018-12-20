@@ -13,10 +13,10 @@
     
     <item>
       <title>Drinking from the Firehose: using R to keep up with current ML Research - part 1</title>
-      <link>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research---part-1/</link>
+      <link>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research-part-1/</link>
       <pubDate>Tue, 12 Jun 2018 21:13:14 -0500</pubDate>
       
-      <guid>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research---part-1/</guid>
+      <guid>/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research-part-1/</guid>
       <description>via GIPHYIn this post, I will explore how we can use resources available in the R package ecosystem to keep up with state-of-the-art machine learning research.
 MotivationRecently, I have been reading books about creativity. The recurring concept in the books is that the key place to start when mastering a skill is by reproducing other people’s proven ideas and figuring out their inner workings - a form of apprenticeship.</description>
     </item>
