@@ -16,7 +16,7 @@ tags: ["rstats", "functional programming"]
 </p>
 <div id="motivation" class="section level2">
 <h2>Motivation</h2>
-<p>This series of blog posts is inspired by <a href="https://twitter.com/drob?lang=en">David Robinson’s</a> tweet:</p>
+<p>This series of blog posts is inspired by David Robinson’s tweet:</p>
 <blockquote>
 <p>When you’ve given the same in-person advice 3 times, write a blog post.</p>
 </blockquote>
@@ -107,7 +107,7 @@ Turbo-fan
 <p>Base R provides a <a href="https://adv-r.hadley.nz/functionals.html"><strong>functional</strong></a> (a function which takes one or more functions as arguments) for performing this type of operation: <code>apply</code>. <code>apply</code> belongs to a special group of functionals: the <a href="https://en.wikipedia.org/wiki/Map_(higher-order_function)"><code>map family</code></a> (functions that take a function and a list as inputs, and return a new list with the function applied to each element from the list).</p>
 <p>How does it work?</p>
 <p>Under the hood, <code>apply</code> inspects the object to which the function will be applied and coerces it to a matrix if the object is two-dimentional (e.g. a dataframe). Otherwise, the object is coerced to an array. After this step, the function is applied to either the rows (along <code>MARGIN</code> 1) or columns (along <code>MARGIN</code> 2) of the matrix or array.</p>
-<p>This means that the base R implementation of rowwise string concatenation becomes:</p>
+<p>This means that rowwise string concatenation in base R will look like this:</p>
 <pre class="r"><code>df_base &lt;- df
 df_base$id = apply(df, 1, paste, collapse = &quot; &quot;)
 pretty_print(df_base)</code></pre>

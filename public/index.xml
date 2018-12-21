@@ -28,7 +28,7 @@
 &lt;/p&gt;
 &lt;div id=&#34;motivation&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Motivation&lt;/h2&gt;
-&lt;p&gt;This series of blog posts is inspired by &lt;a href=&#34;https://twitter.com/drob?lang=en&#34;&gt;David Robinson’s&lt;/a&gt; tweet:&lt;/p&gt;
+&lt;p&gt;This series of blog posts is inspired by David Robinson’s tweet:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;When you’ve given the same in-person advice 3 times, write a blog post.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -119,7 +119,7 @@ Turbo-fan
 &lt;p&gt;Base R provides a &lt;a href=&#34;https://adv-r.hadley.nz/functionals.html&#34;&gt;&lt;strong&gt;functional&lt;/strong&gt;&lt;/a&gt; (a function which takes one or more functions as arguments) for performing this type of operation: &lt;code&gt;apply&lt;/code&gt;. &lt;code&gt;apply&lt;/code&gt; belongs to a special group of functionals: the &lt;a href=&#34;https://en.wikipedia.org/wiki/Map_(higher-order_function)&#34;&gt;&lt;code&gt;map family&lt;/code&gt;&lt;/a&gt; (functions that take a function and a list as inputs, and return a new list with the function applied to each element from the list).&lt;/p&gt;
 &lt;p&gt;How does it work?&lt;/p&gt;
 &lt;p&gt;Under the hood, &lt;code&gt;apply&lt;/code&gt; inspects the object to which the function will be applied and coerces it to a matrix if the object is two-dimentional (e.g. a dataframe). Otherwise, the object is coerced to an array. After this step, the function is applied to either the rows (along &lt;code&gt;MARGIN&lt;/code&gt; 1) or columns (along &lt;code&gt;MARGIN&lt;/code&gt; 2) of the matrix or array.&lt;/p&gt;
-&lt;p&gt;This means that the base R implementation of rowwise string concatenation becomes:&lt;/p&gt;
+&lt;p&gt;This means that rowwise string concatenation in base R will look like this:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_base &amp;lt;- df
 df_base$id = apply(df, 1, paste, collapse = &amp;quot; &amp;quot;)
 pretty_print(df_base)&lt;/code&gt;&lt;/pre&gt;
