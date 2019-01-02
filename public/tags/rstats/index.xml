@@ -6,10 +6,20 @@
     <description>Recent content in Rstats on Ernest Omane-Kodie</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 18 Dec 2018 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Wed, 02 Jan 2019 21:13:14 -0500</lastBuildDate>
     
 	<atom:link href="/tags/rstats/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Functional Programming helpers from purrr and friends, part 2 | Composition</title>
+      <link>/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/</link>
+      <pubDate>Wed, 02 Jan 2019 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/</guid>
+      <description>via GIPHYBackgroundIn the first instalment of this blog series, I explored how some functional programming (FP) concepts are implemented in R using purrr and associated packages. This post extends the exploration to cover two closely related concepts: composition and pointfree style.
+Note that the main focus of the blog series is FP concepts that feel natural to R and are in line with the design philosophy of purrr:</description>
+    </item>
     
     <item>
       <title>Functional Programming helpers from purrr and friends, part 1 | Rowwise operations</title>

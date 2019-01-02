@@ -13,9 +13,9 @@
 <meta property="og:site_name" content="Ernest Omane-Kodie" />
 <meta property="og:locale" content="nn_NO" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/tags/highcharts/" />
-<meta property="og:title" content="Highcharts" />
-<meta property="twitter:title" content="Highcharts">
+<meta property="og:url" content="/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/" />
+<meta property="og:title" content="Functional Programming helpers from purrr and friends, part 2 | Composition" />
+<meta property="twitter:title" content="Functional Programming helpers from purrr and friends, part 2 | Composition">
 
     <meta property="twitter:card" content="summary">
 
@@ -25,10 +25,10 @@
 <title>
 
 
-     Ernest Omane-Kodie - Highcharts 
+     Ernest Omane-Kodie - Functional Programming helpers from purrr and friends, part 2 | Composition 
 
 </title>
-<link rel="canonical" href="/tags/highcharts/">
+<link rel="canonical" href="/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/">
 
 
 <style media="screen">
@@ -1052,8 +1052,6 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
 
 
 
-  <link href="/tags/highcharts/index.xml" rel="alternate" type="application/rss+xml" title="Ernest Omane-Kodie" />
-
 
 </head>
 
@@ -1061,7 +1059,7 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
 <body>
 
 
-<div class="header header-home column">
+<div class="header column">
 
     <div class="container">
         
@@ -1092,24 +1090,260 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
     </div>
 </div>
 
-<div class="main column">
+
+
+
+<div class="main post non-narrow zero-top-spacing column">
     <div class="container">
         <div class="content">
-            <div class="posts">
-                <div class="page-heading">Posts about Highcharts</div>
-                <ul>
-                    
-                        <li class="post-item">
-    <span class="meta">Apr 30, 2018</span>
-    <a href="/blog/need-for-speed-benchmarks-on-dataframes/"><span>Need for Speed: Benchmarks on Dataframes</span></a>
-</li>
+            <div class="front-matter">
+                <div class="title-container">
+                    <div class="page-heading">
 
+    Functional Programming helpers from purrr and friends, part 2 | Composition
+
+</div>
+
+                </div>
+                <div class="meta">
+                    <div class="date" title="Wed Jan 2 2019 21:13:14 -0500">Jan 2, 2019</div>
                     
-                </ul>
+                        
+                        <div class="author middot" title="Ernest Omane-Kodie">Ernest Omane-Kodie</div>
+                        
+                    
+                    <div class="reading-time middot">5 minute read</div>
+                    <div class="tags">
+                        <ul>
+                          
+                            <li class="middot"><a href="/tags/rstats">rstats</a> </li>
+                          
+                            <li class="middot"><a href="/tags/functional-programming">functional programming</a> </li>
+                          
+                        </ul>
+                    </div>
+                    <div class="tags">
+                        <ul>
+                          
+                          
+                        </ul>
+                    </div>
+                </div>
             </div>
+            <div class="markdown">
+                
+    
+    
+
+
+<iframe src="https://giphy.com/embed/l2iNlSsrLaszStTSio" width="360" height="480" frameBorder="0" class="giphy-embed" allowFullScreen>
+</iframe>
+<p>
+<a href="https://giphy.com/gifs/l2iNlSsrLaszStTSio">via GIPHY</a>
+</p>
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>In the <a href="https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/">first instalment</a> of this blog series, I explored how some functional programming (FP) concepts are implemented in R using <code>purrr</code> and associated packages. This post extends the exploration to cover two closely related concepts: <em>composition</em> and <em>pointfree style</em>.</p>
+<p>Note that the main focus of the blog series is FP concepts that feel natural to R and are in line with the design philosophy of <code>purrr</code>:</p>
+<blockquote>
+<p>“The goal of purrr is not try and turn R into Haskell in R: it does not implement currying, or destructuring binds, or pattern matching. The goal is to give you similar expressiveness to a classical FP language, while allowing you to write code that looks and feels like R” - <a href="https://purrr.tidyverse.org/articles/other-langs.html">purrr vignette</a></p>
+</blockquote>
+<pre class="r"><code>library(tidyverse)
+library(magrittr)
+library(fs)</code></pre>
+</div>
+<div id="composition" class="section level2">
+<h2>Composition</h2>
+<p>Composition is a technique for combining small functions to form a new function.</p>
+<p>Suppose <code>g</code> and <code>f</code> are <a href="https://en.wikipedia.org/wiki/Unary_function">unary functions</a> which perform transformations on dataframes. If we are interested in the sequential application of these functions, we can create a new function by applying <code>g</code> and <code>f</code> from right to left (as is conventional in mathematics) with nested calls.</p>
+<pre class="r"><code>g(f(data))))</code></pre>
+<p>This syntax works in R but the expression becomes difficult to read as the number of functions grows.</p>
+<p>We will look at two ways of eliminating nested function calls using tidyverse implementations of <em>composition.</em></p>
+<div id="motivating-example" class="section level3">
+<h3>Motivating example</h3>
+<p>Imagine we have several small csv files on disk. We want to write a simple workflow to read data from the files and store them in a list of tibbles.</p>
+</div>
+<div id="composition-with-pipes" class="section level3">
+<h3>Composition with pipes</h3>
+<p>The forward pipe operator (<code>%&gt;%</code>) from Stefan Bache’s <code>magrittr</code> package makes it possible to implement function composition in R. We achieve this by chaining small functions with <code>%&gt;%</code> and replacing the initial object with the dot placeholder.</p>
+<p>This means we can solve the problem in our motivating example by composing a function with pipes:</p>
+<pre class="r"><code>load_files &lt;- . %&gt;% 
+  path() %&gt;% 
+  dir_ls(regexp = &quot;[.]csv$&quot;) %&gt;% 
+  map(read_csv)</code></pre>
+<blockquote>
+<p>Composing functions with <code>magrittr</code> pipes creates a function in its own right. The composed function is known as a <strong>functional sequence</strong>.</p>
+</blockquote>
+<p>We can inspect the list of functions inside the functional sequence with <code>magrittr::functions</code>:</p>
+<pre class="r"><code>magrittr::functions(load_files)</code></pre>
+<pre><code>## [[1]]
+## function (.) 
+## path(.)
+## 
+## [[2]]
+## function (.) 
+## dir_ls(., regexp = &quot;[.]csv$&quot;)
+## 
+## [[3]]
+## function (.) 
+## map(., read_csv)</code></pre>
+<p>One nice feature of functional sequences is that they work with standard subsetting tools. This gives us the flexibility to apply an entire pipeline (or a subset of the pipeline) to an object.</p>
+<p>For example, we can use a <code>single square bracket</code> subset to generate a new functional sequence:</p>
+<pre class="r"><code>magrittr::functions(load_files[-3])</code></pre>
+<pre><code>## [[1]]
+## function (.) 
+## path(.)
+## 
+## [[2]]
+## function (.) 
+## dir_ls(., regexp = &quot;[.]csv$&quot;)</code></pre>
+<p>We can also use a <code>double square bracket</code> subset to generate a single function:</p>
+<pre class="r"><code>load_files[[1]]</code></pre>
+<pre><code>## function (.) 
+## path(.)</code></pre>
+<p>Which makes the following possible:</p>
+<pre class="r"><code>path_name &lt;- &quot;./data&quot;
+
+# construct path
+load_files[[1]](path_name) 
+#&gt; ./data
+
+# list csv files in the directory
+load_files[-3](path_name)
+#&gt; ./data/file1.csv ./data/file2.csv ./data/file3.csv 
+
+# read csv files and store in list
+data_list &lt;- load_files(path_name)</code></pre>
+</div>
+<div id="purrr-composed-functions" class="section level3">
+<h3>purrr composed functions</h3>
+<p><code>purrr</code> provides a function for composition: <code>compose</code>. <code>compose</code> takes any number of functions and applies them in turn from right to left (by default). The order in which functions are applied can be reversed by setting the <code>.dir</code> argument to “<em>forward</em>”.</p>
+<p>We can create a <code>purrr</code> composed function for reading csv files from disk with:</p>
+<pre class="r"><code>load_files &lt;- compose(
+  ~ path(.),
+  ~ dir_ls(path = ., regexp = &quot;[.]csv$&quot;),
+  ~ map(., read_csv),
+  .dir = c(&quot;forward&quot;)
+)</code></pre>
+<p>Note that <code>purrr::compose</code> works with anonymous functions supplied as formulas.</p>
+<pre class="r"><code>load_files</code></pre>
+<pre><code>## &lt;composed&gt;
+## 1. &lt;lambda&gt;
+## function (..., .x = ..1, .y = ..2, . = ..1) 
+## path(.)
+## attr(,&quot;class&quot;)
+## [1] &quot;rlang_lambda_function&quot;
+## 
+## 2. &lt;lambda&gt;
+## function (..., .x = ..1, .y = ..2, . = ..1) 
+## dir_ls(path = ., regexp = &quot;[.]csv$&quot;)
+## attr(,&quot;class&quot;)
+## [1] &quot;rlang_lambda_function&quot;
+## 
+## 3. &lt;lambda&gt;
+## function (..., .x = ..1, .y = ..2, . = ..1) 
+## map(., read_csv)
+## attr(,&quot;class&quot;)
+## [1] &quot;rlang_lambda_function&quot;</code></pre>
+</div>
+</div>
+<div id="pointfree" class="section level2">
+<h2>Pointfree</h2>
+<div id="a-bit-more-background" class="section level3">
+<h3>A bit more background</h3>
+<p>In functional programming, <strong>points</strong> refer to function argument. <strong>Pointfree</strong> (also called tacit programming) means getting rid of arguments using composition.</p>
+<p>Suppose we want to apply a series of transformations to a dataframe. The imperative way to do this in R will look like this:</p>
+<pre class="r"><code>df1 &lt;- log(mtcars)
+df2 &lt;- tan(df1)
+df3 &lt;- sqrt(df2)
+result &lt;- abs(df3)</code></pre>
+<p>This approach has a number of drawbacks.</p>
+<ul>
+<li>We have to pass parameters everywhere</li>
+<li>we need to think about naming intermediate variables, but naming is notorious for being hard</li>
+</ul>
+<blockquote>
+<p>“There are only two hard things in Computer Science: cache invalidation and naming things” - Phil Karlton</p>
+</blockquote>
+<p>Our example is simple but in a real system, this would mean passing a ship-load of parameters and naming tons of variables.</p>
+<p>How do we correct this?</p>
+<p>In the following sections, we will look at two ways of simplifying the workflow with pointfree style.</p>
+</div>
+<div id="sweet-dreams-are-made-of-pipes" class="section level3">
+<h3>Sweet dreams are made of pipes</h3>
+<p><code>%&gt;%</code> is syntactic sugar for invoking multiple function calls on an object without needing to create variables to store intermediate results.</p>
+<p>This means we can use pipes to rewrite the imperative solution in one expression, resulting in clarity to the dataflow with no intermediate variables:</p>
+<pre class="r"><code>result &lt;- mtcars %&gt;%
+  log %&gt;% 
+  tan %&gt;% 
+  sqrt %&gt;% 
+  abs</code></pre>
+<p>What we are doing here is piping the dataset through the first function, then piping the result into the next function and so on.</p>
+</div>
+<div id="magrittrfreduce" class="section level3">
+<h3>magrittr::freduce</h3>
+<p><code>magrittr</code> has a function for this type of problem: <code>freduce</code>. <code>freduce</code> takes a list of functions, and applies the functions sequentially to the object.</p>
+<pre class="r"><code>result &lt;- freduce(mtcars, list(log, tan, sqrt, abs))</code></pre>
+</div>
+</div>
+<div id="wrapping-up" class="section level2">
+<h2>Wrapping up</h2>
+<p>We have covered the tidyverse implementation of two related functional programming techniques:</p>
+<ul>
+<li>Getting rid of nested function calls with composition</li>
+<li>Getting rid of arguments with pointfree</li>
+</ul>
+<p>Remember that although the pipe makes code concise and easy to read, it is important not to take it too far. Where a pipeline has a lot of sequence of operations, consider creating intermediate steps with meaningful names. Also consider using the pipe only when the workflow transforms one main object (For more on this, see <a href="https://r4ds.had.co.nz/pipes.html">the pipes chapter</a> of R for Data Science).</p>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><a href="http://magrittr.tidyverse.org/">Magrittr: A Forward-Pipe Operator for R</a> - Stefan Milton Bache and Hadley Wickham</li>
+<li><a href="https://r4ds.had.co.nz">R for Data Science</a> - Garrett Grolemund and Hadley Wickham</li>
+<li><a href="https://purrr.tidyverse.org/articles/other-langs.html">purrr vignette</a></li>
+</ul>
+</div>
+</div>
+
+
+                <br>
+            </div>
+            
+            <div class="share">
+                  
+                  <a href="" class="ssk ssk-facebook"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-twitter"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-google-plus"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-linkedin"></a>
+                  
+            </div>
+            
+            
+                <div class="navigation">
+                    
+                    <div>
+                        <img class="icon" src="/img/back.svg" alt="back" />
+                        <a href="/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/">Functional Programming helpers from purrr and friends, part 1 | Rowwise operations</a>
+                    </div>
+                    
+                    <div style="width: 100%;"></div>
+                    
+                </div>
+            
+            <br>
+            <div class="disqus">
+                
+            </div>
+            
         </div>
     </div>
 </div>
+
 <div class="footer column">
     <div class="container">
 

@@ -1,0 +1,168 @@
+---
+title: "Functional Programming helpers from purrr and friends, part 2 | Composition" 
+author: "Ernest Omane-Kodie"
+date: 2019-01-02T21:13:14-05:00 
+categories: ["R"]
+tags: ["rstats", "functional programming"]
+---
+<iframe src="https://giphy.com/embed/l2iNlSsrLaszStTSio" width="360" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/l2iNlSsrLaszStTSio">via GIPHY</a></p>
+
+## Background
+In the [first instalment](https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/) of this blog series, I explored how some functional programming (FP) concepts are implemented in R using `purrr` and associated packages. This post extends the exploration to cover two closely related concepts: _composition_ and _pointfree style_.
+
+Note that the main focus of the blog series is FP concepts that feel natural to R and are in line with the design philosophy of `purrr`:
+
+> "The goal of purrr is not try and turn R into Haskell in R: it does not implement currying, or destructuring binds, or pattern matching. The goal is to give you similar expressiveness to a classical FP language, while allowing you to write code that looks and feels like R" - [purrr vignette](https://purrr.tidyverse.org/articles/other-langs.html)
+
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(magrittr)
+library(fs)
+```
+
+
+## Composition
+
+Composition is a technique for combining small functions to form a new function. 
+
+Suppose `g` and `f` are [unary functions](https://en.wikipedia.org/wiki/Unary_function) which perform transformations on dataframes. If we are interested in the sequential application of these functions, we can create a new function by applying `g` and `f` from right to left (as is conventional in mathematics) with nested calls. 
+```{r eval=FALSE}
+g(f(data))))
+```
+
+This syntax works in R but the expression becomes difficult to read as the number of functions grows.
+
+We will look at two ways of eliminating nested function calls using tidyverse implementations of _composition._
+
+### Motivating example
+Imagine we have several small csv files on disk. We want to write a simple workflow to read data from the files and store them in a list of tibbles.
+
+### Composition with pipes
+The forward pipe operator (`%>%`) from Stefan Bache's `magrittr` package makes it possible to implement function composition in R. We achieve this by chaining small functions with `%>%` and replacing the initial object with the dot placeholder. 
+
+This means we can solve the problem in our motivating example by composing a function with pipes:
+```{r}
+load_files <- . %>% 
+  path() %>% 
+  dir_ls(regexp = "[.]csv$") %>% 
+  map(read_csv)
+```
+
+> Composing functions with `magrittr` pipes creates a function in its own right. The composed function is known as a __functional sequence__.
+
+We can inspect the list of functions inside the functional sequence with `magrittr::functions`:
+```{r}
+magrittr::functions(load_files)
+```
+
+One nice feature of functional sequences is that they work with standard subsetting tools. This gives us the flexibility to apply an entire pipeline (or a subset of the pipeline) to an object.
+
+For example, we can use a `single square bracket` subset to generate a new functional sequence:
+```{r}
+magrittr::functions(load_files[-3])
+```
+
+We can also use a `double square bracket` subset to generate a single function:
+```{r}
+load_files[[1]]
+```
+
+Which makes the following possible:
+```{r eval=FALSE}
+path_name <- "./data"
+
+# construct path
+load_files[[1]](path_name) 
+#> ./data
+
+# list csv files in the directory
+load_files[-3](path_name)
+#> ./data/file1.csv ./data/file2.csv ./data/file3.csv 
+
+# read csv files and store in list
+data_list <- load_files(path_name)
+```
+
+### purrr composed functions
+
+`purrr` provides a function for composition: `compose`. `compose` takes any number of functions and applies them in turn from right to left (by default). The order in which functions are applied can be reversed by setting the `.dir` argument to "_forward_".
+
+We can create a `purrr` composed function for reading csv files from disk with:
+```{r}
+load_files <- compose(
+  ~ path(.),
+  ~ dir_ls(path = ., regexp = "[.]csv$"),
+  ~ map(., read_csv),
+  .dir = c("forward")
+)
+```
+
+Note that `purrr::compose` works with anonymous functions supplied as formulas.
+```{r}
+load_files
+```
+
+
+## Pointfree 
+### A bit more background
+In functional programming, __points__ refer to function argument. __Pointfree__ (also called tacit programming) means getting rid of arguments using composition. 
+
+Suppose we want to apply a series of transformations to a dataframe.
+The imperative way to do this in R will look like this:
+```{r eval=FALSE}
+df1 <- log(mtcars)
+df2 <- tan(df1)
+df3 <- sqrt(df2)
+result <- abs(df3)
+```
+
+This approach has a number of drawbacks. 
+
++ We have to pass parameters everywhere
++ we need to think about naming intermediate variables, but naming is notorious for being hard
+
+> "There are only two hard things in Computer Science: cache invalidation and naming things" - Phil Karlton
+
+
+Our example is simple but in a real system, this would mean passing a ship-load of parameters and naming tons of variables.
+
+How do we correct this?
+
+In the following sections, we will look at two ways of simplifying the workflow with pointfree style.
+
+### Sweet dreams are made of pipes
+`%>%` is syntactic sugar for invoking multiple function calls on an object without needing to create variables to store intermediate results.
+
+This means we can use pipes to rewrite the imperative solution in one expression, resulting in clarity to the dataflow with no intermediate variables:
+```{r eval=FALSE}
+result <- mtcars %>%
+  log %>% 
+  tan %>% 
+  sqrt %>% 
+  abs
+```
+
+What we are doing here is piping the dataset through the first function, then piping the result into the next function and so on.
+
+### magrittr::freduce
+`magrittr` has a function for this type of problem: `freduce`. `freduce` takes a list of functions, and applies the functions sequentially to the object.
+```{r eval=FALSE}
+result <- freduce(mtcars, list(log, tan, sqrt, abs))
+```
+
+## Wrapping up
+We have covered the tidyverse implementation of two related functional programming techniques: 
+
++ Getting rid of nested function calls with composition
++ Getting rid of arguments with pointfree 
+
+Remember that although the pipe makes code concise and easy to read, it is important not to take it too far. Where a pipeline has a lot of sequence of operations, consider creating intermediate steps with meaningful names. Also consider using the pipe only when the workflow transforms one main object (For more on this, see [the pipes chapter](https://r4ds.had.co.nz/pipes.html) of R for Data Science).
+
+### References
+
++ [Magrittr: A Forward-Pipe Operator for R](http://magrittr.tidyverse.org/) - Stefan Milton Bache and Hadley Wickham
++ [R for Data Science](https://r4ds.had.co.nz) - Garrett Grolemund  and Hadley Wickham
++ [purrr vignette](https://purrr.tidyverse.org/articles/other-langs.html)
+
+

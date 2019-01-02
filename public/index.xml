@@ -6,10 +6,189 @@
     <description>Recent content on Ernest Omane-Kodie</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 18 Dec 2018 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Wed, 02 Jan 2019 21:13:14 -0500</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Functional Programming helpers from purrr and friends, part 2 | Composition</title>
+      <link>/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/</link>
+      <pubDate>Wed, 02 Jan 2019 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/</guid>
+      <description>
+
+
+&lt;iframe src=&#34;https://giphy.com/embed/l2iNlSsrLaszStTSio&#34; width=&#34;360&#34; height=&#34;480&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://giphy.com/gifs/l2iNlSsrLaszStTSio&#34;&gt;via GIPHY&lt;/a&gt;
+&lt;/p&gt;
+&lt;div id=&#34;background&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Background&lt;/h2&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/&#34;&gt;first instalment&lt;/a&gt; of this blog series, I explored how some functional programming (FP) concepts are implemented in R using &lt;code&gt;purrr&lt;/code&gt; and associated packages. This post extends the exploration to cover two closely related concepts: &lt;em&gt;composition&lt;/em&gt; and &lt;em&gt;pointfree style&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Note that the main focus of the blog series is FP concepts that feel natural to R and are in line with the design philosophy of &lt;code&gt;purrr&lt;/code&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“The goal of purrr is not try and turn R into Haskell in R: it does not implement currying, or destructuring binds, or pattern matching. The goal is to give you similar expressiveness to a classical FP language, while allowing you to write code that looks and feels like R” - &lt;a href=&#34;https://purrr.tidyverse.org/articles/other-langs.html&#34;&gt;purrr vignette&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(magrittr)
+library(fs)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;composition&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Composition&lt;/h2&gt;
+&lt;p&gt;Composition is a technique for combining small functions to form a new function.&lt;/p&gt;
+&lt;p&gt;Suppose &lt;code&gt;g&lt;/code&gt; and &lt;code&gt;f&lt;/code&gt; are &lt;a href=&#34;https://en.wikipedia.org/wiki/Unary_function&#34;&gt;unary functions&lt;/a&gt; which perform transformations on dataframes. If we are interested in the sequential application of these functions, we can create a new function by applying &lt;code&gt;g&lt;/code&gt; and &lt;code&gt;f&lt;/code&gt; from right to left (as is conventional in mathematics) with nested calls.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;g(f(data))))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This syntax works in R but the expression becomes difficult to read as the number of functions grows.&lt;/p&gt;
+&lt;p&gt;We will look at two ways of eliminating nested function calls using tidyverse implementations of &lt;em&gt;composition.&lt;/em&gt;&lt;/p&gt;
+&lt;div id=&#34;motivating-example&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Motivating example&lt;/h3&gt;
+&lt;p&gt;Imagine we have several small csv files on disk. We want to write a simple workflow to read data from the files and store them in a list of tibbles.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;composition-with-pipes&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Composition with pipes&lt;/h3&gt;
+&lt;p&gt;The forward pipe operator (&lt;code&gt;%&amp;gt;%&lt;/code&gt;) from Stefan Bache’s &lt;code&gt;magrittr&lt;/code&gt; package makes it possible to implement function composition in R. We achieve this by chaining small functions with &lt;code&gt;%&amp;gt;%&lt;/code&gt; and replacing the initial object with the dot placeholder.&lt;/p&gt;
+&lt;p&gt;This means we can solve the problem in our motivating example by composing a function with pipes:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;load_files &amp;lt;- . %&amp;gt;% 
+  path() %&amp;gt;% 
+  dir_ls(regexp = &amp;quot;[.]csv$&amp;quot;) %&amp;gt;% 
+  map(read_csv)&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Composing functions with &lt;code&gt;magrittr&lt;/code&gt; pipes creates a function in its own right. The composed function is known as a &lt;strong&gt;functional sequence&lt;/strong&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;We can inspect the list of functions inside the functional sequence with &lt;code&gt;magrittr::functions&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;magrittr::functions(load_files)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [[1]]
+## function (.) 
+## path(.)
+## 
+## [[2]]
+## function (.) 
+## dir_ls(., regexp = &amp;quot;[.]csv$&amp;quot;)
+## 
+## [[3]]
+## function (.) 
+## map(., read_csv)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;One nice feature of functional sequences is that they work with standard subsetting tools. This gives us the flexibility to apply an entire pipeline (or a subset of the pipeline) to an object.&lt;/p&gt;
+&lt;p&gt;For example, we can use a &lt;code&gt;single square bracket&lt;/code&gt; subset to generate a new functional sequence:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;magrittr::functions(load_files[-3])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [[1]]
+## function (.) 
+## path(.)
+## 
+## [[2]]
+## function (.) 
+## dir_ls(., regexp = &amp;quot;[.]csv$&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can also use a &lt;code&gt;double square bracket&lt;/code&gt; subset to generate a single function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;load_files[[1]]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## function (.) 
+## path(.)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which makes the following possible:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;path_name &amp;lt;- &amp;quot;./data&amp;quot;
+
+# construct path
+load_files[[1]](path_name) 
+#&amp;gt; ./data
+
+# list csv files in the directory
+load_files[-3](path_name)
+#&amp;gt; ./data/file1.csv ./data/file2.csv ./data/file3.csv 
+
+# read csv files and store in list
+data_list &amp;lt;- load_files(path_name)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;purrr-composed-functions&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;purrr composed functions&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;purrr&lt;/code&gt; provides a function for composition: &lt;code&gt;compose&lt;/code&gt;. &lt;code&gt;compose&lt;/code&gt; takes any number of functions and applies them in turn from right to left (by default). The order in which functions are applied can be reversed by setting the &lt;code&gt;.dir&lt;/code&gt; argument to “&lt;em&gt;forward&lt;/em&gt;”.&lt;/p&gt;
+&lt;p&gt;We can create a &lt;code&gt;purrr&lt;/code&gt; composed function for reading csv files from disk with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;load_files &amp;lt;- compose(
+  ~ path(.),
+  ~ dir_ls(path = ., regexp = &amp;quot;[.]csv$&amp;quot;),
+  ~ map(., read_csv),
+  .dir = c(&amp;quot;forward&amp;quot;)
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that &lt;code&gt;purrr::compose&lt;/code&gt; works with anonymous functions supplied as formulas.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;load_files&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;composed&amp;gt;
+## 1. &amp;lt;lambda&amp;gt;
+## function (..., .x = ..1, .y = ..2, . = ..1) 
+## path(.)
+## attr(,&amp;quot;class&amp;quot;)
+## [1] &amp;quot;rlang_lambda_function&amp;quot;
+## 
+## 2. &amp;lt;lambda&amp;gt;
+## function (..., .x = ..1, .y = ..2, . = ..1) 
+## dir_ls(path = ., regexp = &amp;quot;[.]csv$&amp;quot;)
+## attr(,&amp;quot;class&amp;quot;)
+## [1] &amp;quot;rlang_lambda_function&amp;quot;
+## 
+## 3. &amp;lt;lambda&amp;gt;
+## function (..., .x = ..1, .y = ..2, . = ..1) 
+## map(., read_csv)
+## attr(,&amp;quot;class&amp;quot;)
+## [1] &amp;quot;rlang_lambda_function&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pointfree&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Pointfree&lt;/h2&gt;
+&lt;div id=&#34;a-bit-more-background&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;A bit more background&lt;/h3&gt;
+&lt;p&gt;In functional programming, &lt;strong&gt;points&lt;/strong&gt; refer to function argument. &lt;strong&gt;Pointfree&lt;/strong&gt; (also called tacit programming) means getting rid of arguments using composition.&lt;/p&gt;
+&lt;p&gt;Suppose we want to apply a series of transformations to a dataframe. The imperative way to do this in R will look like this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df1 &amp;lt;- log(mtcars)
+df2 &amp;lt;- tan(df1)
+df3 &amp;lt;- sqrt(df2)
+result &amp;lt;- abs(df3)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This approach has a number of drawbacks.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We have to pass parameters everywhere&lt;/li&gt;
+&lt;li&gt;we need to think about naming intermediate variables, but naming is notorious for being hard&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“There are only two hard things in Computer Science: cache invalidation and naming things” - Phil Karlton&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Our example is simple but in a real system, this would mean passing a ship-load of parameters and naming tons of variables.&lt;/p&gt;
+&lt;p&gt;How do we correct this?&lt;/p&gt;
+&lt;p&gt;In the following sections, we will look at two ways of simplifying the workflow with pointfree style.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;sweet-dreams-are-made-of-pipes&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Sweet dreams are made of pipes&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;%&amp;gt;%&lt;/code&gt; is syntactic sugar for invoking multiple function calls on an object without needing to create variables to store intermediate results.&lt;/p&gt;
+&lt;p&gt;This means we can use pipes to rewrite the imperative solution in one expression, resulting in clarity to the dataflow with no intermediate variables:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;result &amp;lt;- mtcars %&amp;gt;%
+  log %&amp;gt;% 
+  tan %&amp;gt;% 
+  sqrt %&amp;gt;% 
+  abs&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What we are doing here is piping the dataset through the first function, then piping the result into the next function and so on.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;magrittrfreduce&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;magrittr::freduce&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;magrittr&lt;/code&gt; has a function for this type of problem: &lt;code&gt;freduce&lt;/code&gt;. &lt;code&gt;freduce&lt;/code&gt; takes a list of functions, and applies the functions sequentially to the object.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;result &amp;lt;- freduce(mtcars, list(log, tan, sqrt, abs))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wrapping-up&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Wrapping up&lt;/h2&gt;
+&lt;p&gt;We have covered the tidyverse implementation of two related functional programming techniques:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Getting rid of nested function calls with composition&lt;/li&gt;
+&lt;li&gt;Getting rid of arguments with pointfree&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Remember that although the pipe makes code concise and easy to read, it is important not to take it too far. Where a pipeline has a lot of sequence of operations, consider creating intermediate steps with meaningful names. Also consider using the pipe only when the workflow transforms one main object (For more on this, see &lt;a href=&#34;https://r4ds.had.co.nz/pipes.html&#34;&gt;the pipes chapter&lt;/a&gt; of R for Data Science).&lt;/p&gt;
+&lt;div id=&#34;references&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;References&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://magrittr.tidyverse.org/&#34;&gt;Magrittr: A Forward-Pipe Operator for R&lt;/a&gt; - Stefan Milton Bache and Hadley Wickham&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://r4ds.had.co.nz&#34;&gt;R for Data Science&lt;/a&gt; - Garrett Grolemund and Hadley Wickham&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://purrr.tidyverse.org/articles/other-langs.html&#34;&gt;purrr vignette&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Functional Programming helpers from purrr and friends, part 1 | Rowwise operations</title>
