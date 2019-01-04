@@ -50,15 +50,15 @@ library(fs)&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;composition-with-pipes&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Composition with pipes&lt;/h3&gt;
 &lt;p&gt;The forward pipe operator (&lt;code&gt;%&amp;gt;%&lt;/code&gt;) from Stefan Bache’s &lt;code&gt;magrittr&lt;/code&gt; package makes it possible to implement function composition in R. We achieve this by chaining small functions with &lt;code&gt;%&amp;gt;%&lt;/code&gt; and replacing the initial object with the dot placeholder.&lt;/p&gt;
-&lt;p&gt;This means we can solve the problem in our motivating example by composing a function with pipes:&lt;/p&gt;
+&lt;p&gt;This means we can solve the problem in our motivating example by composing &lt;code&gt;load_files()&lt;/code&gt; with pipes:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;load_files &amp;lt;- . %&amp;gt;% 
   path() %&amp;gt;% 
   dir_ls(regexp = &amp;quot;[.]csv$&amp;quot;) %&amp;gt;% 
   map(read_csv)&lt;/code&gt;&lt;/pre&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Composing functions with &lt;code&gt;magrittr&lt;/code&gt; pipes creates a function in its own right. The composed function is known as a &lt;strong&gt;functional sequence&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Stringing functions together with pipes and replacing the initial object with the dot placeholder creates a function in its own right. The composed function is a &lt;strong&gt;functional sequence&lt;/strong&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;We can inspect the list of functions inside the functional sequence with &lt;code&gt;magrittr::functions&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;We can inspect the contents of the &lt;em&gt;functional sequence&lt;/em&gt; with &lt;code&gt;magrittr::functions()&lt;/code&gt;:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;magrittr::functions(load_files)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [[1]]
 ## function (.) 

@@ -41,7 +41,7 @@ Imagine we have several small csv files on disk. We want to write a simple workf
 ### Composition with pipes
 The forward pipe operator (`%>%`) from Stefan Bache's `magrittr` package makes it possible to implement function composition in R. We achieve this by chaining small functions with `%>%` and replacing the initial object with the dot placeholder. 
 
-This means we can solve the problem in our motivating example by composing a function with pipes:
+This means we can solve the problem in our motivating example by composing `load_files()` with pipes:
 ```{r}
 load_files <- . %>% 
   path() %>% 
@@ -49,9 +49,9 @@ load_files <- . %>%
   map(read_csv)
 ```
 
-> Composing functions with `magrittr` pipes creates a function in its own right. The composed function is known as a __functional sequence__.
+> Stringing functions together with pipes and replacing the initial object with the dot placeholder creates a function in its own right. The composed function is a __functional sequence__.
 
-We can inspect the list of functions inside the functional sequence with `magrittr::functions`:
+We can inspect the contents of the _functional sequence_ with `magrittr::functions()`:
 ```{r}
 magrittr::functions(load_files)
 ```

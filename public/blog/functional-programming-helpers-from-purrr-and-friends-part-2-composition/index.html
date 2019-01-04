@@ -1166,15 +1166,15 @@ library(fs)</code></pre>
 <div id="composition-with-pipes" class="section level3">
 <h3>Composition with pipes</h3>
 <p>The forward pipe operator (<code>%&gt;%</code>) from Stefan Bache’s <code>magrittr</code> package makes it possible to implement function composition in R. We achieve this by chaining small functions with <code>%&gt;%</code> and replacing the initial object with the dot placeholder.</p>
-<p>This means we can solve the problem in our motivating example by composing a function with pipes:</p>
+<p>This means we can solve the problem in our motivating example by composing <code>load_files()</code> with pipes:</p>
 <pre class="r"><code>load_files &lt;- . %&gt;% 
   path() %&gt;% 
   dir_ls(regexp = &quot;[.]csv$&quot;) %&gt;% 
   map(read_csv)</code></pre>
 <blockquote>
-<p>Composing functions with <code>magrittr</code> pipes creates a function in its own right. The composed function is known as a <strong>functional sequence</strong>.</p>
+<p>Stringing functions together with pipes and replacing the initial object with the dot placeholder creates a function in its own right. The composed function is a <strong>functional sequence</strong>.</p>
 </blockquote>
-<p>We can inspect the list of functions inside the functional sequence with <code>magrittr::functions</code>:</p>
+<p>We can inspect the contents of the <em>functional sequence</em> with <code>magrittr::functions()</code>:</p>
 <pre class="r"><code>magrittr::functions(load_files)</code></pre>
 <pre><code>## [[1]]
 ## function (.) 
