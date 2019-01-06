@@ -38,6 +38,10 @@
   </url>
   
   <url>
+    <loc>/home/</loc>
+  </url>
+  
+  <url>
     <loc>/blog/</loc>
     <lastmod>2019-01-02T21:13:14-05:00</lastmod>
     <priority>0</priority>
@@ -76,10 +80,6 @@
     <loc>/tags/highcharts/</loc>
     <lastmod>2018-04-30T21:13:14-05:00</lastmod>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/home/</loc>
   </url>
   
   <url>
