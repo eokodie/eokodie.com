@@ -1214,7 +1214,7 @@ read_with_readr(&quot;.&quot;)</code></pre>
 <div id="whats-happening-under-the-hood" class="section level3">
 <h3>What’s happening under the hood?</h3>
 <p>When <code>read_with_vroom()</code> is created, it captures the current environment which happens to be the enclosing environment of the function factory. Every time <code>read_with_vroom()</code> is called, it creates a fresh execution environment which is the enclosing environment of the manufactured function.</p>
-<p>This makes lexical scoping possible: for instance since <code>vroom::vroom()</code> is not in the enclosing enviroment of <code>read_with_vroom()</code>, R will look for it in the parent environment - <a href="https://adv-r.hadley.nz/function-factories.html">See here for more information</a></p>
+<p>This makes lexical scoping possible: for instance since <code>vroom::vroom()</code> is not in the enclosing enviroment of <code>read_with_vroom()</code>, R will look for it in the parent environment - <a href="https://adv-r.hadley.nz/function-factories.html">See Adv. R for more information</a></p>
 </div>
 </div>
 <div id="partial-application" class="section level2">
@@ -1266,7 +1266,7 @@ read_with_readr(&quot;.&quot;)</code></pre>
 <div id="how-does-it-work" class="section level3">
 <h3>How does it work?</h3>
 <p>As with function factories, when we execute <code>read_with_vroom()</code>, the current environment is the execution environment of the current function (i.e. the one currently being evaluated). The caller environment is the execution environment of the function that called the current function (i.e. <code>read_many_csv_files()</code>).</p>
-<p>Note that in our example, the <code>body</code> argument captures (quotes) the multiline expression which represents code inside the manufactured function. At the moment of quoting these expressions, <code>.f</code> is known (i.e. can be looked up from the caller environment). We use <code>rlang::!!</code> to evaluate (unquote) <code>.f</code> before we capture the expressions in the <code>body</code> of <code>rlang::new_function()</code> - <a href="https://adv-r.hadley.nz/quasiquotation.html#unquoting">See here for more information</a>.</p>
+<p>Note that in our example, the <code>body</code> argument captures (quotes) the multiline expression which represents code inside the manufactured function. At the moment of quoting these expressions, <code>.f</code> is known (i.e. can be looked up from the caller environment). We use <code>rlang::!!</code> to evaluate (unquote) <code>.f</code> before we capture the expressions in the <code>body</code> of <code>rlang::new_function()</code> - <a href="https://adv-r.hadley.nz/quasiquotation.html#unquoting">See Adv. R for more information</a>.</p>
 </div>
 </div>
 <div id="wrapping-up" class="section level2">
