@@ -6,10 +6,161 @@
     <description>Recent content on Ernest Omane-Kodie</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 02 Jan 2019 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 23 Mar 2019 21:13:14 -0500</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Functional Programming helpers from purrr and friends, part 3</title>
+      <link>/blog/functional-programming-helpers-from-purrr-and-friends-part-3/</link>
+      <pubDate>Sat, 23 Mar 2019 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/functional-programming-helpers-from-purrr-and-friends-part-3/</guid>
+      <description>
+
+
+&lt;iframe src=&#34;https://giphy.com/embed/8vQSQ3cNXuDGo&#34; width=&#34;300&#34; height=&#34;300&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://giphy.com/gifs/cat-moment-remember-8vQSQ3cNXuDGo&#34;&gt;via GIPHY&lt;/a&gt;
+&lt;/p&gt;
+&lt;div id=&#34;background&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Background&lt;/h2&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/&#34;&gt;first&lt;/a&gt; and &lt;a href=&#34;https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/&#34;&gt;second&lt;/a&gt; instalments of this blog series, we touched on some functional programming concepts and their implementation in &lt;code&gt;purrr&lt;/code&gt; and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of dynamically creating new functions: &lt;strong&gt;function factories&lt;/strong&gt;, &lt;strong&gt;partial application&lt;/strong&gt; and &lt;strong&gt;quasiquotation&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Let’s begin by loading the packages we need.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(purrr)
+library(rlang)
+library(fs)
+library(magrittr)
+library(vroom)
+library(readr)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;motivating-example&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Motivating example&lt;/h2&gt;
+&lt;p&gt;We will illustrate new concepts by adapting the simple file reading problem from the previous instalment.&lt;/p&gt;
+&lt;p&gt;Recapping the example: Imagine we have several small csv files on disk:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mtcars %&amp;gt;% 
+  split(.$carb) %&amp;gt;% 
+  iwalk(~ readr::write_csv(.x, glue::glue(&amp;quot;mtcars_{.y}.csv&amp;quot;)))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We want to explore ways of creating functions to read these files into a list of dataframes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-first-attempt&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;A first attempt&lt;/h2&gt;
+&lt;p&gt;Our first go at the problem using &lt;code&gt;fs&lt;/code&gt; and &lt;code&gt;purrr&lt;/code&gt; might look like this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_many_csv_files &amp;lt;- function(folder_path){
+  # extract file names
+  file_names &amp;lt;- path(folder_path) %&amp;gt;% 
+    dir_ls(type = &amp;quot;file&amp;quot;, glob = &amp;quot;*.csv&amp;quot;) %&amp;gt;%
+    map_chr(fs::path_file) 
+  
+  # load data
+  out &amp;lt;- path(folder_path) %&amp;gt;% 
+    dir_ls(regexp = &amp;quot;[.]csv$&amp;quot;) %&amp;gt;% 
+    map(readr::read_csv) %&amp;gt;% 
+    set_names(file_names)
+  return(out)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# read csv files
+read_many_csv_files(&amp;quot;.&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is all well and good, but imagine further that we don’t want to restrict our function to only use &lt;code&gt;readr::read_csv()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;How do we extend our workflow to accommodate any csv reader?&lt;/p&gt;
+&lt;p&gt;In the sections that follow, we will walk through different ways of creating general-purpose versions of &lt;code&gt;read_many_csv_files()&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;function-factories&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Function factories&lt;/h2&gt;
+&lt;p&gt;Our second attempt at the motivating problem begins with a function factory (a function for creating other functions):&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_many_csv_files &amp;lt;- function(.f){
+  force(.f)
+  function(folder_path){
+    # extract file names
+    file_names &amp;lt;- path(folder_path) %&amp;gt;% 
+      dir_ls(type = &amp;quot;file&amp;quot;, glob = &amp;quot;*.csv&amp;quot;) %&amp;gt;% 
+      map_chr(fs::path_file) 
+    
+    # load data
+    out &amp;lt;- path(folder_path) %&amp;gt;% 
+      dir_ls(regexp = &amp;quot;.csv&amp;quot;) %&amp;gt;% 
+      map(.f) %&amp;gt;% 
+      set_names(file_names)
+    return(out)
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This gives us a version of &lt;code&gt;read_many_csv_files()&lt;/code&gt; which is versatile enough to let us take different file readers (&lt;a href=&#34;https://github.com/jimhester/vroom&#34;&gt;including Jim Hester’s awesome vroom package&lt;/a&gt;) for a spin.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_with_vroom &amp;lt;- read_many_csv_files(vroom::vroom)
+read_with_readr &amp;lt;- read_many_csv_files(readr::read_csv)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_with_vroom(&amp;quot;.&amp;quot;)
+read_with_readr(&amp;quot;.&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;whats-happening-under-the-hood&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;What’s happening under the hood?&lt;/h3&gt;
+&lt;p&gt;When &lt;code&gt;read_with_vroom()&lt;/code&gt; is created, it captures the current environment which happens to be the enclosing environment of the function factory. Every time &lt;code&gt;read_with_vroom()&lt;/code&gt; is called, it creates a fresh execution environment which is the enclosing environment of the manufactured function.&lt;/p&gt;
+&lt;p&gt;This makes lexical scoping possible: for instance since &lt;code&gt;vroom::vroom()&lt;/code&gt; is not in the enclosing enviroment of &lt;code&gt;read_with_vroom()&lt;/code&gt;, R will look for it in the parent environment - &lt;a href=&#34;https://adv-r.hadley.nz/function-factories.html&#34;&gt;See here for more information&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;partial-application&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Partial application&lt;/h2&gt;
+&lt;p&gt;In programming and in mathematics, &lt;strong&gt;function application&lt;/strong&gt; means applying a function to its arguments. &lt;strong&gt;Partial function application&lt;/strong&gt; means pre-filling one or more arguments of a function, to produce a new function with fewer number of arguments.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;purrr&lt;/code&gt; implements this technique with &lt;code&gt;partial()&lt;/code&gt;. We can create a customisable csv reader with &lt;code&gt;purrr::partial()&lt;/code&gt; in two steps.&lt;/p&gt;
+&lt;p&gt;First we create a function which takes two arguments:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_many_csv_files &amp;lt;- function(.f, file){
+  # extract file names
+  file_names &amp;lt;- path(file) %&amp;gt;% 
+    dir_ls(type = &amp;quot;file&amp;quot;, glob = &amp;quot;*.csv&amp;quot;) %&amp;gt;%
+    map(fs::path_file) 
+  
+  # load data
+  out &amp;lt;- path(file) %&amp;gt;% 
+    dir_ls(regexp = &amp;quot;[.]csv$&amp;quot;) %&amp;gt;% 
+    map(.f) %&amp;gt;% 
+    set_names(file_names)
+  return(out)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Next, we pre-fill &lt;code&gt;.f&lt;/code&gt; with our file reader of choice. For example, if we’re feeling super excited about &lt;code&gt;utils::read.csv&lt;/code&gt; we could pass that to &lt;code&gt;read_many_csv_files()&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_with_base &amp;lt;- partial(read_many_csv_files, .f = read.csv)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_with_base(&amp;quot;.&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;quasiquotation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Quasiquotation&lt;/h2&gt;
+&lt;p&gt;Quasiquotation involves using two techniques: quoting (i.e. capturing an expression to be evaluated later) and unquoting (i.e. evaluating parts of an otherwise quoted expression).&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;rlang&lt;/code&gt; provides &lt;code&gt;new_function()&lt;/code&gt; which constructs a new function given its three components: list of arguments, body code and parent environment (the caller environment by default).&lt;/p&gt;
+&lt;p&gt;When combined with quasiquotation, &lt;code&gt;new_function()&lt;/code&gt; can be used as an alternative to function factories. For example, we could write a customisable csv reader function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_many_csv_files &amp;lt;- function(.f){
+  rlang::new_function(
+    args = exprs(folder_path =),
+    body = expr({
+      file_names &amp;lt;- path(folder_path) %&amp;gt;% 
+        ddir_ls(type = &amp;quot;file&amp;quot;, glob = &amp;quot;*.csv&amp;quot;) %&amp;gt;% 
+        map_chr(fs::path_file) 
+      
+      out &amp;lt;- path(folder_path) %&amp;gt;% 
+        dir_ls(regexp = &amp;quot;[.]csv$&amp;quot;) %&amp;gt;% 
+        map(!!.f) %&amp;gt;% 
+        set_names(file_names)
+    }) ,
+    env = caller_env()
+  )
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And use it to generate a function to read csv files with &lt;code&gt;vroom::vroom()&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_with_vroom &amp;lt;- read_many_csv_files(vroom::vroom)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_with_vroom(&amp;quot;.&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;how-does-it-work&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;How does it work?&lt;/h3&gt;
+&lt;p&gt;As with function factories, when we execute &lt;code&gt;read_with_vroom()&lt;/code&gt;, the current environment is the execution environment of the current function (i.e. the one currently being evaluated). The caller environment is the execution environment of the function that called the current function (i.e. &lt;code&gt;read_many_csv_files()&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Note that in our example, the &lt;code&gt;body&lt;/code&gt; argument captures (quotes) the multiline expression which represents code inside the manufactured function. At the moment of quoting these expressions, &lt;code&gt;.f&lt;/code&gt; is known (i.e. can be looked up from the caller environment). We use &lt;code&gt;rlang::!!&lt;/code&gt; to evaluate (unquote) &lt;code&gt;.f&lt;/code&gt; before we capture the expressions in the &lt;code&gt;body&lt;/code&gt; of &lt;code&gt;rlang::new_function()&lt;/code&gt; - &lt;a href=&#34;https://adv-r.hadley.nz/quasiquotation.html#unquoting&#34;&gt;See here for more information&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wrapping-up&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Wrapping up&lt;/h2&gt;
+&lt;p&gt;This concludes our brief look at three techniques for code generation: function factories, partial application and quasiquotation.&lt;/p&gt;
+&lt;p&gt;If after reading this you crave more &lt;code&gt;purrr&lt;/code&gt;, FP and tidyeval goodness, head over to these resources:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://colinfay.me/purrr-web-mining/&#34;&gt;Colin Fay’s awesome 6 part series&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.rstudio.com/resources/videos/happy-r-users-purrr-tutorial/&#34;&gt;Charlotte Wickham’s Happy R Users Purrr - Tutorial&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://milesmcbain.xyz/the-roots-of-quotation/&#34;&gt;Miles McBain’s The Roots of Quotation&lt;/a&gt; which inspired a host of other great posts about tidy evaluation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Functional Programming helpers from purrr and friends, part 2 | Composition</title>
@@ -102,7 +253,7 @@ data_list &amp;lt;- load_files(path_name)&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;purrr-composed-functions&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;purrr composed functions&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;purrr&lt;/code&gt; provides a function for composition: &lt;code&gt;compose&lt;/code&gt;. &lt;code&gt;compose&lt;/code&gt; takes any number of functions and applies them in turn from right to left (by default). The order in which functions are applied can be reversed by setting the &lt;code&gt;.dir&lt;/code&gt; argument to “&lt;em&gt;forward&lt;/em&gt;”.&lt;/p&gt;
-&lt;p&gt;We can create a &lt;code&gt;purrr&lt;/code&gt; composed function for reading csv files from disk with:&lt;/p&gt;
+&lt;p&gt;Using &lt;code&gt;purrr::compose&lt;/code&gt;, the workflow becomes:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;load_files &amp;lt;- compose(
   ~ path(.),
   ~ dir_ls(path = ., regexp = &amp;quot;[.]csv$&amp;quot;),
@@ -150,13 +301,12 @@ result &amp;lt;- abs(df3)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;“There are only two hard things in Computer Science: cache invalidation and naming things” - Phil Karlton&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Our example is simple but in a real system, this would mean passing a ship-load of parameters and naming tons of variables.&lt;/p&gt;
-&lt;p&gt;How do we correct this?&lt;/p&gt;
 &lt;p&gt;In the following sections, we will look at two ways of simplifying the workflow with pointfree style.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;sweet-dreams-are-made-of-pipes&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Sweet dreams are made of pipes&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;%&amp;gt;%&lt;/code&gt; is syntactic sugar for invoking multiple function calls on an object without needing to create variables to store intermediate results.&lt;/p&gt;
-&lt;p&gt;This means we can use pipes to rewrite the imperative solution in one expression, resulting in clarity to the dataflow with no intermediate variables:&lt;/p&gt;
+&lt;p&gt;Using pipes, the series of data transformations becomes:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;result &amp;lt;- mtcars %&amp;gt;%
   log %&amp;gt;% 
   tan %&amp;gt;% 

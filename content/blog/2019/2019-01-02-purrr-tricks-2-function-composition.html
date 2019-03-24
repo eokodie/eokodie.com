@@ -90,7 +90,7 @@ data_list &lt;- load_files(path_name)</code></pre>
 <div id="purrr-composed-functions" class="section level3">
 <h3>purrr composed functions</h3>
 <p><code>purrr</code> provides a function for composition: <code>compose</code>. <code>compose</code> takes any number of functions and applies them in turn from right to left (by default). The order in which functions are applied can be reversed by setting the <code>.dir</code> argument to “<em>forward</em>”.</p>
-<p>We can create a <code>purrr</code> composed function for reading csv files from disk with:</p>
+<p>Using <code>purrr::compose</code>, the workflow becomes:</p>
 <pre class="r"><code>load_files &lt;- compose(
   ~ path(.),
   ~ dir_ls(path = ., regexp = &quot;[.]csv$&quot;),
@@ -138,13 +138,12 @@ result &lt;- abs(df3)</code></pre>
 <p>“There are only two hard things in Computer Science: cache invalidation and naming things” - Phil Karlton</p>
 </blockquote>
 <p>Our example is simple but in a real system, this would mean passing a ship-load of parameters and naming tons of variables.</p>
-<p>How do we correct this?</p>
 <p>In the following sections, we will look at two ways of simplifying the workflow with pointfree style.</p>
 </div>
 <div id="sweet-dreams-are-made-of-pipes" class="section level3">
 <h3>Sweet dreams are made of pipes</h3>
 <p><code>%&gt;%</code> is syntactic sugar for invoking multiple function calls on an object without needing to create variables to store intermediate results.</p>
-<p>This means we can use pipes to rewrite the imperative solution in one expression, resulting in clarity to the dataflow with no intermediate variables:</p>
+<p>Using pipes, the series of data transformations becomes:</p>
 <pre class="r"><code>result &lt;- mtcars %&gt;%
   log %&gt;% 
   tan %&gt;% 

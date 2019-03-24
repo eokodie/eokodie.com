@@ -1,0 +1,185 @@
+---
+title: Functional Programming helpers from purrr and friends, part 3 
+author: "Ernest Omane-Kodie"
+date: '2019-03-23T21:13:14-05:00'
+tags:
+- rstats
+- functional programming
+- tidyeval
+categories: R
+---
+
+<iframe src="https://giphy.com/embed/8vQSQ3cNXuDGo" width="300" height="300" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/cat-moment-remember-8vQSQ3cNXuDGo">via GIPHY</a></p>
+
+## Background
+In the [first](https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/) and [second](https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/) instalments of this blog series, we touched on some functional programming concepts and their implementation in `purrr` and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of dynamically creating new functions: __function factories__, __partial application__ and __quasiquotation__.
+
+Let's begin by loading the packages we need.
+```{r message=FALSE, warning=FALSE}
+library(purrr)
+library(rlang)
+library(fs)
+library(magrittr)
+library(vroom)
+library(readr)
+```
+
+## Motivating example
+We will illustrate new concepts by adapting the simple file reading problem from the previous instalment.
+
+Recapping the example: Imagine we have several small csv files on disk:
+```{r eval=FALSE}
+mtcars %>% 
+  split(.$carb) %>% 
+  iwalk(~ readr::write_csv(.x, glue::glue("mtcars_{.y}.csv")))
+```
+We want to explore ways of creating functions to read these files into a list of dataframes. 
+
+## A first attempt
+Our first go at the problem using `fs` and `purrr` might look like this:
+```{r eval=FALSE}
+read_many_csv_files <- function(folder_path){
+  # extract file names
+  file_names <- path(folder_path) %>% 
+    dir_ls(type = "file", glob = "*.csv") %>%
+    map_chr(fs::path_file) 
+  
+  # load data
+  out <- path(folder_path) %>% 
+    dir_ls(regexp = "[.]csv$") %>% 
+    map(readr::read_csv) %>% 
+    set_names(file_names)
+  return(out)
+}
+```
+
+```{r eval=FALSE}
+# read csv files
+read_many_csv_files(".")
+
+```
+
+This is all well and good, but imagine further that we don't want to restrict our function to only use `readr::read_csv()`. 
+
+How do we extend our workflow to accommodate any csv reader? 
+
+In the sections that follow, we will walk through different ways of creating general-purpose versions of `read_many_csv_files()`.
+
+## Function factories 
+
+Our second attempt at  the motivating problem begins with a function factory (a function for creating other functions):
+```{r}
+read_many_csv_files <- function(.f){
+  force(.f)
+  function(folder_path){
+    # extract file names
+    file_names <- path(folder_path) %>% 
+      dir_ls(type = "file", glob = "*.csv") %>% 
+      map_chr(fs::path_file) 
+    
+    # load data
+    out <- path(folder_path) %>% 
+      dir_ls(regexp = ".csv") %>% 
+      map(.f) %>% 
+      set_names(file_names)
+    return(out)
+  }
+}
+```
+
+This gives us a version of `read_many_csv_files()` which is versatile enough to let us take different file readers
+([including Jim Hester's awesome vroom package](https://github.com/jimhester/vroom)) for a spin.
+```{r}
+read_with_vroom <- read_many_csv_files(vroom::vroom)
+read_with_readr <- read_many_csv_files(readr::read_csv)
+```
+
+```{r eval=FALSE}
+read_with_vroom(".")
+read_with_readr(".")
+```
+
+### What's happening under the hood?
+When `read_with_vroom()` is created, it captures the current environment which happens to be the enclosing environment of the function factory. Every time `read_with_vroom()` is called, it creates a fresh execution environment which is the enclosing environment of the manufactured function.
+
+This makes lexical scoping possible: for instance since `vroom::vroom()` is not in the enclosing enviroment of `read_with_vroom()`, R will look for it in the parent environment - [See here for more information](https://adv-r.hadley.nz/function-factories.html)
+
+## Partial application
+In programming and in mathematics, __function application__ means applying a function to its arguments. __Partial function application__ means pre-filling one or more arguments of a function, to produce a new function with fewer number of arguments.
+
+`purrr` implements this technique with `partial()`. We can create a customisable csv reader with `purrr::partial()` in two steps.
+
+First we create a function which takes two arguments:
+```{r eval=FALSE}
+read_many_csv_files <- function(.f, file){
+  # extract file names
+  file_names <- path(file) %>% 
+    dir_ls(type = "file", glob = "*.csv") %>%
+    map(fs::path_file) 
+  
+  # load data
+  out <- path(file) %>% 
+    dir_ls(regexp = "[.]csv$") %>% 
+    map(.f) %>% 
+    set_names(file_names)
+  return(out)
+}
+```
+
+Next, we pre-fill `.f` with our file reader of choice. For example, if we're feeling super excited about `utils::read.csv` we could pass that to `read_many_csv_files()`: 
+```{r eval=FALSE}
+read_with_base <- partial(read_many_csv_files, .f = read.csv)
+```
+
+```{r eval=FALSE}
+read_with_base(".")
+```
+
+## Quasiquotation
+Quasiquotation involves using two techniques: quoting (i.e. capturing an expression to be evaluated later) and unquoting (i.e. evaluating parts of an otherwise quoted expression).
+
+`rlang` provides `new_function()` which constructs a new function given its three components: list of arguments, body code and parent environment (the caller environment by default). 
+
+When combined with quasiquotation, `new_function()` can be used as an alternative to function factories. For example, we could write a customisable csv reader function:
+```{r eval=FALSE}
+read_many_csv_files <- function(.f){
+  rlang::new_function(
+    args = exprs(folder_path =),
+    body = expr({
+      file_names <- path(folder_path) %>% 
+        ddir_ls(type = "file", glob = "*.csv") %>% 
+        map_chr(fs::path_file) 
+      
+      out <- path(folder_path) %>% 
+        dir_ls(regexp = "[.]csv$") %>% 
+        map(!!.f) %>% 
+        set_names(file_names)
+    }) ,
+    env = caller_env()
+  )
+}
+```
+
+And use it to generate a function to read csv files with `vroom::vroom()`:
+```{r eval=FALSE}
+read_with_vroom <- read_many_csv_files(vroom::vroom)
+```
+
+```{r eval=FALSE}
+read_with_vroom(".")
+```
+
+### How does it work?
+As with function factories, when we execute `read_with_vroom()`, the current environment is the execution environment of the current function (i.e. the one currently being evaluated). The caller environment is the execution environment of the function that called the current function (i.e. `read_many_csv_files()`). 
+
+Note that in our example, the `body` argument captures (quotes) the multiline expression which represents code inside the manufactured function. At the moment of quoting these expressions, `.f` is known (i.e. can be looked up from the caller environment). We use `rlang::!!` to evaluate (unquote) `.f` before we capture the expressions in the `body` of `rlang::new_function()` - [See here for more information](https://adv-r.hadley.nz/quasiquotation.html#unquoting).
+
+## Wrapping up
+This concludes our brief look at three techniques for code generation: function factories, partial application and quasiquotation.
+
+If after reading this you crave more `purrr`, FP and tidyeval goodness, head over to these resources: 
+
+ + [Colin Fay's awesome 6 part series](https://colinfay.me/purrr-web-mining/)
+ + [Charlotte Wickham's Happy R Users Purrr - Tutorial](https://www.rstudio.com/resources/videos/happy-r-users-purrr-tutorial/)
+ + [Miles McBain's The Roots of Quotation](https://milesmcbain.xyz/the-roots-of-quotation/) which inspired a host of other great posts about tidy evaluation
+

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tidyeval on Ernest Omane-Kodie</title>
+    <link>/tags/tidyeval/</link>
+    <description>Recent content in Tidyeval on Ernest Omane-Kodie</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 23 Mar 2019 21:13:14 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/tidyeval/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Functional Programming helpers from purrr and friends, part 3</title>
+      <link>/blog/functional-programming-helpers-from-purrr-and-friends-part-3/</link>
+      <pubDate>Sat, 23 Mar 2019 21:13:14 -0500</pubDate>
+      
+      <guid>/blog/functional-programming-helpers-from-purrr-and-friends-part-3/</guid>
+      <description>via GIPHYBackgroundIn the first and second instalments of this blog series, we touched on some functional programming concepts and their implementation in purrr and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of dynamically creating new functions: function factories, partial application and quasiquotation.
+Let’s begin by loading the packages we need.
+library(purrr)library(rlang)library(fs)library(magrittr)library(vroom)library(readr)Motivating exampleWe will illustrate new concepts by adapting the simple file reading problem from the previous instalment.</description>
+    </item>
+    
+  </channel>
+</rss>

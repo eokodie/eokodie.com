@@ -88,7 +88,7 @@ data_list <- load_files(path_name)
 
 `purrr` provides a function for composition: `compose`. `compose` takes any number of functions and applies them in turn from right to left (by default). The order in which functions are applied can be reversed by setting the `.dir` argument to "_forward_".
 
-We can create a `purrr` composed function for reading csv files from disk with:
+Using `purrr::compose`, the workflow becomes:
 ```{r}
 load_files <- compose(
   ~ path(.),
@@ -127,14 +127,12 @@ This approach has a number of drawbacks.
 
 Our example is simple but in a real system, this would mean passing a ship-load of parameters and naming tons of variables.
 
-How do we correct this?
-
 In the following sections, we will look at two ways of simplifying the workflow with pointfree style.
 
 ### Sweet dreams are made of pipes
 `%>%` is syntactic sugar for invoking multiple function calls on an object without needing to create variables to store intermediate results.
 
-This means we can use pipes to rewrite the imperative solution in one expression, resulting in clarity to the dataflow with no intermediate variables:
+Using pipes, the series of data transformations becomes:
 ```{r eval=FALSE}
 result <- mtcars %>%
   log %>% 

@@ -13,9 +13,9 @@
 <meta property="og:site_name" content="Ernest Omane-Kodie" />
 <meta property="og:locale" content="nn_NO" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/blog/" />
-<meta property="og:title" content="Blog" />
-<meta property="twitter:title" content="Blog">
+<meta property="og:url" content="/blog/functional-programming-helpers-from-purrr-and-friends-part-3/" />
+<meta property="og:title" content="Functional Programming helpers from purrr and friends, part 3" />
+<meta property="twitter:title" content="Functional Programming helpers from purrr and friends, part 3">
 
     <meta property="twitter:card" content="summary">
 
@@ -25,10 +25,10 @@
 <title>
 
 
-     Ernest Omane-Kodie - Blog 
+     Ernest Omane-Kodie - Functional Programming helpers from purrr and friends, part 3 
 
 </title>
-<link rel="canonical" href="/blog/">
+<link rel="canonical" href="/blog/functional-programming-helpers-from-purrr-and-friends-part-3/">
 
 
 <style media="screen">
@@ -1052,8 +1052,6 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
 
 
 
-  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml" title="Ernest Omane-Kodie" />
-
 
 </head>
 
@@ -1061,7 +1059,7 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
 <body>
 
 
-<div class="header header-home column">
+<div class="header column">
 
     <div class="container">
         
@@ -1094,75 +1092,234 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
     </div>
 </div>
 
-<div class="main column">
+
+
+
+<div class="main post non-narrow zero-top-spacing column">
     <div class="container">
         <div class="content">
-            <div class="posts">
-                <div class="page-heading">Blog</div>
-                <ul>
-                    
-                        <li class="groupby">Mar, 2019</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Mar 23, 2019</span>
-    <a href="/blog/functional-programming-helpers-from-purrr-and-friends-part-3/"><span>Functional Programming helpers from purrr and friends, part 3</span></a>
-</li>
+            <div class="front-matter">
+                <div class="title-container">
+                    <div class="page-heading">
 
-                        
-                    
-                        <li class="groupby">Jan, 2019</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Jan 2, 2019</span>
-    <a href="/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/"><span>Functional Programming helpers from purrr and friends, part 2 | Composition</span></a>
-</li>
+    Functional Programming helpers from purrr and friends, part 3
 
+</div>
+
+                </div>
+                <div class="meta">
+                    <div class="date" title="Sat Mar 23 2019 21:13:14 -0500">Mar 23, 2019</div>
+                    
+                        
+                        <div class="author middot" title="Ernest Omane-Kodie">Ernest Omane-Kodie</div>
                         
                     
-                        <li class="groupby">Dec, 2018</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Dec 18, 2018</span>
-    <a href="/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/"><span>Functional Programming helpers from purrr and friends, part 1 | Rowwise operations</span></a>
-</li>
-
-                        
-                    
-                        <li class="groupby">Jun, 2018</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Jun 12, 2018</span>
-    <a href="/blog/drinking-from-the-firehose-using-r-to-keep-up-with-current-ml-research-part-1/"><span>Drinking from the Firehose: using R to keep up with current ML Research - part 1</span></a>
-</li>
-
-                        
-                            <li class="post-item">
-    <span class="meta">Jun 11, 2018</span>
-    <a href="/blog/colours-impact-resources-for-data-visualization-with-a-splash-of-r/"><span>Colours &amp; Impact: Resources for Data Visualization with a splash of R</span></a>
-</li>
-
-                        
-                    
-                        <li class="groupby">Apr, 2018</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Apr 30, 2018</span>
-    <a href="/blog/need-for-speed-benchmarks-on-dataframes/"><span>Need for Speed: Benchmarks on Dataframes</span></a>
-</li>
-
-                        
-                            <li class="post-item">
-    <span class="meta">Apr 13, 2018</span>
-    <a href="/blog/installing-missing-packages-from-bioconductor-cran-and-github/"><span>Installing Missing Packages from Bioconductor, CRAN and Github</span></a>
-</li>
-
-                        
-                    
-                </ul>
+                    <div class="reading-time middot">4 minute read</div>
+                    <div class="tags">
+                        <ul>
+                          
+                            <li class="middot"><a href="/tags/rstats">rstats</a> </li>
+                          
+                            <li class="middot"><a href="/tags/functional-programming">functional programming</a> </li>
+                          
+                            <li class="middot"><a href="/tags/tidyeval">tidyeval</a> </li>
+                          
+                        </ul>
+                    </div>
+                    <div class="tags">
+                        <ul>
+                          
+                          
+                        </ul>
+                    </div>
+                </div>
             </div>
+            <div class="markdown">
+                
+    
+    
+
+
+<iframe src="https://giphy.com/embed/8vQSQ3cNXuDGo" width="300" height="300" frameBorder="0" class="giphy-embed" allowFullScreen>
+</iframe>
+<p>
+<a href="https://giphy.com/gifs/cat-moment-remember-8vQSQ3cNXuDGo">via GIPHY</a>
+</p>
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>In the <a href="https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/">first</a> and <a href="https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/">second</a> instalments of this blog series, we touched on some functional programming concepts and their implementation in <code>purrr</code> and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of dynamically creating new functions: <strong>function factories</strong>, <strong>partial application</strong> and <strong>quasiquotation</strong>.</p>
+<p>Let’s begin by loading the packages we need.</p>
+<pre class="r"><code>library(purrr)
+library(rlang)
+library(fs)
+library(magrittr)
+library(vroom)
+library(readr)</code></pre>
+</div>
+<div id="motivating-example" class="section level2">
+<h2>Motivating example</h2>
+<p>We will illustrate new concepts by adapting the simple file reading problem from the previous instalment.</p>
+<p>Recapping the example: Imagine we have several small csv files on disk:</p>
+<pre class="r"><code>mtcars %&gt;% 
+  split(.$carb) %&gt;% 
+  iwalk(~ readr::write_csv(.x, glue::glue(&quot;mtcars_{.y}.csv&quot;)))</code></pre>
+<p>We want to explore ways of creating functions to read these files into a list of dataframes.</p>
+</div>
+<div id="a-first-attempt" class="section level2">
+<h2>A first attempt</h2>
+<p>Our first go at the problem using <code>fs</code> and <code>purrr</code> might look like this:</p>
+<pre class="r"><code>read_many_csv_files &lt;- function(folder_path){
+  # extract file names
+  file_names &lt;- path(folder_path) %&gt;% 
+    dir_ls(type = &quot;file&quot;, glob = &quot;*.csv&quot;) %&gt;%
+    map_chr(fs::path_file) 
+  
+  # load data
+  out &lt;- path(folder_path) %&gt;% 
+    dir_ls(regexp = &quot;[.]csv$&quot;) %&gt;% 
+    map(readr::read_csv) %&gt;% 
+    set_names(file_names)
+  return(out)
+}</code></pre>
+<pre class="r"><code># read csv files
+read_many_csv_files(&quot;.&quot;)</code></pre>
+<p>This is all well and good, but imagine further that we don’t want to restrict our function to only use <code>readr::read_csv()</code>.</p>
+<p>How do we extend our workflow to accommodate any csv reader?</p>
+<p>In the sections that follow, we will walk through different ways of creating general-purpose versions of <code>read_many_csv_files()</code>.</p>
+</div>
+<div id="function-factories" class="section level2">
+<h2>Function factories</h2>
+<p>Our second attempt at the motivating problem begins with a function factory (a function for creating other functions):</p>
+<pre class="r"><code>read_many_csv_files &lt;- function(.f){
+  force(.f)
+  function(folder_path){
+    # extract file names
+    file_names &lt;- path(folder_path) %&gt;% 
+      dir_ls(type = &quot;file&quot;, glob = &quot;*.csv&quot;) %&gt;% 
+      map_chr(fs::path_file) 
+    
+    # load data
+    out &lt;- path(folder_path) %&gt;% 
+      dir_ls(regexp = &quot;.csv&quot;) %&gt;% 
+      map(.f) %&gt;% 
+      set_names(file_names)
+    return(out)
+  }
+}</code></pre>
+<p>This gives us a version of <code>read_many_csv_files()</code> which is versatile enough to let us take different file readers (<a href="https://github.com/jimhester/vroom">including Jim Hester’s awesome vroom package</a>) for a spin.</p>
+<pre class="r"><code>read_with_vroom &lt;- read_many_csv_files(vroom::vroom)
+read_with_readr &lt;- read_many_csv_files(readr::read_csv)</code></pre>
+<pre class="r"><code>read_with_vroom(&quot;.&quot;)
+read_with_readr(&quot;.&quot;)</code></pre>
+<div id="whats-happening-under-the-hood" class="section level3">
+<h3>What’s happening under the hood?</h3>
+<p>When <code>read_with_vroom()</code> is created, it captures the current environment which happens to be the enclosing environment of the function factory. Every time <code>read_with_vroom()</code> is called, it creates a fresh execution environment which is the enclosing environment of the manufactured function.</p>
+<p>This makes lexical scoping possible: for instance since <code>vroom::vroom()</code> is not in the enclosing enviroment of <code>read_with_vroom()</code>, R will look for it in the parent environment - <a href="https://adv-r.hadley.nz/function-factories.html">See here for more information</a></p>
+</div>
+</div>
+<div id="partial-application" class="section level2">
+<h2>Partial application</h2>
+<p>In programming and in mathematics, <strong>function application</strong> means applying a function to its arguments. <strong>Partial function application</strong> means pre-filling one or more arguments of a function, to produce a new function with fewer number of arguments.</p>
+<p><code>purrr</code> implements this technique with <code>partial()</code>. We can create a customisable csv reader with <code>purrr::partial()</code> in two steps.</p>
+<p>First we create a function which takes two arguments:</p>
+<pre class="r"><code>read_many_csv_files &lt;- function(.f, file){
+  # extract file names
+  file_names &lt;- path(file) %&gt;% 
+    dir_ls(type = &quot;file&quot;, glob = &quot;*.csv&quot;) %&gt;%
+    map(fs::path_file) 
+  
+  # load data
+  out &lt;- path(file) %&gt;% 
+    dir_ls(regexp = &quot;[.]csv$&quot;) %&gt;% 
+    map(.f) %&gt;% 
+    set_names(file_names)
+  return(out)
+}</code></pre>
+<p>Next, we pre-fill <code>.f</code> with our file reader of choice. For example, if we’re feeling super excited about <code>utils::read.csv</code> we could pass that to <code>read_many_csv_files()</code>:</p>
+<pre class="r"><code>read_with_base &lt;- partial(read_many_csv_files, .f = read.csv)</code></pre>
+<pre class="r"><code>read_with_base(&quot;.&quot;)</code></pre>
+</div>
+<div id="quasiquotation" class="section level2">
+<h2>Quasiquotation</h2>
+<p>Quasiquotation involves using two techniques: quoting (i.e. capturing an expression to be evaluated later) and unquoting (i.e. evaluating parts of an otherwise quoted expression).</p>
+<p><code>rlang</code> provides <code>new_function()</code> which constructs a new function given its three components: list of arguments, body code and parent environment (the caller environment by default).</p>
+<p>When combined with quasiquotation, <code>new_function()</code> can be used as an alternative to function factories. For example, we could write a customisable csv reader function:</p>
+<pre class="r"><code>read_many_csv_files &lt;- function(.f){
+  rlang::new_function(
+    args = exprs(folder_path =),
+    body = expr({
+      file_names &lt;- path(folder_path) %&gt;% 
+        ddir_ls(type = &quot;file&quot;, glob = &quot;*.csv&quot;) %&gt;% 
+        map_chr(fs::path_file) 
+      
+      out &lt;- path(folder_path) %&gt;% 
+        dir_ls(regexp = &quot;[.]csv$&quot;) %&gt;% 
+        map(!!.f) %&gt;% 
+        set_names(file_names)
+    }) ,
+    env = caller_env()
+  )
+}</code></pre>
+<p>And use it to generate a function to read csv files with <code>vroom::vroom()</code>:</p>
+<pre class="r"><code>read_with_vroom &lt;- read_many_csv_files(vroom::vroom)</code></pre>
+<pre class="r"><code>read_with_vroom(&quot;.&quot;)</code></pre>
+<div id="how-does-it-work" class="section level3">
+<h3>How does it work?</h3>
+<p>As with function factories, when we execute <code>read_with_vroom()</code>, the current environment is the execution environment of the current function (i.e. the one currently being evaluated). The caller environment is the execution environment of the function that called the current function (i.e. <code>read_many_csv_files()</code>).</p>
+<p>Note that in our example, the <code>body</code> argument captures (quotes) the multiline expression which represents code inside the manufactured function. At the moment of quoting these expressions, <code>.f</code> is known (i.e. can be looked up from the caller environment). We use <code>rlang::!!</code> to evaluate (unquote) <code>.f</code> before we capture the expressions in the <code>body</code> of <code>rlang::new_function()</code> - <a href="https://adv-r.hadley.nz/quasiquotation.html#unquoting">See here for more information</a>.</p>
+</div>
+</div>
+<div id="wrapping-up" class="section level2">
+<h2>Wrapping up</h2>
+<p>This concludes our brief look at three techniques for code generation: function factories, partial application and quasiquotation.</p>
+<p>If after reading this you crave more <code>purrr</code>, FP and tidyeval goodness, head over to these resources:</p>
+<ul>
+<li><a href="https://colinfay.me/purrr-web-mining/">Colin Fay’s awesome 6 part series</a></li>
+<li><a href="https://www.rstudio.com/resources/videos/happy-r-users-purrr-tutorial/">Charlotte Wickham’s Happy R Users Purrr - Tutorial</a></li>
+<li><a href="https://milesmcbain.xyz/the-roots-of-quotation/">Miles McBain’s The Roots of Quotation</a> which inspired a host of other great posts about tidy evaluation</li>
+</ul>
+</div>
+
+
+                <br>
+            </div>
+            
+            <div class="share">
+                  
+                  <a href="" class="ssk ssk-facebook"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-twitter"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-google-plus"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-linkedin"></a>
+                  
+            </div>
+            
+            
+                <div class="navigation">
+                    
+                    <div>
+                        <img class="icon" src="/img/back.svg" alt="back" />
+                        <a href="/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/">Functional Programming helpers from purrr and friends, part 2 | Composition</a>
+                    </div>
+                    
+                    <div style="width: 100%;"></div>
+                    
+                </div>
+            
+            <br>
+            <div class="disqus">
+                
+            </div>
+            
         </div>
     </div>
 </div>
+
 <div class="footer column">
     <div class="container">
 
