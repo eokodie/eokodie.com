@@ -12,7 +12,7 @@ categories: R
 <iframe src="https://giphy.com/embed/8vQSQ3cNXuDGo" width="300" height="300" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/cat-moment-remember-8vQSQ3cNXuDGo">via GIPHY</a></p>
 
 ## Background
-In the [first](https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/) and [second](https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/) instalments of this blog series, we touched on some functional programming concepts and their implementation in `purrr` and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of dynamically creating new functions: __function factories__, __partial application__ and __quasiquotation__.
+In the [first](https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/) and [second](https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/) instalments of this blog series, we touched on some functional programming concepts and their implementation in `purrr` and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of creating new functions: __function factories__, __partial application__ and __quasiquotation__.
 
 Let's begin by loading the packages we need.
 ```{r message=FALSE, warning=FALSE}

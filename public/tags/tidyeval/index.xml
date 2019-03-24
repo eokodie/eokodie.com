@@ -17,7 +17,7 @@
       <pubDate>Sat, 23 Mar 2019 21:13:14 -0500</pubDate>
       
       <guid>/blog/functional-programming-helpers-from-purrr-and-friends-part-3/</guid>
-      <description>via GIPHYBackgroundIn the first and second instalments of this blog series, we touched on some functional programming concepts and their implementation in purrr and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of dynamically creating new functions: function factories, partial application and quasiquotation.
+      <description>via GIPHYBackgroundIn the first and second instalments of this blog series, we touched on some functional programming concepts and their implementation in purrr and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of creating new functions: function factories, partial application and quasiquotation.
 Let’s begin by loading the packages we need.
 library(purrr)library(rlang)library(fs)library(magrittr)library(vroom)library(readr)Motivating exampleWe will illustrate new concepts by adapting the simple file reading problem from the previous instalment.</description>
     </item>

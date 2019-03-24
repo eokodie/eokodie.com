@@ -18,7 +18,7 @@ categories: R
 </p>
 <div id="background" class="section level2">
 <h2>Background</h2>
-<p>In the <a href="https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/">first</a> and <a href="https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/">second</a> instalments of this blog series, we touched on some functional programming concepts and their implementation in <code>purrr</code> and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of dynamically creating new functions: <strong>function factories</strong>, <strong>partial application</strong> and <strong>quasiquotation</strong>.</p>
+<p>In the <a href="https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-1-rowwise-operations/">first</a> and <a href="https://www.eokodie.com/blog/functional-programming-helpers-from-purrr-and-friends-part-2-composition/">second</a> instalments of this blog series, we touched on some functional programming concepts and their implementation in <code>purrr</code> and related packages. This instalment continues the exploration, showing techniques for writing functions which are capable of creating new functions: <strong>function factories</strong>, <strong>partial application</strong> and <strong>quasiquotation</strong>.</p>
 <p>Let’s begin by loading the packages we need.</p>
 <pre class="r"><code>library(purrr)
 library(rlang)
