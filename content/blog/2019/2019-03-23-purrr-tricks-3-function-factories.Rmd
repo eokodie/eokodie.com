@@ -105,11 +105,11 @@ When `read_with_vroom()` is created, it captures the current environment which h
 This makes lexical scoping possible: for instance since `vroom::vroom()` is not in the enclosing enviroment of `read_with_vroom()`, R will look for it in the parent environment - [See here for more information](https://adv-r.hadley.nz/function-factories.html)
 
 ## Partial application
-In programming and in mathematics, __function application__ means applying a function to its arguments. __Partial function application__ means pre-filling one or more arguments of a function, to produce a new function with fewer number of arguments.
+In programming and in mathematics, __function application__ means applying a function to its arguments. __Partial function application__ means pre-filling one or more arguments of a function, to produce a new function with a fewer number of arguments.
 
 `purrr` implements this technique with `partial()`. We can create a customisable csv reader with `purrr::partial()` in two steps.
 
-First we create a function which takes two arguments:
+First, we create a function which takes two arguments:
 ```{r eval=FALSE}
 read_many_csv_files <- function(.f, file){
   # extract file names

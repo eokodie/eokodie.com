@@ -1219,9 +1219,9 @@ read_with_readr(&quot;.&quot;)</code></pre>
 </div>
 <div id="partial-application" class="section level2">
 <h2>Partial application</h2>
-<p>In programming and in mathematics, <strong>function application</strong> means applying a function to its arguments. <strong>Partial function application</strong> means pre-filling one or more arguments of a function, to produce a new function with fewer number of arguments.</p>
+<p>In programming and in mathematics, <strong>function application</strong> means applying a function to its arguments. <strong>Partial function application</strong> means pre-filling one or more arguments of a function, to produce a new function with a fewer number of arguments.</p>
 <p><code>purrr</code> implements this technique with <code>partial()</code>. We can create a customisable csv reader with <code>purrr::partial()</code> in two steps.</p>
-<p>First we create a function which takes two arguments:</p>
+<p>First, we create a function which takes two arguments:</p>
 <pre class="r"><code>read_many_csv_files &lt;- function(.f, file){
   # extract file names
   file_names &lt;- path(file) %&gt;% 

@@ -99,9 +99,9 @@ read_with_readr(&amp;quot;.&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;partial-application&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Partial application&lt;/h2&gt;
-&lt;p&gt;In programming and in mathematics, &lt;strong&gt;function application&lt;/strong&gt; means applying a function to its arguments. &lt;strong&gt;Partial function application&lt;/strong&gt; means pre-filling one or more arguments of a function, to produce a new function with fewer number of arguments.&lt;/p&gt;
+&lt;p&gt;In programming and in mathematics, &lt;strong&gt;function application&lt;/strong&gt; means applying a function to its arguments. &lt;strong&gt;Partial function application&lt;/strong&gt; means pre-filling one or more arguments of a function, to produce a new function with a fewer number of arguments.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;purrr&lt;/code&gt; implements this technique with &lt;code&gt;partial()&lt;/code&gt;. We can create a customisable csv reader with &lt;code&gt;purrr::partial()&lt;/code&gt; in two steps.&lt;/p&gt;
-&lt;p&gt;First we create a function which takes two arguments:&lt;/p&gt;
+&lt;p&gt;First, we create a function which takes two arguments:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_many_csv_files &amp;lt;- function(.f, file){
   # extract file names
   file_names &amp;lt;- path(file) %&amp;gt;% 
