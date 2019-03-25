@@ -136,8 +136,8 @@ read_with_readr(&quot;.&quot;)</code></pre>
 <pre class="r"><code>read_with_vroom(&quot;.&quot;)</code></pre>
 <div id="how-does-it-work" class="section level3">
 <h3>How does it work?</h3>
-<p>As with function factories, when we execute <code>read_with_vroom()</code>, the current environment is the execution environment of the current function (i.e. the one currently being evaluated). The caller environment is the execution environment of the function that called the current function (i.e. <code>read_many_csv_files()</code>).</p>
-<p>Note that in our example, the <code>body</code> argument captures (quotes) the multiline expression which represents code inside the manufactured function. At the moment of quoting these expressions, <code>.f</code> is known (i.e. can be looked up from the caller environment). We use <code>rlang::!!</code> to evaluate (unquote) <code>.f</code> before we capture the expressions in the <code>body</code> of <code>rlang::new_function()</code> - <a href="https://adv-r.hadley.nz/quasiquotation.html#unquoting">See Adv. R for more information</a>.</p>
+<p>As with function factories, when we create <code>read_with_vroom()</code>, it captures the execution environment of the function that created it. When we invoke <code>read_with_vroom()</code>, it creates a new execution environment of its own.</p>
+<p>In our example, the <code>body</code> argument of <code>rlang::new_function()</code> captures (quotes) the multiline expression which represents code inside the manufactured function. At the moment of quoting these expressions, <code>.f</code> is known (i.e. can be looked up from the caller environment). We use <code>rlang::!!</code> to evaluate (unquote) <code>.f</code> before we capture the expressions in the <code>body</code> of <code>rlang::new_function()</code> - <a href="https://adv-r.hadley.nz/quasiquotation.html#unquoting">See Adv. R for more information</a>.</p>
 </div>
 </div>
 <div id="wrapping-up" class="section level2">

@@ -170,9 +170,9 @@ read_with_vroom(".")
 ```
 
 ### How does it work?
-As with function factories, when we execute `read_with_vroom()`, the current environment is the execution environment of the current function (i.e. the one currently being evaluated). The caller environment is the execution environment of the function that called the current function (i.e. `read_many_csv_files()`). 
+As with function factories, when we create `read_with_vroom()`,  it captures the execution environment of the function that created it. When we invoke `read_with_vroom()`, it creates a new execution environment of its own.
 
-Note that in our example, the `body` argument captures (quotes) the multiline expression which represents code inside the manufactured function. At the moment of quoting these expressions, `.f` is known (i.e. can be looked up from the caller environment). We use `rlang::!!` to evaluate (unquote) `.f` before we capture the expressions in the `body` of `rlang::new_function()` - [See Adv. R for more information](https://adv-r.hadley.nz/quasiquotation.html#unquoting).
+In our example, the `body` argument of `rlang::new_function()` captures (quotes) the multiline expression which represents code inside the manufactured function. At the moment of quoting these expressions, `.f` is known (i.e. can be looked up from the caller environment). We use `rlang::!!` to evaluate (unquote) `.f` before we capture the expressions in the `body` of `rlang::new_function()` - [See Adv. R for more information](https://adv-r.hadley.nz/quasiquotation.html#unquoting).
 
 ## Wrapping up
 This concludes our brief look at three techniques for code generation: function factories, partial application and quasiquotation.
