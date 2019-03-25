@@ -27,7 +27,7 @@ library(readr)
 ## Motivating example
 We will illustrate new concepts by adapting the simple file reading problem from the previous instalment.
 
-Recapping the example: Imagine we have several small csv files on disk:
+Recapping the example: Imagine we have several flat files in our current working directory.
 ```{r eval=FALSE}
 mtcars %>% 
   split(.$carb) %>% 

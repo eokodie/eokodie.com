@@ -39,7 +39,7 @@ library(readr)&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;motivating-example&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Motivating example&lt;/h2&gt;
 &lt;p&gt;We will illustrate new concepts by adapting the simple file reading problem from the previous instalment.&lt;/p&gt;
-&lt;p&gt;Recapping the example: Imagine we have several small csv files on disk:&lt;/p&gt;
+&lt;p&gt;Recapping the example: Imagine we have several flat files in our current working directory.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mtcars %&amp;gt;% 
   split(.$carb) %&amp;gt;% 
   iwalk(~ readr::write_csv(.x, glue::glue(&amp;quot;mtcars_{.y}.csv&amp;quot;)))&lt;/code&gt;&lt;/pre&gt;

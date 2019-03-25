@@ -30,7 +30,7 @@ library(readr)</code></pre>
 <div id="motivating-example" class="section level2">
 <h2>Motivating example</h2>
 <p>We will illustrate new concepts by adapting the simple file reading problem from the previous instalment.</p>
-<p>Recapping the example: Imagine we have several small csv files on disk:</p>
+<p>Recapping the example: Imagine we have several flat files in our current working directory.</p>
 <pre class="r"><code>mtcars %&gt;% 
   split(.$carb) %&gt;% 
   iwalk(~ readr::write_csv(.x, glue::glue(&quot;mtcars_{.y}.csv&quot;)))</code></pre>
