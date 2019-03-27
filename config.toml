@@ -29,7 +29,6 @@ progressively = true
 share = true
 latestpostcount = 5
 github = "eokodie"
-email = "omanekodie@gmail.com"
 usesmallsummarycard = true
 posts_navigation = true
 small_banner_logo = false
